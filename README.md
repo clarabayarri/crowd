@@ -1,0 +1,4 @@
+crowd
+=====
+
+Generic crowdsourcing platform
