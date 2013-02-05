@@ -1,3 +1,8 @@
+Generic crowdsourcing platform
+
+This is a project I am working on for my bachelor thesis.
+
+
 # Spring MVC and Hibernate template application
 
 This is a template for a web application that uses Spring MVC and Hibernate. The sample code is a simple CRUD page that manipulates records for a single model object.
@@ -10,5 +15,4 @@ First build with:
 
 Then run it with:
 
-    $java -jar target/dependency/webapp-runner.jar target/*.war
-
+    $java -jar target/dependency/jetty-runner.jar target/*.war

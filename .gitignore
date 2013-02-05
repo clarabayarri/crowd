@@ -5,3 +5,4 @@
 /tomcat.*
 /.idea
 /*.iml
+*.DS_Store
