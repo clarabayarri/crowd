@@ -34,6 +34,15 @@ public class BatchServiceImplTest {
 	}
 	
 	@Test
+	public void testAddBatch() {
+		Batch batch = new Batch();
+		
+		service.addBatch(batch);
+		
+		Mockito.verify(em).persist(batch);
+	}
+	
+	@Test
 	public void testRemoveBatch() {
 		Batch newBatch = new Batch();
 		Mockito.when(em.find(Batch.class, 1)).thenReturn(newBatch);

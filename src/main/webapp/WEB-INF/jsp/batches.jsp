@@ -2,14 +2,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <html>
-  <head><title>Hello :: Spring Application</title></head>
-  <body>
-    <h1>Hello - Spring Application</h1>
-    <p>Greetings, it is now <c:out value="${now}"/></p>
-  </body>
-</html>
-
-<html>
 <head>
     <meta charset="utf-8">
     <title>Crowd platform</title>
@@ -33,8 +25,8 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a href="/" class="brand">Spring MVC and Hibernate Template</a>
-            <a href="/" class="brand" id="heroku">by <strong>heroku</strong></a>
+            <a href="/" class="brand">Crowd platform</a>
+            <a href="/" class="brand" id="heroku">by <strong>Clara</strong></a>
         </div>
     </div>
 </div>
@@ -43,20 +35,12 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>Simple CRUD Page</h1>
+                <h1>Sample project</h1>
             </div>
-            <form:form method="post" action="add" commandName="batch" class="form-vertical">
-
-                <form:label path="name">Name</form:label>
-                <form:input path="name" />
-                <form:label path="executionsPerTask">Executions Per Task</form:label>
-                <form:input path="executionsPerTask" />
-                <input type="submit" value="Add Batch" class="btn"/>
-            </form:form>
 
 
             <c:if  test="${!empty batchList}">
-                <h3>People</h3>
+                <h3>Batches</h3>
                 <table class="table table-bordered table-striped">
                     <thead>
                     <tr>
@@ -67,8 +51,8 @@
                     <tbody>
                     <c:forEach items="${batchList}" var="batch">
                         <tr>
-                            <td>${batch.name}, ${batch.executionsPerTask}</td>
-                            <td>${batch.percentageComplete} % <form action="delete/${batch.id}" method="post"><input type="submit" class="btn btn-danger btn-mini" value="Delete"/></form></td>
+                            <td>${batch.name}, ${batch.executionsPerTask} executions per task</td>
+                            <td>${batch.percentageComplete} %, ${batch.numTasks} tasks </td>
                         </tr>
                     </c:forEach>
                     </tbody>

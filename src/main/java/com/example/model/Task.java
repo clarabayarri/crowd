@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Formula;
+
 @Entity
 public class Task {
 
@@ -24,6 +26,9 @@ public class Task {
 	
 	@OneToMany
 	Set<Execution> executions;
+	
+	@Formula("(select count(*) from Execution e where e.Task_id=id)")
+	private Integer numExecutions;
 
 	public Integer getId() {
 		return id;
@@ -42,7 +47,28 @@ public class Task {
 	}
 	
 	public int getNumExecutions() {
-		return executions.size();
+		return numExecutions;
 	}
+
+	public Batch getBatch() {
+		return batch;
+	}
+
+	public void setBatch(Batch batch) {
+		this.batch = batch;
+	}
+
+	public Set<Execution> getExecutions() {
+		return executions;
+	}
+
+	public void setExecutions(Set<Execution> executions) {
+		this.executions = executions;
+	}
+
+	public void setNumExecutions(Integer numExecutions) {
+		this.numExecutions = numExecutions;
+	}
+	
 	
 }

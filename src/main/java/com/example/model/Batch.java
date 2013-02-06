@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Formula;
+
 @Entity
 public class Batch {
 
@@ -22,6 +24,9 @@ public class Batch {
 	
 	@OneToMany
 	private Set<Task> tasks;
+	
+	@Formula("(select count(*) from Task t where t.Batch_id=id)")
+	private Integer numTasks;
 
 	public Integer getId() {
 		return id;
@@ -45,7 +50,6 @@ public class Batch {
 
 	public void setExecutionsPerTask(Integer executionsPerTask) {
 		this.executionsPerTask = executionsPerTask;
-		updatePercentageComplete();
 	}
 
 	public Set<Task> getTasks() {
@@ -72,5 +76,13 @@ public class Batch {
 				this.percentageComplete = ((double) total * 100) / (executionsPerTask * tasks.size());
 			}
 		}
+	}
+
+	public Integer getNumTasks() {
+		return numTasks;
+	}
+
+	public void setNumTasks(Integer numTasks) {
+		this.numTasks = numTasks;
 	}
 }
