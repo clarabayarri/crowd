@@ -1,28 +1,44 @@
 package com.example.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.model.Batch;
 
 @Service
 public class BatchServiceImpl implements BatchService {
 
-	// TODO: implement
-	public void addBatch(Batch batch) {
-		
+	private EntityManager em;
+	 
+	@PersistenceContext
+	public void setEntityManager(EntityManager entityManager) {
+	        this.em = entityManager;
 	}
 	
-	// TODO: implement
+	@Transactional
+	public void addBatch(Batch batch) {
+		em.persist(batch);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
     public List<Batch> listBatches() {
-    	return new ArrayList<Batch>();
+		Query query = em.createQuery("FROM Batch");
+        return query.getResultList();
     }
     
-    // TODO: implement
+    @Transactional
     public void removeBatch(Integer id) {
-    	
+    	Batch batch = em.find(Batch.class, id);
+        if (null != batch) {
+            em.remove(batch);
+        }
     }
     
 }
