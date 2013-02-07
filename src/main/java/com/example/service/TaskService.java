@@ -6,4 +6,6 @@ public interface TaskService {
 
 	public void addTask(Task task);
 	
+	public Task getTask();
+	
 }

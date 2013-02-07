@@ -14,12 +14,13 @@ import com.example.model.Batch;
 import com.example.service.BatchService;
 
 @Controller
+@RequestMapping("/batches")
 public class BatchController {
 
 	@Autowired
     private BatchService batchService;
 
-    @RequestMapping("/batches/")
+    @RequestMapping("/")
     public String listBatches(Map<String, Object> map) {
 
         map.put("batch", new Batch());
@@ -28,7 +29,7 @@ public class BatchController {
         return "batches";
     }
 
-    @RequestMapping(value = "/batches/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addBatch(@ModelAttribute("batch") Batch batch, BindingResult result) {
 
         batchService.addBatch(batch);
@@ -36,7 +37,7 @@ public class BatchController {
         return "redirect:/batches/";
     }
 
-    @RequestMapping("/batches/delete/{batchId}")
+    @RequestMapping("/delete/{batchId}")
     public String deleteBatch(@PathVariable("batchId") Integer batchId) {
 
         batchService.removeBatch(batchId);

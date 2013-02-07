@@ -28,12 +28,6 @@ public class BatchServiceImplTest {
 	}
 	
 	@Test
-	public void testListBatchesIsNotNull() {
-		
-		//assert(service.listBatches() != null);
-	}
-	
-	@Test
 	public void testAddBatch() {
 		Batch batch = new Batch();
 		
