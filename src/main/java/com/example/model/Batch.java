@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Formula;
 
+
 @Entity
 public class Batch {
 

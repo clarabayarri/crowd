@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -15,6 +16,7 @@ import com.example.service.TaskService;
 import com.google.common.collect.Sets;
 
 @Controller
+@RequestMapping("/sample")
 public class SampleDataController {
 
 	@Autowired
@@ -25,11 +27,24 @@ public class SampleDataController {
 	
 	private Random random = new Random();
 	
-	@RequestMapping("/sample/")
+	@RequestMapping("/")
 	public String createSampleData(Map<String, Object> map) {
 		for (int i = 0; i < 5; ++i)
 			createSampleBatch();
 		
+		return "redirect:/batches/";
+	}
+	
+	@RequestMapping("/clean")
+	public String cleanSampleData() {
+		List<Task> tasks = taskService.listTasks();
+		for (Task task : tasks) {
+			taskService.removeTask(task.getId());
+		}
+		List<Batch> batches = batchService.listBatches();
+		for (Batch batch : batches) {
+			batchService.removeBatch(batch.getId());
+		}
 		return "redirect:/batches/";
 	}
 	

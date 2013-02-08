@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Formula;
 
 @Entity
@@ -25,6 +27,7 @@ public class Task {
 	private Batch batch;
 	
 	@OneToMany
+	@Cascade(CascadeType.REMOVE)
 	Set<Execution> executions;
 	
 	@Formula("(select count(*) from Execution e where e.Task_id=id)")

@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -29,5 +31,20 @@ public class TaskServiceImpl implements TaskService {
 		Query query = em.createQuery("FROM Task");
 		return ((Task) query.getResultList().get(0));
 	}
+    
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Task> listTasks() {
+		Query query = em.createQuery("FROM Task");
+        return query.getResultList();
+	}
+	
+    @Transactional
+    public void removeTask(Integer id) {
+    	Task task = em.find(Task.class, id);
+        if (null != task) {
+            em.remove(task);
+        }
+    }
 	
 }
