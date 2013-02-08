@@ -15,7 +15,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.example.model.Execution;
 import com.example.model.Task;
+import com.example.model.TaskInfo;
 import com.example.service.TaskService;
 
 @Controller
@@ -34,9 +34,9 @@ public class RemoteServiceController {
 	private TaskService taskService;
 	
 	@RequestMapping(value="/task", method=RequestMethod.GET)
-	public @ResponseBody Task provideTask(@PathVariable String projectId) {
+	public @ResponseBody TaskInfo provideTask() {
 		Task task = taskService.getTask();
-		return task;
+		return new TaskInfo(task);
 	}
 	
 	
