@@ -63,7 +63,7 @@ public class SampleDataController {
 			Task task = new Task();
 			task.setNumExecutions(random.nextInt(exPerTask));
 			task.setBatch(batch);
-			task.setContents("{'type':'insertion','word':'palabra', 'startIndex':3, 'endIndex':3, 'answers':['a', 'b']}");
+			task.setContents("{\"type\":\"insertion\",\"word\":\"palabra\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"a\", \"b\"]}");
 			taskService.addTask(task);
 			tasks.add(task);
 		}
