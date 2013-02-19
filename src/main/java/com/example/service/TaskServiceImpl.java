@@ -1,6 +1,7 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,7 +30,9 @@ public class TaskServiceImpl implements TaskService {
 	@Transactional
 	public Task getTask() {
 		Query query = em.createQuery("FROM Task");
-		return ((Task) query.getResultList().get(0));
+		int total = query.getResultList().size();
+		int index = (new Random()).nextInt(total);
+		return ((Task) query.getResultList().get(index));
 	}
     
 	@SuppressWarnings("unchecked")

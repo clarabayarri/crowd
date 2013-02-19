@@ -48,6 +48,12 @@ public class SampleDataController {
 		return "redirect:/batches/";
 	}
 	
+	private static final String[] definitions = {"{\"type\":\"insertion\",\"word\":\"palabra\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"e\", \"b\", \"r\", \"o\"]}",
+		"{\"type\":\"insertion\",\"word\":\"cometa\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"i\", \"b\", \"r\", \"o\"]}",
+		"{\"type\":\"insertion\",\"word\":\"singular\", \"startIndex\":1, \"endIndex\":1, \"answers\":[\"a\", \"e\"]}",
+		"{\"type\":\"insertion\",\"word\":\"pediatria\", \"startIndex\":7, \"endIndex\":7, \"answers\":[\"e\", \"b\", \"r\", \"o\", \"a\", \"u\"]}",
+		"{\"type\":\"insertion\",\"word\":\"ejercicio\", \"startIndex\":8, \"endIndex\":8, \"answers\":[\"a\", \"b\", \"e\", \"i\", \"d\"]}"};
+	
 	private void createSampleBatch() {
 		Batch batch = new Batch();
 		
@@ -57,13 +63,16 @@ public class SampleDataController {
 		
 		batchService.addBatch(batch);
 		
+		Random random = new Random();
+		
 		Set<Task> tasks = Sets.newHashSet();
 		int numTasks = random.nextInt(15) + 1;
 		for (int i = 0; i < numTasks; ++i) {
 			Task task = new Task();
 			task.setNumExecutions(random.nextInt(exPerTask));
 			task.setBatch(batch);
-			task.setContents("{\"type\":\"insertion\",\"word\":\"palabra\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"a\", \"b\"]}");
+			int index = random.nextInt(definitions.length);
+			task.setContents(definitions[index]);
 			taskService.addTask(task);
 			tasks.add(task);
 		}
