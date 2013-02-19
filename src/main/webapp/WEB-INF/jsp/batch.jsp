@@ -35,29 +35,27 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>Sample project</h1>
+                <h1>Batch ${batch.name}</h1>
             </div>
 
 
-            <c:if  test="${!empty batchList}">
-                <h3>Batches</h3>
-                <table class="table table-bordered table-striped">
-                    <thead>
+            <h3>Tasks</h3>
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach items="${batch.tasks}" var="task">
                     <tr>
-                        <th>Name</th>
-                        <th>&nbsp;</th>
+                        <td>${task.id}, ${task.contents}</td>
+                        <td>${task.numExecutions} executions </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${batchList}" var="batch">
-                        <tr>
-                            <td><a href="batch/${batch.id}">${batch.name}</a>, ${batch.executionsPerTask} executions per task</td>
-                            <td>${batch.percentageComplete} %, ${batch.numTasks} tasks </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </c:if>
+                </c:forEach>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

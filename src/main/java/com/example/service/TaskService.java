@@ -14,4 +14,6 @@ public interface TaskService {
 	
 	public void removeTask(Integer id);
 	
+	public void saveTask(Task task);
+	
 }

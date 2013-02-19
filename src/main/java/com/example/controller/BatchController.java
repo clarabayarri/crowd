@@ -44,4 +44,12 @@ public class BatchController {
 
         return "redirect:/batches/";
     }
+    
+    @RequestMapping("/batch/{batchId}")
+    public String getBatch(@PathVariable("batchId") Integer batchId, Map<String, Object> map) {
+    	
+    	map.put("batch", batchService.getBatch(batchId));
+    	
+    	return "batch";
+    }
 }

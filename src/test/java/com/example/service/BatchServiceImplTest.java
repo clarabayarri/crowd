@@ -45,4 +45,13 @@ public class BatchServiceImplTest {
 		
 		Mockito.verify(em).remove(newBatch);
 	}
+	
+	@Test
+	public void testSaveBatch() {
+		Batch batch = new Batch();
+		
+		service.saveBatch(batch);
+		
+		Mockito.verify(em).merge(batch);
+	}
 }

@@ -46,5 +46,15 @@ public class Execution {
 	public void setContents(String contents) {
 		this.contents = contents;
 	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+	
+	
 	
 }

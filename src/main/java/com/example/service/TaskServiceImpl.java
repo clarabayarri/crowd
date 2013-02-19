@@ -50,4 +50,8 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 	
+    @Transactional
+    public void saveTask(Task task) {
+    	em.merge(task);
+    }
 }
