@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.example.model.Execution;
+import com.example.model.Task;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutionServiceImplTest {
@@ -29,7 +30,7 @@ public class ExecutionServiceImplTest {
 	
 	@Test
 	public void testAddExecution() {
-		Execution execution = new Execution();
+		Execution execution = new Execution("", new Task());
 		
 		service.addExecution(execution);
 		

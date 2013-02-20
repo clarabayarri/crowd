@@ -8,7 +8,9 @@ public interface TaskService {
 
 	public void addTask(Task task);
 	
-	public Task getTask();
+	public Task getRandomTask();
+	
+	public Task getTask(Integer id);
 	
 	public List<Task> listTasks();
 	

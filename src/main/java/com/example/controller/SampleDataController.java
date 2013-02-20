@@ -84,10 +84,7 @@ public class SampleDataController {
 			
 			Set<Execution> executions = Sets.newHashSet();
 			for (int j = 0; j < numExecutions; ++ j) {
-				Execution execution = new Execution();
-				execution.setDate(new Date());
-				execution.setContents("blabla");
-				execution.setTask(task);
+				Execution execution = new Execution("blabla", task);
 				executionService.addExecution(execution);
 				executions.add(execution);
 			}

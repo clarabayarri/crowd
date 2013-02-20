@@ -3,14 +3,11 @@ package com.example.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,8 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.example.model.Execution;
+import com.example.model.ExecutionInfo;
 import com.example.model.Task;
 import com.example.model.TaskInfo;
+import com.example.service.ExecutionService;
 import com.example.service.TaskService;
 
 @Controller
@@ -33,27 +32,27 @@ public class RemoteServiceController {
 	@Autowired
 	private TaskService taskService;
 	
+	@Autowired
+	private ExecutionService executionService;
+	
 	@RequestMapping(value="/task", method=RequestMethod.GET)
 	public @ResponseBody TaskInfo provideTask() {
-		Task task = taskService.getTask();
+		Task task = taskService.getRandomTask();
 		return new TaskInfo(task);
 	}
 	
 	
 	@RequestMapping(value="/execution", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public void saveExecution(@RequestBody Execution execution, BindingResult result, HttpServletResponse response)
-            throws BindException {
-		if(result.hasErrors()) {
-			throw new BindException(result);
-		}
-		
-		// TODO: save execution
+	public void saveExecution(@RequestBody ExecutionInfo info)
+             {
+		Task task = taskService.getTask(info.getTaskId());
+		Execution execution = new Execution(info.getContents(), task);
+		executionService.addExecution(execution);
 		
 		// TODO: add execution ID to the end
-		response.setHeader("Location", "/execution/");
+		//response.setHeader("Location", "/execution/");
 	}
-	
 	
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

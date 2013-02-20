@@ -22,6 +22,15 @@ public class Execution {
 	@ManyToOne
 	@JoinColumn(name="Task_id")
 	private Task task;
+	
+	public Execution() {
+		
+	}
+	
+	public Execution(String contents, Task task) {
+		this.contents = contents;
+		this.task = task;
+	}
 
 	public Integer getId() {
 		return id;

@@ -28,7 +28,12 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Transactional
-	public Task getTask() {
+	public Task getTask(Integer id) {
+		return em.find(Task.class, id);
+	}
+	
+	@Transactional
+	public Task getRandomTask() {
 		Query query = em.createQuery("FROM Task");
 		int total = query.getResultList().size();
 		int index = (new Random()).nextInt(total);
