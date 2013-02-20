@@ -43,15 +43,23 @@ public class SampleDataController {
 	
 	@RequestMapping("/clean")
 	public String cleanSampleData() {
+		List<Batch> batches = batchService.listBatches();
+		for (Batch batch : batches) {
+			batch.setTasks(null);
+			batchService.saveBatch(batch);
+		}
+		List<Task> tasks = taskService.listTasks();
+		for (Task task : tasks) {
+			task.setExecutions(null);
+			taskService.saveTask(task);
+		}
 		List<Execution> executions = executionService.listExecutions();
 		for (Execution execution : executions) {
 			executionService.removeExecution(execution.getId());
 		}
-		List<Task> tasks = taskService.listTasks();
 		for (Task task : tasks) {
 			taskService.removeTask(task.getId());
 		}
-		List<Batch> batches = batchService.listBatches();
 		for (Batch batch : batches) {
 			batchService.removeBatch(batch.getId());
 		}
