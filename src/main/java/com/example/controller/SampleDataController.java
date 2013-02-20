@@ -43,6 +43,10 @@ public class SampleDataController {
 	
 	@RequestMapping("/clean")
 	public String cleanSampleData() {
+		List<Execution> executions = executionService.listExecutions();
+		for (Execution execution : executions) {
+			executionService.removeExecution(execution.getId());
+		}
 		List<Task> tasks = taskService.listTasks();
 		for (Task task : tasks) {
 			taskService.removeTask(task.getId());
