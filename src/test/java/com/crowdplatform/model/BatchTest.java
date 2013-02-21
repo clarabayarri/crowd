@@ -1,4 +1,4 @@
-package com.example.model;
+package com.crowdplatform.model;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Task;
 import com.google.common.collect.Sets;
 
 

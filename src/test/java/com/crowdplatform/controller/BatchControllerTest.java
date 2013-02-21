@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,7 +12,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.example.service.BatchService;
+import com.crowdplatform.controller.BatchController;
+import com.crowdplatform.service.BatchService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchControllerTest {

@@ -1,8 +1,8 @@
-package com.example.service;
+package com.crowdplatform.service;
 
 import java.util.List;
 
-import com.example.model.Task;
+import com.crowdplatform.model.Task;
 
 public interface TaskService {
 

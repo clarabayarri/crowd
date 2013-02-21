@@ -1,4 +1,4 @@
-package com.example.service;
+package com.crowdplatform.service;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.model.Batch;
+import com.crowdplatform.model.Batch;
 
 @Service
 public class BatchServiceImpl implements BatchService {

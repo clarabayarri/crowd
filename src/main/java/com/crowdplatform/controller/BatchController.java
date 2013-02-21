@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.crowdplatform.controller;
 
 import java.util.Map;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.example.model.Batch;
-import com.example.service.BatchService;
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.service.BatchService;
 
 @Controller
 @RequestMapping("/batches")

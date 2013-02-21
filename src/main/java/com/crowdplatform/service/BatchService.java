@@ -1,8 +1,8 @@
-package com.example.service;
+package com.crowdplatform.service;
 
 import java.util.List;
 
-import com.example.model.Batch;
+import com.crowdplatform.model.Batch;
 
 public interface BatchService {
 

@@ -1,4 +1,4 @@
-package com.example.service;
+package com.crowdplatform.service;
 
 import javax.persistence.EntityManager;
 
@@ -11,7 +11,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.example.model.Task;
+import com.crowdplatform.model.Task;
+import com.crowdplatform.service.TaskServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaskServiceImplTest {

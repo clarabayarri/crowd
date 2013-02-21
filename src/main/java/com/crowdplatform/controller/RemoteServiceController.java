@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.crowdplatform.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.example.model.Execution;
-import com.example.model.ExecutionInfo;
-import com.example.model.Task;
-import com.example.model.TaskInfo;
-import com.example.service.ExecutionService;
-import com.example.service.TaskService;
+import com.crowdplatform.model.Execution;
+import com.crowdplatform.model.ExecutionInfo;
+import com.crowdplatform.model.Task;
+import com.crowdplatform.model.TaskInfo;
+import com.crowdplatform.service.ExecutionService;
+import com.crowdplatform.service.TaskService;
 
 @Controller
 @RequestMapping("/API")

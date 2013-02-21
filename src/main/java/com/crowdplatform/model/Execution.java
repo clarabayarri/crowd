@@ -1,4 +1,4 @@
-package com.example.model;
+package com.crowdplatform.model;
 
 import java.util.Date;
 

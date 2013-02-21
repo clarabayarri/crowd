@@ -1,4 +1,4 @@
-package com.example.service;
+package com.crowdplatform.service;
 
 import javax.persistence.EntityManager;
 
@@ -11,7 +11,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.example.model.Batch;
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.service.BatchServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchServiceImplTest {

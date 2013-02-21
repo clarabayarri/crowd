@@ -1,8 +1,8 @@
-package com.example.service;
+package com.crowdplatform.service;
 
 import java.util.List;
 
-import com.example.model.Execution;
+import com.crowdplatform.model.Execution;
 
 public interface ExecutionService {
 

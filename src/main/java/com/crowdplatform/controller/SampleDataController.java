@@ -1,6 +1,5 @@
-package com.example.controller;
+package com.crowdplatform.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -10,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.model.Batch;
-import com.example.model.Execution;
-import com.example.model.Task;
-import com.example.service.BatchService;
-import com.example.service.ExecutionService;
-import com.example.service.TaskService;
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Execution;
+import com.crowdplatform.model.Task;
+import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.ExecutionService;
+import com.crowdplatform.service.TaskService;
 import com.google.common.collect.Sets;
 
 @Controller

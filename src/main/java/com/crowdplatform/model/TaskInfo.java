@@ -1,4 +1,4 @@
-package com.example.model;
+package com.crowdplatform.model;
 
 
 public class TaskInfo {

@@ -1,4 +1,4 @@
-package com.example.service;
+package com.crowdplatform.service;
 
 import java.util.List;
 import java.util.Random;
@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.model.Task;
+import com.crowdplatform.model.Task;
 
 @Service
 public class TaskServiceImpl implements TaskService {

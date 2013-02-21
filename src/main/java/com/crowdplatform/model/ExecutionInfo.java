@@ -1,16 +1,15 @@
-package com.example.model;
+package com.crowdplatform.model;
 
 
 public class ExecutionInfo {
 
 	private Integer taskId;
 	
-	// Project ID
-	
-	// Username
-	
 	private String contents;
 	
+	public ExecutionInfo() {
+		
+	}
 
 	public Integer getTaskId() {
 		return taskId;
