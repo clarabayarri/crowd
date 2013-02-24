@@ -68,7 +68,7 @@ public class SampleDataController {
 	private static final String[] definitions = {"{\"type\":\"insertion\",\"word\":\"nadie\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"e\", \"r\", \"y\", \"g\"]}",
 		"{\"type\":\"insertion\",\"word\":\"tarde\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"s\", \"n\", \"i\", \"l\"]}",
 		"{\"type\":\"insertion\",\"word\":\"estar\", \"startIndex\":1, \"endIndex\":1, \"answers\":[\"r\", \"n\", \"m\", \"i\", \"a\"]}",
-		"{\"type\":\"insertion\",\"word\":\"señor\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"y\", \"i\", \"n\", \"m\"]}",
+		"{\"type\":\"insertion\",\"word\":\"se&ntilde;or\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"y\", \"i\", \"n\", \"m\"]}",
 		"{\"type\":\"insertion\",\"word\":\"donde\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"r\", \"m\", \"s\", \"b\", \"g\"]}",
 		"{\"type\":\"omission\",\"word\":\"donde\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"r\"]}",
 		"{\"type\":\"omission\",\"word\":\"madre\", \"startIndex\":1, \"endIndex\":1, \"answers\":[\"s\"]}",
