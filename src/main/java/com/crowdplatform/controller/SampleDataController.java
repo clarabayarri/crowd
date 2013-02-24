@@ -65,11 +65,19 @@ public class SampleDataController {
 		return "redirect:/batches/";
 	}
 	
-	private static final String[] definitions = {"{\"type\":\"insertion\",\"word\":\"palabra\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"e\", \"b\", \"r\", \"o\"]}",
-		"{\"type\":\"insertion\",\"word\":\"cometa\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"i\", \"b\", \"r\", \"o\"]}",
-		"{\"type\":\"insertion\",\"word\":\"singular\", \"startIndex\":1, \"endIndex\":1, \"answers\":[\"a\", \"e\"]}",
-		"{\"type\":\"insertion\",\"word\":\"pediatria\", \"startIndex\":7, \"endIndex\":7, \"answers\":[\"e\", \"b\", \"r\", \"o\", \"a\", \"u\"]}",
-		"{\"type\":\"insertion\",\"word\":\"ejercicio\", \"startIndex\":8, \"endIndex\":8, \"answers\":[\"a\", \"b\", \"e\", \"i\", \"d\"]}"};
+	private static final String[] definitions = {"{\"type\":\"insertion\",\"word\":\"nadie\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"e\", \"r\", \"y\", \"g\"]}",
+		"{\"type\":\"insertion\",\"word\":\"tarde\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"s\", \"n\", \"i\", \"l\"]}",
+		"{\"type\":\"insertion\",\"word\":\"estar\", \"startIndex\":1, \"endIndex\":1, \"answers\":[\"r\", \"n\", \"m\", \"i\", \"a\"]}",
+		"{\"type\":\"insertion\",\"word\":\"señor\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"y\", \"i\", \"n\", \"m\"]}",
+		"{\"type\":\"insertion\",\"word\":\"donde\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"r\", \"m\", \"s\", \"b\", \"g\"]}",
+		"{\"type\":\"omission\",\"word\":\"donde\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"r\"]}",
+		"{\"type\":\"omission\",\"word\":\"madre\", \"startIndex\":1, \"endIndex\":1, \"answers\":[\"s\"]}",
+		"{\"type\":\"substitution\",\"word\":\"donde\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"r\", \"m\", \"s\", \"b\", \"g\"]}",
+		"{\"type\":\"substitution\",\"word\":\"madre\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"s\", \"n\", \"i\", \"o\"]}",
+		"{\"type\":\"derivation\",\"word\":\"felicidad\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"ción\", \"dero\", \"dor\", \"izar\", \"ura\"]}",
+		"{\"type\":\"derivation\",\"word\":\"amoroso\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"ario\", \"able\", \"erio\", \"eto\", \"al\"]}",
+		"{\"type\":\"separation\",\"word\":\"casa azul\", \"startIndex\":0, \"endIndex\":0, \"answers\":[]}",
+		"{\"type\":\"separation\",\"word\":\"cosa buena\", \"startIndex\":0, \"endIndex\":0, \"answers\":[]}"};
 	
 	private void createSampleBatch() {
 		Batch batch = new Batch();
