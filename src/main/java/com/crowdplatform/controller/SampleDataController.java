@@ -74,7 +74,7 @@ public class SampleDataController {
 		"{\"type\":\"omission\",\"word\":\"madre\", \"startIndex\":1, \"endIndex\":1, \"answers\":[\"s\"]}",
 		"{\"type\":\"substitution\",\"word\":\"donde\", \"startIndex\":2, \"endIndex\":2, \"answers\":[\"r\", \"m\", \"s\", \"b\", \"g\"]}",
 		"{\"type\":\"substitution\",\"word\":\"madre\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"s\", \"n\", \"i\", \"o\"]}",
-		"{\"type\":\"derivation\",\"word\":\"felicidad\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"ción\", \"dero\", \"dor\", \"izar\", \"ura\"]}",
+		"{\"type\":\"derivation\",\"word\":\"felicidad\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"cion\", \"dero\", \"dor\", \"izar\", \"ura\"]}",
 		"{\"type\":\"derivation\",\"word\":\"amoroso\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"ario\", \"able\", \"erio\", \"eto\", \"al\"]}",
 		"{\"type\":\"separation\",\"word\":\"casa azul\", \"startIndex\":0, \"endIndex\":0, \"answers\":[]}",
 		"{\"type\":\"separation\",\"word\":\"cosa buena\", \"startIndex\":0, \"endIndex\":0, \"answers\":[]}"};
