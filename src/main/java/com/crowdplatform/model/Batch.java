@@ -23,6 +23,12 @@ public class Batch {
 	
 	private double percentageComplete;
 	
+	public enum State {
+		RUNNING, PAUSED, COMPLETE
+	}
+	
+	private State state;
+	
 	@OneToMany
 	private Set<Task> tasks;
 	
@@ -85,5 +91,13 @@ public class Batch {
 
 	public void setNumTasks(Integer numTasks) {
 		this.numTasks = numTasks;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
 	}
 }

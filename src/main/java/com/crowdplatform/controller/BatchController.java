@@ -22,34 +22,25 @@ public class BatchController {
 
     @RequestMapping("/")
     public String listBatches(Map<String, Object> map) {
-
-        map.put("batch", new Batch());
         map.put("batchList", batchService.listBatches());
-
         return "batches";
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addBatch(@ModelAttribute("batch") Batch batch, BindingResult result) {
-
         batchService.addBatch(batch);
-
         return "redirect:/batches/";
     }
 
     @RequestMapping("/delete/{batchId}")
     public String deleteBatch(@PathVariable("batchId") Integer batchId) {
-
         batchService.removeBatch(batchId);
-
         return "redirect:/batches/";
     }
     
     @RequestMapping("/batch/{batchId}")
     public String getBatch(@PathVariable("batchId") Integer batchId, Map<String, Object> map) {
-    	
     	map.put("batch", batchService.getBatch(batchId));
-    	
     	return "batch";
     }
 }

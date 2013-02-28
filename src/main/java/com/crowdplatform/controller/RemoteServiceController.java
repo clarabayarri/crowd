@@ -44,14 +44,10 @@ public class RemoteServiceController {
 	
 	@RequestMapping(value="/execution", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public void saveExecution(@RequestBody ExecutionInfo info)
-             {
+	public void saveExecution(@RequestBody ExecutionInfo info) {
 		Task task = taskService.getTask(info.getTaskId());
 		Execution execution = new Execution(info.getContents(), task);
 		executionService.addExecution(execution);
-		
-		// TODO: add execution ID to the end
-		//response.setHeader("Location", "/execution/");
 	}
 	
 	@ExceptionHandler
