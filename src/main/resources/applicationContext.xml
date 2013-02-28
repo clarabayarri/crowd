@@ -14,6 +14,9 @@
 
 	<mvc:annotation-driven />
 
+	<mvc:resources mapping="/resources/**"
+                 location="/resources/" />
+	
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<property name="mediaTypes">
@@ -49,6 +52,8 @@
 		<property name="dataSource" ref="dataSource" />
 
 	</bean>
+	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
 	<beans profile="default">
 		<jdbc:embedded-database id="dataSource" />

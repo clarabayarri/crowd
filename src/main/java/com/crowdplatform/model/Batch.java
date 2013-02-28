@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.Formula;
 
@@ -19,6 +20,7 @@ public class Batch {
 	
 	private String name;
 	
+	@Min(1)
 	private Integer executionsPerTask;
 	
 	private double percentageComplete;

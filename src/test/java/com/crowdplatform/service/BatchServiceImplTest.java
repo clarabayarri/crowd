@@ -1,5 +1,7 @@
 package com.crowdplatform.service;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
@@ -54,5 +56,27 @@ public class BatchServiceImplTest {
 		service.saveBatch(batch);
 		
 		Mockito.verify(em).merge(batch);
+	}
+	
+	@Test
+	public void testStartBatch() {
+		Batch batch = new Batch();
+		batch.setState(Batch.State.PAUSED);
+		Mockito.when(em.find(Batch.class, 1)).thenReturn(batch);
+		
+		service.startBatch(1);
+		
+		assertEquals(Batch.State.RUNNING, batch.getState());
+	}
+	
+	@Test
+	public void testPauseBatch() {
+		Batch batch = new Batch();
+		batch.setState(Batch.State.RUNNING);
+		Mockito.when(em.find(Batch.class, 1)).thenReturn(batch);
+		
+		service.pauseBatch(1);
+		
+		assertEquals(Batch.State.PAUSED, batch.getState());
 	}
 }

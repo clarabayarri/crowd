@@ -44,13 +44,27 @@ public class BatchServiceImpl implements BatchService {
     @Transactional
     public Batch getBatch(Integer id) {
     	Batch batch = em.find(Batch.class, id);
-    	System.out.println(batch.getTasks().size());
-    	System.out.println(batch.getNumTasks());
+    	batch.getTasks().size();
+    	batch.getNumTasks();
     	return batch;
     }
     
     @Transactional
     public void saveBatch(Batch batch) {
+    	em.merge(batch);
+    }
+    
+    @Transactional
+    public void startBatch(Integer id) {
+    	Batch batch = em.find(Batch.class, id);
+    	batch.setState(Batch.State.RUNNING);
+    	em.merge(batch);
+    }
+    
+    @Transactional
+    public void pauseBatch(Integer id) {
+    	Batch batch = em.find(Batch.class, id);
+    	batch.setState(Batch.State.PAUSED);
     	em.merge(batch);
     }
     

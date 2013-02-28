@@ -40,23 +40,48 @@
 
 
             <c:if  test="${!empty batchList}">
-                <h3>Batches</h3>
-                <table class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${batchList}" var="batch">
-                        <tr>
-                            <td><a href="batch/${batch.id}">${batch.name}</a>, ${batch.executionsPerTask} executions per task</td>
-                            <td>${batch.percentageComplete} %, ${batch.numTasks} tasks </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                <h2>Batches</h2>
+
+                <c:forEach items="${batchList}" var="batch">
+                    <div class="well well-small">
+                        <c:choose>
+                            <c:when test="${batch.state eq 'RUNNING'}">
+                                <img src="/resources/img/status_green.png" class="pull-right"/>
+                            </c:when>
+                            <c:when test="${batch.state eq 'PAUSED'}">
+                                <img src="/resources/img/status_grey.png" class="pull-right"/>
+                            </c:when>
+                            <c:when test="${batch.state eq 'COMPLETE'}">
+                                <img src="/resources/img/status_blue.png" class="pull-right"/>
+                            </c:when>
+                        </c:choose>
+                        
+                        
+
+                        <h4>${batch.name}</h4>
+
+                        <div class="clear-fix"></div>
+
+                        <div class="pull-right">
+                            <p><a href="/batches/batch/${batch.id}" class="btn btn-info">Details</a></p>
+                            <c:choose>
+                                <c:when test="${batch.state eq 'RUNNING'}">
+                                    <p><a href="/batches/batch/${batch.id}/pause" class="btn btn-danger">Stop</a></p>
+                                </c:when>
+                                <c:when test="${batch.state eq 'PAUSED'}">
+                                    <p><a href="/batches/batch/${batch.id}/start" class="btn btn-success">Start</a></p>
+                                </c:when>
+                            </c:choose>
+                        </div>
+
+                        <div class="extra-info">
+                            <p><strong>Tasks: </strong>${batch.numTasks}</p>
+                            <p><strong>Executions per task: </strong>${batch.executionsPerTask}</p>
+                            <p><strong>Completed: </strong>${batch.percentageComplete} %</p>
+                        </div>
+                        
+                    </div>
+                </c:forEach>
             </c:if>
         </div>
     </div>

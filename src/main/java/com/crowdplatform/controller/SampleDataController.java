@@ -78,6 +78,7 @@ public class SampleDataController {
 		"{\"type\":\"derivation\",\"word\":\"amoroso\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"ario\", \"able\", \"erio\", \"eto\", \"al\"]}",
 		"{\"type\":\"separation\",\"word\":\"casa azul\", \"startIndex\":0, \"endIndex\":0, \"answers\":[]}",
 		"{\"type\":\"separation\",\"word\":\"cosa buena\", \"startIndex\":0, \"endIndex\":0, \"answers\":[]}"};
+	private static final Batch.State[] states = {Batch.State.RUNNING, Batch.State.PAUSED};
 	
 	private void createSampleBatch() {
 		Batch batch = new Batch();
@@ -85,6 +86,8 @@ public class SampleDataController {
 		batch.setName("Wonderful" + random.nextInt(99));
 		int exPerTask = random.nextInt(10) + 1;
 		batch.setExecutionsPerTask(exPerTask);
+		int stateIndex = random.nextInt(states.length);
+		batch.setState(states[stateIndex]);
 		
 		batchService.addBatch(batch);
 		

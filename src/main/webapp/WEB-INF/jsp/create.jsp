@@ -35,23 +35,26 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>Batch ${batch.name}</h1>
+                <h1>Create batch</h1>
             </div>
 
 
-            <h3>Tasks</h3>
-
-            <c:forEach items="${batch.tasks}" var="task">
-                <div class="well well-small">
-                    <h4>${task.id}</h4>
-
-                    <div class="extra-info">
-                        <p><strong>Contents: </strong>${task.contents}</p>
-                        <p><strong>Executions: </strong>${task.numExecutions}</p>
-                    </div>
-                    
-                </div>
-            </c:forEach>
+            <sf:form method="POST" modelAttribute="batch" action="/batches/create">
+                <fieldset>
+                    <table>
+                        <tr>
+                            <th><label for="batch_name">Batch name:</label></th>
+                            <td><sf:input path="name" size="15" id="batch_name" /></td>
+                        </tr>
+                        <tr>
+                            <th><label for="batch_num_exec">Number of executions:</label></th>
+                            <td><sf:input path="executionsPerTask" size="15" id="batch_num_exec" />
+                                <sf:errors path="executionsPerTask" cssClass="error" />
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </sf:form>
         </div>
     </div>
 </div>
