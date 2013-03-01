@@ -14,6 +14,8 @@ public interface BatchService {
     
     public Batch getBatch(Integer id);
     
+    public List<Integer> listRunningBatchIds();
+    
     public void saveBatch(Batch batch);
     
     public void startBatch(Integer id);

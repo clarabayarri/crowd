@@ -3,6 +3,8 @@ package com.crowdplatform.model;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -29,6 +31,7 @@ public class Batch {
 		RUNNING, PAUSED, COMPLETE
 	}
 	
+	@Enumerated(EnumType.STRING)
 	private State state;
 	
 	@OneToMany

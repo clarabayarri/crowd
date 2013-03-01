@@ -24,6 +24,7 @@ import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
 import com.crowdplatform.service.ExecutionService;
 import com.crowdplatform.service.TaskService;
+import com.crowdplatform.service.TaskRetrievalStrategy;
 
 @Controller
 @RequestMapping("/API")
@@ -33,11 +34,14 @@ public class RemoteServiceController {
 	private TaskService taskService;
 	
 	@Autowired
+	private TaskRetrievalStrategy taskRetrieval;
+	
+	@Autowired
 	private ExecutionService executionService;
 	
 	@RequestMapping(value="/task", method=RequestMethod.GET)
 	public @ResponseBody TaskInfo provideTask() {
-		Task task = taskService.getRandomTask();
+		Task task = taskRetrieval.retrieveTaskForExecution();
 		return new TaskInfo(task);
 	}
 	

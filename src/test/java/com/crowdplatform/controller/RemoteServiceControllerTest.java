@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
-import com.crowdplatform.service.TaskService;
+import com.crowdplatform.service.TaskRetrievalStrategy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteServiceControllerTest {
@@ -22,7 +22,7 @@ public class RemoteServiceControllerTest {
 	private RemoteServiceController controller = new RemoteServiceController();
 	
 	@Mock
-	private TaskService taskService;
+	private TaskRetrievalStrategy taskService;
 	
 	@Before
 	public void setUp() {
@@ -33,7 +33,7 @@ public class RemoteServiceControllerTest {
 	public void testProvideTaskRetrievesTask() {
 		Task task = new Task();
 		task.setId(3);
-		Mockito.when(taskService.getRandomTask()).thenReturn(task);
+		Mockito.when(taskService.retrieveTaskForExecution()).thenReturn(task);
 		
 		TaskInfo taskInfo = controller.provideTask();
 		

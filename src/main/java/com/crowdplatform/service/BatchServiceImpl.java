@@ -49,6 +49,13 @@ public class BatchServiceImpl implements BatchService {
     	return batch;
     }
     
+    @SuppressWarnings("unchecked")
+	@Transactional
+    public List<Integer> listRunningBatchIds() {
+    	Query query = em.createQuery("SELECT id FROM Batch WHERE state='RUNNING'");
+    	return query.getResultList();
+    }
+    
     @Transactional
     public void saveBatch(Batch batch) {
     	em.merge(batch);
