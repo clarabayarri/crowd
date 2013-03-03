@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.service.BatchService;
@@ -104,6 +105,17 @@ public class BatchControllerTest {
 		controller.newBatch(model);
 		
 		Mockito.verify(model).addAttribute(Mockito.any(Batch.class));
+	}
+	
+	@Test
+	public void testCreateBatchCallsService() {
+		Batch batch = new Batch();
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		
+		controller.createBatch(batch, bindingResult, null);
+		
+		Mockito.verify(service).addBatch(batch);
 	}
 
 }

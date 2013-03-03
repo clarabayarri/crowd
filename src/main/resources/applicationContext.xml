@@ -14,9 +14,8 @@
 
 	<mvc:annotation-driven />
 
-	<mvc:resources mapping="/resources/**"
-                 location="/resources/" />
-	
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<property name="mediaTypes">
@@ -46,14 +45,27 @@
 		</property>
 	</bean>
 
+
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="500000" />
+	</bean>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="resources/locale/messages" />
+	</bean>
+
 	<tx:annotation-driven />
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 		<property name="dataSource" ref="dataSource" />
 
 	</bean>
-	
-	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
 	<beans profile="default">
 		<jdbc:embedded-database id="dataSource" />

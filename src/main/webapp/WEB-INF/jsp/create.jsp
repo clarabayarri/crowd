@@ -12,6 +12,8 @@
     <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
     <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
+
+    <link href="/resources/css/bootstrap-fileupload.min.css" rel="stylesheet">
     <!--
       IMPORTANT:
       This is Heroku specific styling. Remove to customize.
@@ -38,26 +40,49 @@
                 <h1>Create batch</h1>
             </div>
 
+            <form:form method="POST" modelAttribute="batch" action="/batches/create" enctype="multipart/form-data">
+                <div class="control-group error">
+                    <div class="controls">
+                        <form:errors path="*" cssClass="error help-inline" />
+                    </div>
+                </div>
 
-            <sf:form method="POST" modelAttribute="batch" action="/batches/create">
                 <fieldset>
                     <table>
                         <tr>
                             <th><label for="batch_name">Batch name:</label></th>
-                            <td><sf:input path="name" size="15" id="batch_name" /></td>
+                            <td>
+                                <form:input path="name" size="15" id="batch_name" />
+                            </td>
                         </tr>
                         <tr>
                             <th><label for="batch_num_exec">Number of executions:</label></th>
-                            <td><sf:input path="executionsPerTask" size="15" id="batch_num_exec" />
-                                <sf:errors path="executionsPerTask" cssClass="error" />
+                            <td>
+                                <form:input path="executionsPerTask" size="15" id="batch_num_exec" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><label for="batch_task_file">Task file:</label></th>
+                            <td>
+                                <div class="fileupload fileupload-new" data-provides="fileupload" id="batch_task_file">
+                                    <div class="input-append">
+                                        <div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span></div><span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span><input type="file" name="taskFile" /></span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     </table>
                 </fieldset>
-            </sf:form>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+            </form:form>
         </div>
     </div>
 </div>
 
+
+<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+<script type="text/javascript" src="/resources/js/bootstrap-fileupload.min.js"></script>
 </body>
 </html>

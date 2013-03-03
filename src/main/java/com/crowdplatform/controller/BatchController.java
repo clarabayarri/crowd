@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.service.BatchService;
@@ -64,11 +66,27 @@ public class BatchController {
     }
     
     @RequestMapping(value="create", method = RequestMethod.POST)
-    public String createBatch(@Valid Batch batch, BindingResult bindingResult) {
+    public String createBatch(@Valid Batch batch, BindingResult bindingResult, @RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
     	if (bindingResult.hasErrors()) {
     		return "create";
     	}
+    	
     	batchService.addBatch(batch);
+    	
+    	if (taskFile != null && !taskFile.isEmpty()) {
+    		if (validateFileFormat(taskFile)) {
+    			System.out.println("OK");
+    		} else {
+    			bindingResult.reject("error.file.format");
+    			return "create";
+    		}
+    	}
+    	
     	return "redirect:/batches/";
+    }
+    
+    private boolean validateFileFormat(MultipartFile file) {
+    	if (!file.getContentType().equals("text/csv")) return false;
+    	return true;
     }
 }
