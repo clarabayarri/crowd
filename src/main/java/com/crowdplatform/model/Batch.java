@@ -7,8 +7,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
 
@@ -20,12 +24,19 @@ public class Batch {
     @GeneratedValue
     private Integer id;
 	
+	@NotNull
+	@Size(min=3)
 	private String name;
 	
+	@NotNull
 	@Min(1)
 	private Integer executionsPerTask;
 	
 	private double percentageComplete;
+	
+	@ManyToOne
+	@JoinColumn(name="Project_id")
+	private Project project;
 	
 	public enum State {
 		RUNNING, PAUSED, COMPLETE
@@ -104,5 +115,13 @@ public class Batch {
 
 	public void setState(State state) {
 		this.state = state;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 }

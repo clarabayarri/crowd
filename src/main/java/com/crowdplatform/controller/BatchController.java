@@ -71,8 +71,6 @@ public class BatchController {
     		return "create";
     	}
     	
-    	batchService.addBatch(batch);
-    	
     	if (taskFile != null && !taskFile.isEmpty()) {
     		if (validateFileFormat(taskFile)) {
     			System.out.println("OK");
@@ -80,6 +78,12 @@ public class BatchController {
     			bindingResult.reject("error.file.format");
     			return "create";
     		}
+    	}
+    	
+    	batchService.addBatch(batch);
+    	
+    	if (taskFile != null && !taskFile.isEmpty()) {
+    		// TODO: save tasks from csv
     	}
     	
     	return "redirect:/batches/";

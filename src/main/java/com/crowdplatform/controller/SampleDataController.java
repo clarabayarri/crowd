@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ExecutionService;
+import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
 import com.google.common.collect.Sets;
 
@@ -21,6 +23,9 @@ import com.google.common.collect.Sets;
 @RequestMapping("/sample")
 public class SampleDataController {
 
+	@Autowired
+	private ProjectService projectService;
+	
 	@Autowired
     private BatchService batchService;
 	
@@ -34,14 +39,18 @@ public class SampleDataController {
 	
 	@RequestMapping("/")
 	public String createSampleData(Map<String, Object> map) {
-		for (int i = 0; i < 5; ++i)
-			createSampleBatch();
+		createSampleProject();
 		
-		return "redirect:/batches/";
+		return "redirect:/projects";
 	}
 	
 	@RequestMapping("/clean")
 	public String cleanSampleData() {
+		List<Project> projects = projectService.listProjects();
+		for (Project project : projects) {
+			project.setBatches(null);
+			projectService.saveProject(project);
+		}
 		List<Batch> batches = batchService.listBatches();
 		for (Batch batch : batches) {
 			batch.setTasks(null);
@@ -62,7 +71,10 @@ public class SampleDataController {
 		for (Batch batch : batches) {
 			batchService.removeBatch(batch.getId());
 		}
-		return "redirect:/batches/";
+		for (Project project : projects) {
+			projectService.removeProject(project.getId());
+		}
+		return "redirect:/projects";
 	}
 	
 	private static final String[] definitions = {"{\"type\":\"insertion\",\"word\":\"nadie\", \"startIndex\":3, \"endIndex\":3, \"answers\":[\"e\", \"r\", \"y\", \"g\"]}",
@@ -80,7 +92,19 @@ public class SampleDataController {
 		"{\"type\":\"separation\",\"word\":\"cosa buena\", \"startIndex\":0, \"endIndex\":0, \"answers\":[]}"};
 	private static final Batch.State[] states = {Batch.State.RUNNING, Batch.State.PAUSED};
 	
-	private void createSampleBatch() {
+	private void createSampleProject() {
+		Project project = new Project();
+		project.setName("Awesome project");
+		projectService.addProject(project);
+		
+		Set<Batch> batches = Sets.newHashSet();
+		for (int i = 0; i < 5; ++i)
+			batches.add(createSampleBatch(project));
+		project.setBatches(batches);
+		projectService.saveProject(project);
+	}
+	
+	private Batch createSampleBatch(Project project) {
 		Batch batch = new Batch();
 		
 		batch.setName("Wonderful" + random.nextInt(99));
@@ -88,6 +112,7 @@ public class SampleDataController {
 		batch.setExecutionsPerTask(exPerTask);
 		int stateIndex = random.nextInt(states.length);
 		batch.setState(states[stateIndex]);
+		batch.setProject(project);
 		
 		batchService.addBatch(batch);
 		
@@ -117,5 +142,6 @@ public class SampleDataController {
 		batch.setTasks(tasks);
 		batchService.saveBatch(batch);
 		
+		return batch;
 	}
 }
