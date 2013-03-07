@@ -1,12 +1,13 @@
 package com.crowdplatform.controller;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,58 +16,59 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.ProjectService;
+import com.crowdplatform.service.TaskService;
 
 @Controller
-@RequestMapping("/batches")
 public class BatchController {
 
 	@Autowired
+	private ProjectService projectService;
+	
+	@Autowired
     private BatchService batchService;
-
-    @RequestMapping("/")
-    public String listBatches(Model model) {
-    	model.addAttribute(batchService.listBatches());
-        return "batches";
-    }
-
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addBatch(@ModelAttribute("batch") Batch batch, BindingResult result) {
-        batchService.addBatch(batch);
-        return "redirect:/batches/";
-    }
-
-    @RequestMapping("/delete/{batchId}")
-    public String deleteBatch(@PathVariable("batchId") Integer batchId) {
-        batchService.removeBatch(batchId);
-        return "redirect:/batches/";
-    }
+	
+	@Autowired
+	private TaskService taskService;
     
-    @RequestMapping("/batch/{batchId}")
-    public String getBatch(@PathVariable("batchId") Integer batchId, Model model) {
+    @RequestMapping("/project/{projectId}/batch/{batchId}")
+    public String getBatch(@PathVariable("projectId") Integer projectId, 
+    		@PathVariable("batchId") Integer batchId, Model model) {
     	model.addAttribute(batchService.getBatch(batchId));
     	return "batch";
     }
     
-    @RequestMapping("/batch/{batchId}/start")
-    public String startBatch(@PathVariable("batchId") Integer batchId) {
+    @RequestMapping("/project/{projectId}/batch/{batchId}/start")
+    public String startBatch(@PathVariable("projectId") Integer projectId, 
+    		@PathVariable("batchId") Integer batchId) {
     	batchService.startBatch(batchId);
-    	return "redirect:/batches/";
+    	return "redirect:/project/" + projectId;
     }
     
-    @RequestMapping("/batch/{batchId}/pause")
-    public String pauseBatch(@PathVariable("batchId") Integer batchId) {
+    @RequestMapping("/project/{projectId}/batch/{batchId}/pause")
+    public String pauseBatch(@PathVariable("projectId") Integer projectId, 
+    		@PathVariable("batchId") Integer batchId) {
     	batchService.pauseBatch(batchId);
-    	return "redirect:/batches/";
+    	return "redirect:/project/" + projectId;
     }
     
-    @RequestMapping("/new")
-    public String newBatch(Model model) {
-    	model.addAttribute(new Batch());
+    @RequestMapping("/project/{projectId}/batch/delete/{batchId}")
+    public String deleteBatch(@PathVariable("projectId") Integer projectId,
+    		@PathVariable("batchId") Integer batchId) {
+        batchService.removeBatch(batchId);
+        return "redirect:/project/" + projectId;
+    }
+    
+    @RequestMapping("/project/{projectId}/batch/new")
+    public String newBatch(@PathVariable("projectId") Integer projectId, Model model) {
+    	Batch batch = new Batch();
+    	model.addAttribute("projectId", projectId);
+    	model.addAttribute(batch);
     	return "create";
     }
     
-    @RequestMapping(value="create", method = RequestMethod.POST)
-    public String createBatch(@Valid Batch batch, BindingResult bindingResult, @RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
+    @RequestMapping(value="/project/{projectId}/batch/create", method = RequestMethod.POST)
+    public String createBatch(@Valid Batch batch, @PathVariable("projectId") Integer projectId, BindingResult bindingResult, @RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
     	if (bindingResult.hasErrors()) {
     		return "create";
     	}
@@ -80,13 +82,18 @@ public class BatchController {
     		}
     	}
     	
-    	batchService.addBatch(batch);
+    	batchService.createBatch(batch, projectId);
     	
     	if (taskFile != null && !taskFile.isEmpty()) {
-    		// TODO: save tasks from csv
+			try {
+				taskService.createTasks(batch, taskFile);
+			} catch (IOException e) {
+				bindingResult.reject("error.file.contents");
+    			return "create";
+			}
     	}
     	
-    	return "redirect:/batches/";
+    	return "redirect:/project/" + projectId;
     }
     
     private boolean validateFileFormat(MultipartFile file) {

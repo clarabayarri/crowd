@@ -1,5 +1,9 @@
 package com.crowdplatform.model;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -16,6 +20,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
 
+import com.google.common.collect.Lists;
+
 
 @Entity
 public class Batch {
@@ -31,6 +37,8 @@ public class Batch {
 	@NotNull
 	@Min(1)
 	private Integer executionsPerTask;
+	
+	private Date creationDate;
 	
 	private double percentageComplete;
 	
@@ -51,6 +59,10 @@ public class Batch {
 	@Formula("(select count(*) from Task t where t.Batch_id=id)")
 	private Integer numTasks;
 
+	public Batch() {
+		creationDate = new Date();
+	}
+	
 	public Integer getId() {
 		return id;
 	}
@@ -123,5 +135,26 @@ public class Batch {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+	
+	public List<Task> getOrderedTasks() {
+		List<Task> list = Lists.newArrayList();
+		list.addAll(this.tasks);
+		Collections.sort(list, new Comparator<Task>() {
+
+			@Override
+			public int compare(Task o1, Task o2) {
+				// TODO Auto-generated method stub
+				return o1.getId().compareTo(o2.getId());
+			}});
+		return list;
 	}
 }

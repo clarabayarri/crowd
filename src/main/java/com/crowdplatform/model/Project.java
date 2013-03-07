@@ -1,5 +1,8 @@
 package com.crowdplatform.model;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -8,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @Entity
 public class Project {
@@ -22,6 +28,13 @@ public class Project {
 	
 	@OneToMany
 	private Set<Batch> batches;
+	
+	@OneToMany
+	private Set<Field> inputFields;
+	
+	public Project() {
+		batches = Sets.newHashSet();
+	}
 
 	public Integer getId() {
 		return id;
@@ -47,5 +60,39 @@ public class Project {
 		this.batches = batches;
 	}
 	
+	public void addBatch(Batch batch) {
+		this.batches.add(batch);
+	}
+
+	public Set<Field> getInputFields() {
+		return inputFields;
+	}
+
+	public void setInputFields(Set<Field> inputFields) {
+		this.inputFields = inputFields;
+	}
 	
+	public List<Field> getOrderedInputFields() {
+		List<Field> list = Lists.newArrayList();
+		list.addAll(this.inputFields);
+		Collections.sort(list, new Comparator<Field>() {
+
+			@Override
+			public int compare(Field arg0, Field arg1) {
+				return arg0.getId().compareTo(arg1.getId());
+			}});
+		return list;
+	}
+	
+	public List<Batch> getOrderedBatches() {
+		List<Batch> list = Lists.newArrayList();
+		list.addAll(this.batches);
+		Collections.sort(list, new Comparator<Batch>() {
+
+			@Override
+			public int compare(Batch b1, Batch b2) {
+				return b1.getCreationDate().compareTo(b2.getCreationDate());
+			}});
+		return list;
+	}
 }

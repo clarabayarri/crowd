@@ -25,6 +25,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public Project getProject(Integer id) {
 		Project project = em.find(Project.class, id);
 		project.getBatches().size();
+		project.getInputFields().size();
 		return project;
 	}
 

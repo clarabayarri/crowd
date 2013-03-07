@@ -31,6 +31,10 @@
     </div>
 </div>
 
+<ul class="breadcrumb">
+  <li class="active">Home</li>
+</ul>
+
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
@@ -40,7 +44,7 @@
 
 
             <c:if  test="${!empty projectList}">
-                <h2>Batches</h2>
+                <h2>Projects</h2>
 
                 <c:forEach items="${projectList}" var="project">
                     <div class="well well-small">
@@ -59,6 +63,11 @@
             </c:if>
         </div>
     </div>
+</div>
+
+<div class="span5 offset2">
+    <a href="/sample/" class="btn btn-primary" type="button">Create sample data</a>
+    <a href="/sample/clean" class="btn" type="button">Clean sample data</a>
 </div>
 
 </body>

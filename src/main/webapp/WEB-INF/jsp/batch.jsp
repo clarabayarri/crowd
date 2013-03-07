@@ -31,17 +31,43 @@
     </div>
 </div>
 
+<ul class="breadcrumb">
+  <li><a href="/projects">Home</a> <span class="divider">/</span></li>
+  <li><a href="/project/${batch.project.id}">${batch.project.name}</a> <span class="divider">/</span></li>
+  <li class="active">${batch.name}</li>
+</ul>
+
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
+            <c:choose>
+                <c:when test="${batch.state eq 'RUNNING'}">
+                    <img src="/resources/img/status_green.png" class="pull-right"/>
+                </c:when>
+                <c:when test="${batch.state eq 'PAUSED'}">
+                    <img src="/resources/img/status_grey.png" class="pull-right"/>
+                </c:when>
+                <c:when test="${batch.state eq 'COMPLETE'}">
+                    <img src="/resources/img/status_blue.png" class="pull-right"/>
+                </c:when>
+            </c:choose>
+
             <div class="page-header">
                 <h1>Batch ${batch.name}</h1>
             </div>
 
+            <dl class="dl-horizontal">
+                <dt>Tasks</dt>
+                <dd>${batch.numTasks}</dd>
+                <dt>Executions per task</dt>
+                <dd>${batch.executionsPerTask}</dd>
+                <dt>Completed</dt>
+                <dd>${batch.percentageComplete}</dd>
+            </dl>
 
             <h3>Tasks</h3>
 
-            <c:forEach items="${batch.tasks}" var="task">
+            <c:forEach items="${batch.orderedTasks}" var="task">
                 <div class="well well-small">
                     <h4>${task.id}</h4>
 

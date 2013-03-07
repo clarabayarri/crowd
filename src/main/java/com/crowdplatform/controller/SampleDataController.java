@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
+import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ExecutionService;
+import com.crowdplatform.service.FieldService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
 import com.google.common.collect.Sets;
@@ -28,6 +30,9 @@ public class SampleDataController {
 	
 	@Autowired
     private BatchService batchService;
+	
+	@Autowired
+	private FieldService fieldService;
 	
 	@Autowired
 	private TaskService taskService;
@@ -49,7 +54,13 @@ public class SampleDataController {
 		List<Project> projects = projectService.listProjects();
 		for (Project project : projects) {
 			project.setBatches(null);
+			project.setInputFields(null);
 			projectService.saveProject(project);
+			
+		}
+		List<Field> fields = fieldService.listFields();
+		for (Field field : fields) {
+			fieldService.removeField(field.getId());
 		}
 		List<Batch> batches = batchService.listBatches();
 		for (Batch batch : batches) {
@@ -96,6 +107,28 @@ public class SampleDataController {
 		Project project = new Project();
 		project.setName("Awesome project");
 		projectService.addProject(project);
+		
+		Field field1 = new Field();
+		field1.setName("type");
+		field1.setType(Field.Type.STRING);
+		fieldService.addField(field1);
+		Field field2 = new Field();
+		field2.setName("word");
+		field2.setType(Field.Type.STRING);
+		fieldService.addField(field2);
+		Field field3 = new Field();
+		field3.setName("startIndex");
+		field3.setType(Field.Type.INTEGER);
+		fieldService.addField(field3);
+		Field field4 = new Field();
+		field4.setName("endIndex");
+		field4.setType(Field.Type.INTEGER);
+		fieldService.addField(field4);
+		Field field5 = new Field();
+		field5.setName("answers");
+		field5.setType(Field.Type.MULTIVALUATE_STRING);
+		fieldService.addField(field5);
+		project.setInputFields(Sets.newHashSet(field1, field2, field3, field4, field5));
 		
 		Set<Batch> batches = Sets.newHashSet();
 		for (int i = 0; i < 5; ++i)

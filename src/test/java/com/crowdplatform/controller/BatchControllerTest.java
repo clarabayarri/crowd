@@ -2,8 +2,6 @@ package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,14 +14,18 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
-import com.google.common.collect.Lists;
+import com.crowdplatform.service.ProjectService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchControllerTest {
 
 	@InjectMocks
 	private BatchController controller = new BatchController();
+	
+	@Mock
+	private ProjectService projectService;
 	
 	@Mock
 	private BatchService service;
@@ -34,31 +36,10 @@ public class BatchControllerTest {
 	}
 	
 	@Test
-	public void testListBatchesHandleRequestView() {
-		Model model = Mockito.mock(Model.class);
-		
-		String result = controller.listBatches(model);
-		
-		assertEquals("batches", result);
-	}
-	
-	@Test
-	public void testListBatchesRetrievesBatchesToModel() {
-		List<Batch> batches = Lists.newArrayList(new Batch(), new Batch());
-		Mockito.when(service.listBatches()).thenReturn(batches);
-		Model model = Mockito.mock(Model.class);
-		
-		controller.listBatches(model);
-		
-		Mockito.verify(service).listBatches();
-		Mockito.verify(model).addAttribute(batches);
-	}
-	
-	@Test
 	public void testGetBatchHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
 		
-		String result = controller.getBatch(1, model);
+		String result = controller.getBatch(1, 1, model);
 		
 		assertEquals("batch", result);
 	}
@@ -69,7 +50,7 @@ public class BatchControllerTest {
 		Mockito.when(service.getBatch(1)).thenReturn(batch);
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(1, model);
+		controller.getBatch(1, 1, model);
 		
 		Mockito.verify(model).addAttribute(batch);
 		Mockito.verify(service).getBatch(1);
@@ -77,14 +58,14 @@ public class BatchControllerTest {
 	
 	@Test
 	public void testStartBatchCallsService() {
-		controller.startBatch(1);
+		controller.startBatch(1, 1);
 		
 		Mockito.verify(service).startBatch(1);
 	}
 	
 	@Test
 	public void testPauseBatchCallsService() {
-		controller.pauseBatch(1);
+		controller.pauseBatch(1, 1);
 		
 		Mockito.verify(service).pauseBatch(1);
 	}
@@ -92,8 +73,9 @@ public class BatchControllerTest {
 	@Test
 	public void testNewBatchHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
+		Mockito.when(projectService.getProject(1)).thenReturn(new Project());
 		
-		String result = controller.newBatch(model);
+		String result = controller.newBatch(1, model);
 		
 		assertEquals("create", result);
 	}
@@ -102,7 +84,7 @@ public class BatchControllerTest {
 	public void testNewBatchAddsEmptyBatchToModel() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.newBatch(model);
+		controller.newBatch(1, model);
 		
 		Mockito.verify(model).addAttribute(Mockito.any(Batch.class));
 	}
@@ -110,12 +92,13 @@ public class BatchControllerTest {
 	@Test
 	public void testCreateBatchCallsService() {
 		Batch batch = new Batch();
+		Mockito.when(projectService.getProject(1)).thenReturn(new Project());
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		
-		controller.createBatch(batch, bindingResult, null);
+		controller.createBatch(batch, 1, bindingResult, null);
 		
-		Mockito.verify(service).addBatch(batch);
+		Mockito.verify(service).createBatch(batch, 1);
 	}
 
 }

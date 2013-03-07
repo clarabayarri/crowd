@@ -21,4 +21,6 @@ public interface BatchService {
     public void startBatch(Integer id);
     
     public void pauseBatch(Integer id);
+    
+    public void createBatch(Batch batch, Integer projectId);
 }

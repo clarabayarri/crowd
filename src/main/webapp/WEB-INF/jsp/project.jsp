@@ -31,6 +31,11 @@
     </div>
 </div>
 
+<ul class="breadcrumb">
+  <li><a href="/projects">Home</a> <span class="divider">/</span></li>
+  <li class="active">${project.name}</li>
+</ul>
+
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
@@ -38,11 +43,18 @@
                 <h1>${project.name}</h1>
             </div>
 
+            <h3>Input fields</h3>
+            <dl class="dl-horizontal">
+                <c:forEach items="${project.orderedInputFields}" var="field">
+                    <dt>${field.name}</dt>
+                    <dd>${field.type}</dd>
+                </c:forEach>
+            </dl>
 
             <c:if  test="${!empty project.batches}">
                 <h2>Batches</h2>
 
-                <c:forEach items="${project.batches}" var="batch">
+                <c:forEach items="${project.orderedBatches}" var="batch">
                     <div class="well well-small">
                         <c:choose>
                             <c:when test="${batch.state eq 'RUNNING'}">
@@ -63,13 +75,13 @@
                         <div class="clear-fix"></div>
 
                         <div class="pull-right">
-                            <p><a href="/batches/batch/${batch.id}" class="btn btn-info">Details</a></p>
+                            <p><a href="/project/${project.id}/batch/${batch.id}" class="btn btn-info">Details</a></p>
                             <c:choose>
                                 <c:when test="${batch.state eq 'RUNNING'}">
-                                    <p><a href="/batches/batch/${batch.id}/pause" class="btn btn-danger">Stop</a></p>
+                                    <p><a href="/project/${project.id}/batch/${batch.id}/pause" class="btn btn-danger">Stop</a></p>
                                 </c:when>
                                 <c:when test="${batch.state eq 'PAUSED'}">
-                                    <p><a href="/batches/batch/${batch.id}/start" class="btn btn-success">Start</a></p>
+                                    <p><a href="/project/${project.id}/batch/${batch.id}/start" class="btn btn-success">Start</a></p>
                                 </c:when>
                             </c:choose>
                         </div>

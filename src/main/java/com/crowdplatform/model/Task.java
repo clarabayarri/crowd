@@ -30,6 +30,10 @@ public class Task {
 	@Formula("(select count(*) from Execution e where e.Task_id=id)")
 	private Integer numExecutions;
 
+	public Task() {
+		this.numExecutions = 0;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
