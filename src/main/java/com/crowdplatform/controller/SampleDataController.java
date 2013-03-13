@@ -89,12 +89,12 @@ public class SampleDataController {
 	}
 	
 	private static final String[] definitions = {"{\"answers\":[],\"id\":1,\"word\":\"a lot\",\"level\":1,\"type\":\"separation\",\"language\":\"EN\",\"display\":\"alot\"}",
-		"{\"answers\":[],\"id\":3,\"word\":\"boasted\",\"level\":1,\"type\":\"substitution\",\"language\":\"EN\",\"display\":\"boested\"}",
-		"{\"answers\":[],\"id\":4,\"word\":\"actually\",\"level\":1,\"type\":\"substitution\",\"language\":\"EN\",\"display\":\"act|ai|lly\"}",
+		"{\"answers\":[\"a\",\"s\",\"i\",\"u\"],\"id\":3,\"word\":\"boasted\",\"level\":1,\"type\":\"substitution\",\"language\":\"EN\",\"display\":\"boested\"}",
+		"{\"answers\":[\"ua\",\"ie\",\"i\",\"ei\"],\"id\":4,\"word\":\"actually\",\"level\":1,\"type\":\"substitution\",\"language\":\"EN\",\"display\":\"act|ai|lly\"}",
 		"{\"answers\":[],\"id\":5,\"word\":\"bacon\",\"level\":1,\"type\":\"omission\",\"language\":\"EN\",\"display\":\"baecon\"}",
-		"{\"answers\":[],\"id\":7,\"word\":\"trust\",\"level\":1,\"type\":\"insertion1\",\"language\":\"EN\",\"display\":\"trus_\"}",
-		"{\"answers\":[],\"id\":8,\"word\":\"trust\",\"level\":1,\"type\":\"insertion\",\"language\":\"EN\",\"display\":\"trus\"}",
-		"{\"answers\":[],\"id\":10,\"word\":\"scariness","level\":1,\"type\":\"derivation\",\"language\":\"EN\",\"display\":\"scar\"}",
+		"{\"answers\":[\"t\",\"e\",\"y\",\"h\"],\"id\":7,\"word\":\"trust\",\"level\":1,\"type\":\"insertion1\",\"language\":\"EN\",\"display\":\"trus_\"}",
+		"{\"answers\":[\"t\"],\"id\":8,\"word\":\"trust\",\"level\":1,\"type\":\"insertion\",\"language\":\"EN\",\"display\":\"trus\"}",
+		"{\"answers\":[\"iness\",\"izer\",\"ition\",\"less\"],\"id\":10,\"word\":\"scariness","level\":1,\"type\":\"derivation\",\"language\":\"EN\",\"display\":\"scar\"}",
 		"{\"answers\":[],\"id\":16,\"word\":\"jueves","level\":1,\"type\":\"omission\",\"language\":\"ES\",\"display\":\"jruerves\"}"};
 	private static final Batch.State[] states = {Batch.State.RUNNING, Batch.State.PAUSED};
 	
