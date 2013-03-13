@@ -93,6 +93,8 @@ public class TaskServiceImpl implements TaskService {
         				}
         				contents.put(field.getName(), array);
         				break;
+        			case BOOL:
+        				break;
         			} 
     			}
     		}

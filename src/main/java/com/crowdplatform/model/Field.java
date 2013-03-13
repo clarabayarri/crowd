@@ -22,7 +22,7 @@ public class Field {
 	private Set<String> columnNames;
 	
 	public enum Type {
-		INTEGER, DOUBLE, STRING, MULTIVALUATE_STRING
+		INTEGER, DOUBLE, STRING, MULTIVALUATE_STRING, BOOL
 	}
 	
 	@NotNull
