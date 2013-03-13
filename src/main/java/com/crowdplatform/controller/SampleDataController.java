@@ -94,8 +94,8 @@ public class SampleDataController {
 		"{\"answers\":[],\"id\":5,\"word\":\"bacon\",\"level\":1,\"type\":\"omission\",\"language\":\"EN\",\"display\":\"baecon\"}",
 		"{\"answers\":[\"t\",\"e\",\"y\",\"h\"],\"id\":7,\"word\":\"trust\",\"level\":1,\"type\":\"insertion1\",\"language\":\"EN\",\"display\":\"trus_\"}",
 		"{\"answers\":[\"t\"],\"id\":8,\"word\":\"trust\",\"level\":1,\"type\":\"insertion\",\"language\":\"EN\",\"display\":\"trus\"}",
-		"{\"answers\":[\"iness\",\"izer\",\"ition\",\"less\"],\"id\":10,\"word\":\"scariness","level\":1,\"type\":\"derivation\",\"language\":\"EN\",\"display\":\"scar\"}",
-		"{\"answers\":[],\"id\":16,\"word\":\"jueves","level\":1,\"type\":\"omission\",\"language\":\"ES\",\"display\":\"jruerves\"}"};
+		"{\"answers\":[\"iness\",\"izer\",\"ition\",\"less\"],\"id\":10,\"word\":\"scariness\",\"level\":1,\"type\":\"derivation\",\"language\":\"EN\",\"display\":\"scar\"}",
+		"{\"answers\":[],\"id\":16,\"word\":\"jueves\",\"level\":1,\"type\":\"omission\",\"language\":\"ES\",\"display\":\"jruerves\"}"};
 	private static final Batch.State[] states = {Batch.State.RUNNING, Batch.State.PAUSED};
 	
 	private void createSampleProject() {
