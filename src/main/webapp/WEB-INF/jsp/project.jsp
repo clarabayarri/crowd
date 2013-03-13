@@ -81,15 +81,7 @@
                         <div class="clear-fix"></div>
 
                         <div class="pull-right">
-                            <p><a href="/project/${project.id}/batch/${batch.id}" class="btn btn-info">Details</a></p>
-                            <c:choose>
-                                <c:when test="${batch.state eq 'RUNNING'}">
-                                    <p><a href="/project/${project.id}/batch/${batch.id}/pause" class="btn btn-danger">Stop</a></p>
-                                </c:when>
-                                <c:when test="${batch.state eq 'PAUSED'}">
-                                    <p><a href="/project/${project.id}/batch/${batch.id}/start" class="btn btn-success">Start</a></p>
-                                </c:when>
-                            </c:choose>
+                            <a href="/project/${project.id}/batch/${batch.id}" class="btn btn-info">Details</a>
                         </div>
 
                         <div class="extra-info">

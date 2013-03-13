@@ -40,17 +40,33 @@
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
-            <c:choose>
-                <c:when test="${batch.state eq 'RUNNING'}">
-                    <img src="/resources/img/status_green.png" class="pull-right"/>
-                </c:when>
-                <c:when test="${batch.state eq 'PAUSED'}">
-                    <img src="/resources/img/status_grey.png" class="pull-right"/>
-                </c:when>
-                <c:when test="${batch.state eq 'COMPLETE'}">
-                    <img src="/resources/img/status_blue.png" class="pull-right"/>
-                </c:when>
-            </c:choose>
+            <div class="pull-right">
+                <p>
+                <c:choose>
+                    <c:when test="${batch.state eq 'RUNNING'}">
+                        <a href="/project/${batch.project.id}/batch/${batch.id}/pause" class="btn btn-danger pull-right">Stop</a>
+                    </c:when>
+                    <c:when test="${batch.state eq 'PAUSED'}">
+                        <a href="/project/${batch.project.id}/batch/${batch.id}/start" class="btn btn-success pull-right">Start</a>
+                    </c:when>
+                </c:choose>
+
+                <c:choose>
+                    <c:when test="${batch.state eq 'RUNNING'}">
+                        <img src="/resources/img/status_green.png"/>
+                    </c:when>
+                    <c:when test="${batch.state eq 'PAUSED'}">
+                        <img src="/resources/img/status_grey.png"/>
+                    </c:when>
+                    <c:when test="${batch.state eq 'COMPLETE'}">
+                        <img src="/resources/img/status_blue.png"/>
+                    </c:when>
+                </c:choose>
+                </p>
+                <p><a href="/project/${batch.project.id}/batch/${batch.id}/download" class="btn btn-info">Download executions</a></p>
+
+            </div>
+            
 
             <div class="page-header">
                 <h1>Batch ${batch.name}</h1>

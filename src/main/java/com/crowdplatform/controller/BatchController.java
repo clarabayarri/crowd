@@ -47,14 +47,14 @@ public class BatchController {
     public String startBatch(@PathVariable("projectId") Integer projectId, 
     		@PathVariable("batchId") Integer batchId) {
     	batchService.startBatch(batchId);
-    	return "redirect:/project/" + projectId;
+    	return "redirect:/project/" + projectId + "/batch/" + batchId;
     }
     
     @RequestMapping("/project/{projectId}/batch/{batchId}/pause")
     public String pauseBatch(@PathVariable("projectId") Integer projectId, 
     		@PathVariable("batchId") Integer batchId) {
     	batchService.pauseBatch(batchId);
-    	return "redirect:/project/" + projectId;
+    	return "redirect:/project/" + projectId + "/batch/" + batchId;
     }
     
     @RequestMapping("/project/{projectId}/batch/delete/{batchId}")
