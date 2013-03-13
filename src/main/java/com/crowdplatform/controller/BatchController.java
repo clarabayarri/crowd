@@ -1,6 +1,9 @@
 package com.crowdplatform.controller;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -15,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Field;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
+import com.crowdplatform.util.FileReader;
 
 @Controller
 public class BatchController {
@@ -85,15 +90,18 @@ public class BatchController {
     	batchService.createBatch(batch, projectId);
     	
     	if (taskFile != null && !taskFile.isEmpty()) {
+			Set<Field> fields = projectService.getProject(projectId).getInputFields();
+			FileReader reader = new FileReader();
 			try {
-				taskService.createTasks(batch, taskFile);
+				List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
+				taskService.createTasks(batch, fields, fileContents);
 			} catch (IOException e) {
 				bindingResult.reject("error.file.contents");
     			return "create";
 			}
     	}
     	
-    	return "redirect:/project/" + projectId;
+    	return "redirect:/project/" + projectId + "/batch/" + batch.getId();
     }
     
     private boolean validateFileFormat(MultipartFile file) {

@@ -1,9 +1,7 @@
 package com.crowdplatform.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -11,14 +9,15 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.util.FileReader;
 import com.google.common.collect.Sets;
 
 @Service
@@ -43,14 +42,6 @@ public class TaskServiceImpl implements TaskService {
 	public Task getTask(Integer id) {
 		return em.find(Task.class, id);
 	}
-	
-	@Transactional
-	public Task getRandomTask() {
-		Query query = em.createQuery("FROM Task");
-		int total = query.getResultList().size();
-		int index = (new Random()).nextInt(total);
-		return ((Task) query.getResultList().get(index));
-	}
     
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -73,17 +64,41 @@ public class TaskServiceImpl implements TaskService {
     }
     
     @Transactional
-    public void createTasks(Batch batch, MultipartFile taskFile) throws IOException {
-    	FileReader reader = new FileReader();
-    	List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
-    	
+    public void createTasks(Batch batch, Set<Field> fields, List<Map<String, String>> fileContents) {
     	Set<Task> result = Sets.newHashSet();
     	ObjectMapper mapper = new ObjectMapper();
     	
     	for (Map<String, String> line : fileContents) {
-    		String encoding = mapper.writeValueAsString(line);
+    		ObjectNode contents = mapper.createObjectNode();
+    		for (Field field : fields) {
+    			String value = line.get(field.getName());
+    			if (value == null && field.getType() != Field.Type.MULTIVALUATE_STRING) {
+    				contents.putNull(field.getName());
+    			} else {
+    				switch (field.getType()) {
+        			case STRING:
+        				contents.put(field.getName(), value);
+        				break;
+        			case INTEGER:
+        				contents.put(field.getName(), Integer.valueOf(value));
+        				break;
+        			case DOUBLE:
+        				contents.put(field.getName(), Float.valueOf(value));
+        				break;
+        			case MULTIVALUATE_STRING:
+        				ArrayNode array = mapper.createArrayNode();
+        				for (String column : field.getColumnNames()) {
+        					if (line.get(column) != null && !line.get(column).isEmpty())
+        						array.add(line.get(column));
+        				}
+        				contents.put(field.getName(), array);
+        				break;
+        			} 
+    			}
+    		}
+    		
     		Task task = new Task();
-    		task.setContents(encoding);
+    		task.setContents(contents.toString());
     		task.setBatch(batch);
     		addTask(task);
     		result.add(task);

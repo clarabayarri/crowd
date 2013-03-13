@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
 
 @Service
@@ -25,7 +26,9 @@ public class ProjectServiceImpl implements ProjectService {
 	public Project getProject(Integer id) {
 		Project project = em.find(Project.class, id);
 		project.getBatches().size();
-		project.getInputFields().size();
+		for (Field field : project.getInputFields()) {
+			field.getColumnNames().size();
+		}
 		return project;
 	}
 

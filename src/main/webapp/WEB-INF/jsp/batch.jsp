@@ -62,7 +62,7 @@
                 <dt>Executions per task</dt>
                 <dd>${batch.executionsPerTask}</dd>
                 <dt>Completed</dt>
-                <dd>${batch.percentageComplete}</dd>
+                <dd>${batch.percentageComplete} %</dd>
             </dl>
 
             <h3>Tasks</h3>
@@ -72,8 +72,8 @@
                     <h4>${task.id}</h4>
 
                     <div class="extra-info">
-                        <p><strong>Contents: </strong>${task.contents}</p>
                         <p><strong>Executions: </strong>${task.numExecutions}</p>
+                        <p><strong>Contents: </strong>${task.contents}</p>
                     </div>
                     
                 </div>

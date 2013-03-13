@@ -1,5 +1,8 @@
 package com.crowdplatform.model;
 
+import java.util.Set;
+
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,8 +18,11 @@ public class Field {
 	@NotNull
 	private String name;
 	
+	@ElementCollection
+	private Set<String> columnNames;
+	
 	public enum Type {
-		INTEGER, FLOAT, STRING, BOOLEAN, MULTIVALUATE_STRING
+		INTEGER, DOUBLE, STRING, MULTIVALUATE_STRING
 	}
 	
 	@NotNull
@@ -36,6 +42,14 @@ public class Field {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Set<String> getColumnNames() {
+		return columnNames;
+	}
+
+	public void setColumnNames(Set<String> columnNames) {
+		this.columnNames = columnNames;
 	}
 
 	public Type getType() {

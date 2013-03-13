@@ -39,9 +39,15 @@
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
+            <div class="pull-right">
+                <a href="/project/${project.id}/batch/new" class="btn">New batch</a>
+            </div>
+
             <div class="page-header">
                 <h1>${project.name}</h1>
             </div>
+
+            <div class="clear-fix"></div>
 
             <h3>Input fields</h3>
             <dl class="dl-horizontal">

@@ -61,6 +61,7 @@ public class Batch {
 
 	public Batch() {
 		creationDate = new Date();
+		executionsPerTask = 1;
 	}
 	
 	public Integer getId() {
