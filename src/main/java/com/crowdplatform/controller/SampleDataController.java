@@ -55,6 +55,7 @@ public class SampleDataController {
 		for (Project project : projects) {
 			project.setBatches(null);
 			project.setInputFields(null);
+			project.setOutputFields(null);
 			projectService.saveProject(project);
 			
 		}
@@ -103,6 +104,17 @@ public class SampleDataController {
 		project.setName("Awesome project");
 		projectService.addProject(project);
 		
+		createInputFields(project);
+		createOutputFields(project);
+		
+		Set<Batch> batches = Sets.newHashSet();
+		for (int i = 0; i < 5; ++i)
+			batches.add(createSampleBatch(project));
+		project.setBatches(batches);
+		projectService.saveProject(project);
+	}
+	
+	private void createInputFields(Project project) {
 		Field field0 = new Field();
 		field0.setName("id");
 		field0.setType(Field.Type.INTEGER);
@@ -133,12 +145,22 @@ public class SampleDataController {
 		field6.setColumnNames(Sets.newHashSet("correct", "dis_1", "dis_2", "dis_3", "dis_4", "dis_5", "dis_6"));
 		fieldService.addField(field6);
 		project.setInputFields(Sets.newHashSet(field0, field1, field2, field3, field4, field5, field6));
-		
-		Set<Batch> batches = Sets.newHashSet();
-		for (int i = 0; i < 5; ++i)
-			batches.add(createSampleBatch(project));
-		project.setBatches(batches);
-		projectService.saveProject(project);
+	}
+	
+	private void createOutputFields(Project project) {
+		Field field0 = new Field();
+		field0.setName("timeSpent");
+		field0.setType(Field.Type.INTEGER);
+		fieldService.addField(field0);
+		Field field1 = new Field();
+		field1.setName("failedAttempts");
+		field1.setType(Field.Type.INTEGER);
+		fieldService.addField(field1);
+		Field field2 = new Field();
+		field2.setName("wrongAnswers");
+		field2.setType(Field.Type.MULTIVALUATE_STRING);
+		fieldService.addField(field2);
+		project.setOutputFields(Sets.newHashSet(field0, field1, field2));
 	}
 	
 	private Batch createSampleBatch(Project project) {

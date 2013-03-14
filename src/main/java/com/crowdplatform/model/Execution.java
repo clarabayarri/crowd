@@ -24,12 +24,13 @@ public class Execution {
 	private Task task;
 	
 	public Execution() {
-		
+		this.date = new Date();
 	}
 	
 	public Execution(String contents, Task task) {
 		this.contents = contents;
 		this.task = task;
+		this.date = new Date();
 	}
 
 	public Integer getId() {
