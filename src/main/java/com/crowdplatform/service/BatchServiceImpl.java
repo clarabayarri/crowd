@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Project;
+import com.crowdplatform.model.Task;
+import com.google.common.collect.Lists;
 
 @Service
 public class BatchServiceImpl implements BatchService {
@@ -89,6 +92,16 @@ public class BatchServiceImpl implements BatchService {
     	
     	project.addBatch(batch);
     	projectService.saveProject(project);
+    }
+    
+    @Transactional
+    public List<Execution> listExecutions(Integer id) {
+    	Batch batch = em.find(Batch.class, id);
+    	List<Execution> results = Lists.newArrayList();
+    	for (Task task : batch.getTasks()) {
+    		results.addAll(task.getExecutions());
+    	}
+    	return results;
     }
     
 }

@@ -3,6 +3,7 @@ package com.crowdplatform.service;
 import java.util.List;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Execution;
 
 public interface BatchService {
 
@@ -23,4 +24,6 @@ public interface BatchService {
     public void pauseBatch(Integer id);
     
     public void createBatch(Batch batch, Integer projectId);
+    
+    public List<Execution> listExecutions(Integer id);
 }
