@@ -1,7 +1,6 @@
 package com.crowdplatform.controller;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -119,9 +118,10 @@ public class BatchController {
 	public void downloadBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId, HttpServletResponse response) {
 		List<Execution> executions = batchService.listExecutions(batchId);
+		List<Field> fields = projectService.getProject(projectId).getOrderedOutputFields();
 		try {
-			StringWriter writer = (new FileWriter()).writeExecutions(executions);
-			response.getWriter().write(writer.toString());
+			String writer = (new FileWriter()).writeExecutions(executions, fields);
+			response.getWriter().write(writer);
 			response.setContentType("text/csv");
 			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batchId + ".csv");
 			response.flushBuffer();

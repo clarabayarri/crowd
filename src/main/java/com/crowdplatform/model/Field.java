@@ -27,6 +27,13 @@ public class Field {
 	
 	@NotNull
 	private Type type;
+	
+	public enum FieldType {
+		INPUT, OUTPUT
+	}
+	
+	@NotNull
+	private FieldType fieldType;
 
 	public Integer getId() {
 		return id;
@@ -58,5 +65,13 @@ public class Field {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	public FieldType getFieldType() {
+		return fieldType;
+	}
+
+	public void setFieldType(FieldType fieldType) {
+		this.fieldType = fieldType;
 	}
 }

@@ -30,13 +30,11 @@ public class Project {
 	private Set<Batch> batches;
 	
 	@OneToMany
-	private Set<Field> inputFields;
-	
-	@OneToMany
-	private Set<Field> outputFields;
+	private Set<Field> fields;
 	
 	public Project() {
 		batches = Sets.newHashSet();
+		fields = Sets.newHashSet();
 	}
 
 	public Integer getId() {
@@ -67,25 +65,41 @@ public class Project {
 		this.batches.add(batch);
 	}
 
-	public Set<Field> getInputFields() {
-		return inputFields;
+	public Set<Field> getFields() {
+		return fields;
 	}
 
-	public void setInputFields(Set<Field> inputFields) {
-		this.inputFields = inputFields;
+	public void setFields(Set<Field> inputFields) {
+		this.fields = inputFields;
+	}
+	
+	public void addField(Field field) {
+		this.fields.add(field);
+	}
+	
+	public Set<Field> getInputFields() {
+		Set<Field> result = Sets.newHashSet();
+		for (Field field : fields) {
+			if (field.getFieldType() == Field.FieldType.INPUT) {
+				result.add(field);
+			}
+		}
+		return result;
 	}
 	
 	public Set<Field> getOutputFields() {
-		return outputFields;
-	}
-
-	public void setOutputFields(Set<Field> outputFields) {
-		this.outputFields = outputFields;
+		Set<Field> result = Sets.newHashSet();
+		for (Field field : fields) {
+			if (field.getFieldType() == Field.FieldType.OUTPUT) {
+				result.add(field);
+			}
+		}
+		return result;
 	}
 
 	public List<Field> getOrderedInputFields() {
 		List<Field> list = Lists.newArrayList();
-		list.addAll(this.inputFields);
+		list.addAll(getInputFields());
 		Collections.sort(list, new Comparator<Field>() {
 
 			@Override
@@ -97,7 +111,7 @@ public class Project {
 	
 	public List<Field> getOrderedOutputFields() {
 		List<Field> list = Lists.newArrayList();
-		list.addAll(this.outputFields);
+		list.addAll(getOutputFields());
 		Collections.sort(list, new Comparator<Field>() {
 
 			@Override

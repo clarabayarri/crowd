@@ -54,8 +54,7 @@ public class SampleDataController {
 		List<Project> projects = projectService.listProjects();
 		for (Project project : projects) {
 			project.setBatches(null);
-			project.setInputFields(null);
-			project.setOutputFields(null);
+			project.setFields(null);
 			projectService.saveProject(project);
 			
 		}
@@ -105,7 +104,9 @@ public class SampleDataController {
 		projectService.addProject(project);
 		
 		createInputFields(project);
+		projectService.saveProject(project);
 		createOutputFields(project);
+		projectService.saveProject(project);
 		
 		Set<Batch> batches = Sets.newHashSet();
 		for (int i = 0; i < 5; ++i)
@@ -118,49 +119,67 @@ public class SampleDataController {
 		Field field0 = new Field();
 		field0.setName("id");
 		field0.setType(Field.Type.INTEGER);
+		field0.setFieldType(Field.FieldType.INPUT);
 		fieldService.addField(field0);
+		project.addField(field0);
 		Field field1 = new Field();
 		field1.setName("type");
 		field1.setType(Field.Type.STRING);
+		field1.setFieldType(Field.FieldType.INPUT);
 		fieldService.addField(field1);
+		project.addField(field1);
 		Field field2 = new Field();
 		field2.setName("level");
 		field2.setType(Field.Type.INTEGER);
+		field2.setFieldType(Field.FieldType.INPUT);
 		fieldService.addField(field2);
+		project.addField(field2);
 		Field field3 = new Field();
 		field3.setName("language");
 		field3.setType(Field.Type.STRING);
+		field3.setFieldType(Field.FieldType.INPUT);
 		fieldService.addField(field3);
+		project.addField(field3);
 		Field field4 = new Field();
 		field4.setName("word");
 		field4.setType(Field.Type.STRING);
+		field4.setFieldType(Field.FieldType.INPUT);
 		fieldService.addField(field4);
+		project.addField(field4);
 		Field field5 = new Field();
 		field5.setName("display");
 		field5.setType(Field.Type.STRING);
+		field5.setFieldType(Field.FieldType.INPUT);
 		fieldService.addField(field5);
+		project.addField(field5);
 		Field field6 = new Field();
 		field6.setName("answers");
 		field6.setType(Field.Type.MULTIVALUATE_STRING);
+		field6.setFieldType(Field.FieldType.INPUT);
 		field6.setColumnNames(Sets.newHashSet("correct", "dis_1", "dis_2", "dis_3", "dis_4", "dis_5", "dis_6"));
 		fieldService.addField(field6);
-		project.setInputFields(Sets.newHashSet(field0, field1, field2, field3, field4, field5, field6));
+		project.addField(field6);
 	}
 	
 	private void createOutputFields(Project project) {
 		Field field0 = new Field();
 		field0.setName("timeSpent");
 		field0.setType(Field.Type.INTEGER);
+		field0.setFieldType(Field.FieldType.OUTPUT);
 		fieldService.addField(field0);
+		project.addField(field0);
 		Field field1 = new Field();
 		field1.setName("failedAttempts");
 		field1.setType(Field.Type.INTEGER);
+		field1.setFieldType(Field.FieldType.OUTPUT);
 		fieldService.addField(field1);
+		project.addField(field1);
 		Field field2 = new Field();
 		field2.setName("wrongAnswers");
 		field2.setType(Field.Type.MULTIVALUATE_STRING);
+		field2.setFieldType(Field.FieldType.OUTPUT);
 		fieldService.addField(field2);
-		project.setOutputFields(Sets.newHashSet(field0, field1, field2));
+		project.addField(field2);
 	}
 	
 	private Batch createSampleBatch(Project project) {
@@ -190,7 +209,7 @@ public class SampleDataController {
 			
 			Set<Execution> executions = Sets.newHashSet();
 			for (int j = 0; j < numExecutions; ++ j) {
-				Execution execution = new Execution("blabla", task);
+				Execution execution = new Execution("{\"timeSpent\":300,\"failedAttempts\":1,\"wrongAnswers\":[\"answer\"]}", task);
 				executionService.addExecution(execution);
 				executions.add(execution);
 			}
