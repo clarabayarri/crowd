@@ -35,15 +35,28 @@
                 <h1>Crowd platform</h1>
             </div>
 
-            <section class="hero-unit">
-                <p>Welcome to Crowd Platform!</p>
-                <p>Register or log in to start managing crowdsourcing tasks :)</p>
-            </section>
+            <sec:authorize access="!isAuthenticated()">
+                <section class="hero-unit">
+                    <p>Welcome to Crowd Platform!</p>
+                    <p>Register or log in to start managing crowdsourcing tasks :)</p>
+                </section>
 
-            <section>
-                <a href="/login" class="btn">Login</a>
-                <a href="/register" class="btn">Register</a>
-            </section>
+                <section>
+                    <a href="/login" class="btn">Login</a>
+                    <a href="/register" class="btn">Register</a>
+                </section>
+            </sec:authorize>
+
+            <sec:authorize access="isAuthenticated()">
+                <section class="hero-unit">
+                    <p>Welcome <sec:authentication property="principal.username" />!</p>
+                </section>
+
+                <section>
+                    <a href="/projects" class="btn">My projects</a>
+                </section>
+            </sec:authorize>
+            
         </div>
     </div>
 </div>
