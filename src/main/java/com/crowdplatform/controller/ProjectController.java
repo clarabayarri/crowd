@@ -14,7 +14,7 @@ public class ProjectController {
 	@Autowired
 	private ProjectService projectService;
 	
-	@RequestMapping(value={"/", "/projects"})
+	@RequestMapping("/projects")
 	public String listProjects(Model model) {
 		model.addAttribute(projectService.listProjects());
 		return "projects";

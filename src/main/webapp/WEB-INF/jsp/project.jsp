@@ -22,18 +22,12 @@
 </head>
 
 <body>
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
-            <a href="/" class="brand">Crowd platform</a>
-            <a href="/" class="brand" id="heroku">by <strong>Clara</strong></a>
-        </div>
-    </div>
-</div>
+<%@ include file="/WEB-INF/jsp/header.jsp" %>
 
 <ul class="breadcrumb">
-  <li><a href="/projects">Home</a> <span class="divider">/</span></li>
-  <li class="active">${project.name}</li>
+    <li><a href="/">Home</a> <span class="divider">/</span></li>
+    <li><a href="/projects">Projects</a> <span class="divider">/</span></li>
+    <li class="active">${project.name}</li>
 </ul>
 
 <div class="container">

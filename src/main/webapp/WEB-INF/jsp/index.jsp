@@ -25,8 +25,7 @@
 <%@ include file="/WEB-INF/jsp/header.jsp" %>
 
 <ul class="breadcrumb">
-    <li><a href="/">Home</a> <span class="divider">/</span></li>
-    <li class="active">Projects</li>
+    <li class="active">Home</li>
 </ul>
 
 <div class="container">
@@ -36,32 +35,17 @@
                 <h1>Crowd platform</h1>
             </div>
 
+            <section class="hero-unit">
+                <p>Welcome to Crowd Platform!</p>
+                <p>Register or log in to start managing crowdsourcing tasks :)</p>
+            </section>
 
-            <c:if  test="${!empty projectList}">
-                <h2>Projects</h2>
-
-                <c:forEach items="${projectList}" var="project">
-                    <div class="well well-small">
-                        <div class="pull-right">
-                            <p><a href="/project/${project.id}" class="btn btn-info">Details</a></p>
-                        </div>
-
-                        <h4>${project.name}</h4>
-
-                        <div class="clear-fix"></div>
-
-                        
-                        
-                    </div>
-                </c:forEach>
-            </c:if>
+            <section>
+                <a href="/login" class="btn">Login</a>
+                <a href="/register" class="btn">Register</a>
+            </section>
         </div>
     </div>
-</div>
-
-<div class="span5 offset2">
-    <a href="/sample/" class="btn btn-primary" type="button">Create sample data</a>
-    <a href="/sample/clean" class="btn" type="button">Clean sample data</a>
 </div>
 
 </body>
