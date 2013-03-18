@@ -39,6 +39,7 @@
                 <section class="hero-unit">
                     <p>Welcome to Crowd Platform!</p>
                     <p>Register or log in to start managing crowdsourcing tasks :)</p>
+                    <p><small>To access the test data, log in with user "bob" password "bobspassword".</small></p>
                 </section>
 
                 <section>
