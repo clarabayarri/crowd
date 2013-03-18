@@ -6,23 +6,27 @@
 		http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
 	<http auto-config="true" use-expressions="true">
-		<form-login login-page="/login" 
-		    login-processing-url="/static/j_spring_security_check"
-			authentication-failure-url="/login"
-			default-target-url="/projects"
+		<form-login login-page="/login" login-processing-url="/static/j_spring_security_check"
+			authentication-failure-url="/login" default-target-url="/projects"
 			always-use-default-target="false" />
 		<logout logout-url="/static/j_spring_security_logout"
-		    logout-success-url="/home" />
+			logout-success-url="/home" />
 		<intercept-url pattern="/project*" access="hasRole('ROLE_PLATFORM_USER')" />
 	</http>
 
+
+
 	<authentication-manager>
-    <authentication-provider>
-      <user-service>
-        <user name="jimi" password="jimispassword" authorities="ROLE_PLATFORM_USER, ROLE_ADMIN" />
-        <user name="bob" password="bobspassword" authorities="ROLE_PLATFORM_USER" />
-      </user-service>
-    </authentication-provider>
-  </authentication-manager>
+		<authentication-provider>
+			<jdbc-user-service id="userService"
+				data-source-ref="dataSource"
+				users-by-username-query="select username, password, true from User where username=?"
+				authorities-by-username-query="select username,'ROLE_PLATFORM_USER' from User where username=?" />
+			<user-service>
+				<user name="jimi" password="jimispassword" authorities="ROLE_PLATFORM_USER, ROLE_ADMIN" />
+				<user name="bob" password="bobspassword" authorities="ROLE_PLATFORM_USER" />
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
 
 </beans:beans>
