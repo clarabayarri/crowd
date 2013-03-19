@@ -9,13 +9,12 @@ public class Registration {
 
 	private String username;
 	
-	@NotEmpty
-	@Size(min = 4, max = 20)
+	@Size(min = 4, max = 20, message="{registration.password.wrongSize}")
 	private String password;
 	
 	private String confirmPassword;
 	
-	@NotEmpty
+	@NotEmpty(message="{registration.email.notEmpty}")
 	@Email
 	private String email;
 

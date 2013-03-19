@@ -29,6 +29,11 @@ public class UserServiceImpl implements UserService {
 		em.persist(user);
 	}
 
+	@Transactional
+	public User getUser(String username) {
+		return em.find(User.class, username);
+	}
+
 	
 
 }

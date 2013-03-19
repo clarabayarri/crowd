@@ -2,6 +2,8 @@ package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,8 +59,9 @@ public class UserControllerTest {
 	public void testProcessRegistrationValidatesInput() {
 		Registration registration = new Registration();
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 		
-		controller.processRegistration(registration, bindingResult);
+		controller.processRegistration(registration, bindingResult, request);
 		
 		Mockito.verify(validator).validate(registration, bindingResult);
 	}
@@ -68,8 +71,9 @@ public class UserControllerTest {
 		Registration registration = new Registration();
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 		
-		controller.processRegistration(registration, bindingResult);
+		controller.processRegistration(registration, bindingResult, request);
 		
 		Mockito.verify(service).addUser(Mockito.any(User.class));
 		

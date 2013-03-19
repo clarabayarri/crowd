@@ -42,6 +42,16 @@
                 value="/register" />
 
             <form:form method="post" action="${authUrl}" modelAttribute="registration">
+
+                <c:set var="errors"><form:errors path="*"/></c:set>
+                <c:if test="${not empty errors}">
+                    <div class="alert alert-error">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <h4>Warning!</h4>
+                        <p><spring:message code="registration.error" /></p>
+                    </div>
+                </c:if>
+
                 <fieldset>
                     <table>
                         <tr>
