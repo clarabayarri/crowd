@@ -6,6 +6,8 @@ import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,17 +16,22 @@ import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
+import com.crowdplatform.model.User;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ExecutionService;
 import com.crowdplatform.service.FieldService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
+import com.crowdplatform.service.UserService;
 import com.google.common.collect.Sets;
 
 @Controller
 @RequestMapping("/sample")
 public class SampleDataController {
 
+	@Autowired
+	private UserService userService;
+	
 	@Autowired
 	private ProjectService projectService;
 	
@@ -51,6 +58,13 @@ public class SampleDataController {
 	
 	@RequestMapping("/clean")
 	public String cleanSampleData() {
+		List<User> users = userService.listUsers();
+		for (User user : users) {
+			user.setProjects(null);
+			userService.saveUser(user);
+			userService.removeUser(user.getUsername());
+		}
+		
 		List<Project> projects = projectService.listProjects();
 		for (Project project : projects) {
 			project.setBatches(null);
@@ -113,6 +127,14 @@ public class SampleDataController {
 			batches.add(createSampleBatch(project));
 		project.setBatches(batches);
 		projectService.saveProject(project);
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null) {
+	    	String username = auth.getName();
+		    User user = userService.getUser(username);
+		    user.addProject(project);
+		    userService.saveUser(user);
+	    }
 	}
 	
 	private void createInputFields(Project project) {

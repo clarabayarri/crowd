@@ -39,6 +39,26 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
+	public void testRemoveUser() {
+		String username = "username";
+		User user = new User();
+		Mockito.when(em.find(User.class, username)).thenReturn(user);
+		
+		service.removeUser(username);
+		
+		Mockito.verify(em).remove(user);
+	}
+	
+	@Test
+	public void testSaveUser() {
+		User user = new User();
+		
+		service.saveUser(user);
+		
+		Mockito.verify(em).merge(user);
+	}
+	
+	@Test
 	public void testUsernameExistsForTrue() {
 		String username = "username";
 		Mockito.when(em.find(User.class, username)).thenReturn(new User());

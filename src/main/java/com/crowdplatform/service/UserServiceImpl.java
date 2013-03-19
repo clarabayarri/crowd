@@ -1,7 +1,10 @@
 package com.crowdplatform.service;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +34,29 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	public User getUser(String username) {
-		return em.find(User.class, username);
+		User user = em.find(User.class, username);
+		user.getProjects().size();
+		return user;
 	}
 
+	@Transactional
+	public void saveUser(User user) {
+		em.merge(user);
+	}
 	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<User> listUsers() {
+		Query query = em.createQuery("FROM User");
+		return query.getResultList();
+	}
+	
+	@Transactional
+	public void removeUser(String username) {
+		User user = em.find(User.class, username);
+		if (user != null) {
+			em.remove(user);
+		}
+	}
 
 }

@@ -2,6 +2,7 @@ package com.crowdplatform.model;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -32,9 +33,12 @@ public class Project {
 	@OneToMany
 	private Set<Field> fields;
 	
+	private Date creationDate;
+	
 	public Project() {
 		batches = Sets.newHashSet();
 		fields = Sets.newHashSet();
+		creationDate = new Date();
 	}
 
 	public Integer getId() {
@@ -95,6 +99,14 @@ public class Project {
 			}
 		}
 		return result;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	public List<Field> getOrderedInputFields() {
