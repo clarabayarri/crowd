@@ -9,8 +9,6 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,10 +34,6 @@ public class Project {
 	private Set<Field> fields;
 	
 	private Date creationDate;
-	
-	@ManyToOne
-	@JoinColumn(name="User_username")
-	private PlatformUser user;
 	
 	public Project() {
 		batches = Sets.newHashSet();
@@ -113,14 +107,6 @@ public class Project {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
-	}
-
-	public PlatformUser getUser() {
-		return user;
-	}
-
-	public void setUser(PlatformUser user) {
-		this.user = user;
 	}
 
 	public List<Field> getOrderedInputFields() {

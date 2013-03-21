@@ -62,7 +62,6 @@ public class SampleDataController {
 		for (Project project : projects) {
 			project.setBatches(null);
 			project.setFields(null);
-			project.setUser(null);
 			projectService.saveProject(project);
 			
 		}
@@ -134,7 +133,6 @@ public class SampleDataController {
 		    PlatformUser user = userService.getUser(username);
 		    user.addProject(project);
 		    userService.saveUser(user);
-		    project.setUser(user);
 		    projectService.saveProject(project);
 	    }
 	}
