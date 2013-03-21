@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.crowdplatform.model.User;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.UserService;
 
@@ -26,7 +26,7 @@ public class ProjectController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null) {
 	    	String username = auth.getName();
-		    User user = userService.getUser(username);
+		    PlatformUser user = userService.getUser(username);
 			model.addAttribute(user.getOrderedProjects());
 	    }
 		return "projects";

@@ -1,19 +1,19 @@
 package com.crowdplatform.service;
 
-import com.crowdplatform.model.User;
+import com.crowdplatform.model.PlatformUser;
 import java.util.List;
 
 public interface UserService {
 
 	public boolean usernameExists(String username);
 	
-	public void addUser(User user);
+	public void addUser(PlatformUser user);
 	
-	public User getUser(String username);
+	public PlatformUser getUser(String username);
 	
-	public void saveUser(User user);
+	public void saveUser(PlatformUser user);
 
-	public List<User> listUsers();
+	public List<PlatformUser> listUsers();
 	
 	public void removeUser(String username);
 	

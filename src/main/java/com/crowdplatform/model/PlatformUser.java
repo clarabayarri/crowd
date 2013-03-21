@@ -14,13 +14,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Entity
-public class User {
+public class PlatformUser {
 
 	@Id
-	@Column(name = "username")
+	@Column(name="username")
 	private String username;
 	
-	@Column(name = "password")
+	@Column(name="password")
 	private String password;
 	
 	private String email;
@@ -28,11 +28,11 @@ public class User {
 	@OneToMany
 	Set<Project> projects;
 
-	public User() {
+	public PlatformUser() {
 		this.projects = Sets.newHashSet();
 	}
 	
-	public User(Registration registration) {
+	public PlatformUser(Registration registration) {
 		this.username = registration.getUsername();
 		this.password = registration.getPassword();
 		this.email = registration.getEmail();

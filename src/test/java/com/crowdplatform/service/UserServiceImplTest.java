@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.crowdplatform.model.User;
+import com.crowdplatform.model.PlatformUser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
@@ -31,7 +31,7 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void testAddUser() {
-		User user = new User();
+		PlatformUser user = new PlatformUser();
 		
 		service.addUser(user);
 		
@@ -41,8 +41,8 @@ public class UserServiceImplTest {
 	@Test
 	public void testRemoveUser() {
 		String username = "username";
-		User user = new User();
-		Mockito.when(em.find(User.class, username)).thenReturn(user);
+		PlatformUser user = new PlatformUser();
+		Mockito.when(em.find(PlatformUser.class, username)).thenReturn(user);
 		
 		service.removeUser(username);
 		
@@ -51,7 +51,7 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void testSaveUser() {
-		User user = new User();
+		PlatformUser user = new PlatformUser();
 		
 		service.saveUser(user);
 		
@@ -61,7 +61,7 @@ public class UserServiceImplTest {
 	@Test
 	public void testUsernameExistsForTrue() {
 		String username = "username";
-		Mockito.when(em.find(User.class, username)).thenReturn(new User());
+		Mockito.when(em.find(PlatformUser.class, username)).thenReturn(new PlatformUser());
 		
 		boolean result = service.usernameExists(username);
 		
@@ -71,7 +71,7 @@ public class UserServiceImplTest {
 	@Test
 	public void testUsernameExistsForFalse() {
 		String username = "username";
-		Mockito.when(em.find(User.class, username)).thenReturn(null);
+		Mockito.when(em.find(PlatformUser.class, username)).thenReturn(null);
 		
 		boolean result = service.usernameExists(username);
 		

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.crowdplatform.model.Registration;
-import com.crowdplatform.model.User;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.UserService;
 import com.crowdplatform.util.RegistrationValidator;
 
@@ -56,8 +56,8 @@ public class UserController {
 		if (bindingResult.hasErrors()) {
 			return "register";
 		}
-		userService.addUser(new User(registration));
-		User user = userService.getUser(registration.getUsername());
+		userService.addUser(new PlatformUser(registration));
+		PlatformUser user = userService.getUser(registration.getUsername());
 		if (user != null) {
 			authenticateUserAndSetSession(user, request);
 			return "redirect:/projects";
@@ -66,7 +66,7 @@ public class UserController {
 		return "register";
 	}
 	
-	private void authenticateUserAndSetSession(User user, HttpServletRequest request) {
+	private void authenticateUserAndSetSession(PlatformUser user, HttpServletRequest request) {
 		UsernamePasswordAuthenticationToken token = 
 				new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 

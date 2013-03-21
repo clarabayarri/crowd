@@ -13,24 +13,24 @@
 			logout-success-url="/home" />
 		<intercept-url pattern="/project*" access="hasRole('ROLE_PLATFORM_USER')" />
 	</http>
-	
-	<!-- TODO: fix for prod <jdbc:embedded-database id="dataSource" />-->
-	
+
 	<beans:bean class="java.net.URI" id="dbUrl">
-        <beans:constructor-arg value="#{systemEnvironment['DATABASE_URL']}"/>
-    </beans:bean>
+		<beans:constructor-arg value="#{systemEnvironment['DATABASE_URL']}" />
+	</beans:bean>
+
 	<beans:bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <beans:property name="url" value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath() }"/>
-        <beans:property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }"/>
-        <beans:property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }"/>
-    </beans:bean>
+		<beans:property name="url"
+			value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath() }" />
+		<beans:property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }" />
+		<beans:property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }" />
+	</beans:bean>
 
 	<authentication-manager>
 		<authentication-provider>
 			<jdbc-user-service id="userService"
 				data-source-ref="dataSource"
-				users-by-username-query="select username, password, true from User where username=?"
-				authorities-by-username-query="select username,'ROLE_PLATFORM_USER' from User where username=?" />
+				users-by-username-query="select username, password, true from PlatformUser where username=?"
+				authorities-by-username-query="select username,'ROLE_PLATFORM_USER' from PlatformUser where username=?" />
 		</authentication-provider>
 	</authentication-manager>
 

@@ -22,7 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 
 import com.crowdplatform.model.Project;
-import com.crowdplatform.model.User;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.UserService;
 import com.google.common.collect.Lists;
@@ -59,7 +59,7 @@ public class ProjectControllerTest {
 	public void testListProjectsHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
 		String username = "username";
-		Mockito.when(userService.getUser(username)).thenReturn(new User());
+		Mockito.when(userService.getUser(username)).thenReturn(new PlatformUser());
 		
 		String result = controller.listProjects(model);
 		
@@ -71,7 +71,7 @@ public class ProjectControllerTest {
 		List<Project> projects = Lists.newArrayList(new Project(), new Project());
 		Mockito.when(service.listProjects()).thenReturn(projects);
 		String username = "username";
-		Mockito.when(userService.getUser(username)).thenReturn(new User());
+		Mockito.when(userService.getUser(username)).thenReturn(new PlatformUser());
 		Authentication auth = Mockito.mock(Authentication.class);
 		Mockito.when(auth.getName()).thenReturn(username);
 		Mockito.when(context.getAuthentication()).thenReturn(auth);

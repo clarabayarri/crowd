@@ -16,7 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import com.crowdplatform.model.Registration;
-import com.crowdplatform.model.User;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.UserService;
 import com.crowdplatform.util.RegistrationValidator;
 
@@ -75,7 +75,7 @@ public class UserControllerTest {
 		
 		controller.processRegistration(registration, bindingResult, request);
 		
-		Mockito.verify(service).addUser(Mockito.any(User.class));
+		Mockito.verify(service).addUser(Mockito.any(PlatformUser.class));
 		
 	}
 }

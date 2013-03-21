@@ -16,7 +16,7 @@ import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.model.User;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ExecutionService;
 import com.crowdplatform.service.FieldService;
@@ -58,19 +58,19 @@ public class SampleDataController {
 	
 	@RequestMapping("/clean")
 	public String cleanSampleData() {
-		List<User> users = userService.listUsers();
-		for (User user : users) {
-			user.setProjects(null);
-			userService.saveUser(user);
-			userService.removeUser(user.getUsername());
-		}
-		
 		List<Project> projects = projectService.listProjects();
 		for (Project project : projects) {
 			project.setBatches(null);
 			project.setFields(null);
+			project.setUser(null);
 			projectService.saveProject(project);
 			
+		}
+		List<PlatformUser> users = userService.listUsers();
+		for (PlatformUser user : users) {
+			user.setProjects(null);
+			userService.saveUser(user);
+			userService.removeUser(user.getUsername());
 		}
 		List<Field> fields = fieldService.listFields();
 		for (Field field : fields) {
@@ -131,9 +131,11 @@ public class SampleDataController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null) {
 	    	String username = auth.getName();
-		    User user = userService.getUser(username);
+		    PlatformUser user = userService.getUser(username);
 		    user.addProject(project);
 		    userService.saveUser(user);
+		    project.setUser(user);
+		    projectService.saveProject(project);
 	    }
 	}
 	
