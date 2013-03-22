@@ -38,10 +38,7 @@
 
             <h2>Sign in</h2>
 
-            <spring:url var="authUrl"
-                value="/static/j_spring_security_check" />
-
-            <form method="post" action="${authUrl}">
+            <form method="post" action="/static/j_spring_security_check">
                 <fieldset>
                     <table>
                         <tr>
