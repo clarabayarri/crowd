@@ -153,7 +153,6 @@ public class Batch {
 
 			@Override
 			public int compare(Task o1, Task o2) {
-				// TODO Auto-generated method stub
 				return o1.getId().compareTo(o2.getId());
 			}});
 		return list;

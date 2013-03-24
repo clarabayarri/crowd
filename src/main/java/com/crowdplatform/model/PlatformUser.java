@@ -81,7 +81,6 @@ public class PlatformUser {
 
 			@Override
 			public int compare(Project p1, Project p2) {
-				// TODO Auto-generated method stub
 				return p1.getCreationDate().compareTo(p2.getCreationDate());
 			}});
 		return list;

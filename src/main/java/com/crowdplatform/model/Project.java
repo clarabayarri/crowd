@@ -35,9 +35,13 @@ public class Project {
 	
 	private Date creationDate;
 	
+	@OneToMany
+	private Set<ProjectUser> users;
+	
 	public Project() {
 		batches = Sets.newHashSet();
 		fields = Sets.newHashSet();
+		users = Sets.newHashSet();
 		creationDate = new Date();
 	}
 
@@ -99,6 +103,18 @@ public class Project {
 			}
 		}
 		return result;
+	}
+
+	public Set<ProjectUser> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<ProjectUser> users) {
+		this.users = users;
+	}
+	
+	public void addUser(ProjectUser user) {
+		this.users.add(user);
 	}
 
 	public Date getCreationDate() {

@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.ExecutionInfo;
+import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
 import com.crowdplatform.service.ExecutionService;
-import com.crowdplatform.service.TaskService;
+import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
+import com.crowdplatform.service.TaskService;
 
 @Controller
 @RequestMapping("/API")
@@ -39,6 +41,9 @@ public class RemoteServiceController {
 	@Autowired
 	private ExecutionService executionService;
 	
+	@Autowired
+	private ProjectUserService userService;
+	
 	@RequestMapping(value="/task", method=RequestMethod.GET)
 	public @ResponseBody TaskInfo provideTask() {
 		Task task = taskRetrieval.retrieveTaskForExecution();
@@ -52,6 +57,12 @@ public class RemoteServiceController {
 		Task task = taskService.getTask(info.getTaskId());
 		Execution execution = new Execution(info.getContents(), task);
 		executionService.addExecution(execution);
+	}
+	
+	@RequestMapping(value="/user", method=RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
+	public void saveUser(@RequestBody ProjectUser user) {
+		userService.addProjectUser(user);
 	}
 	
 	@ExceptionHandler
