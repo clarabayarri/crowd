@@ -81,7 +81,27 @@
                         <div class="extra-info">
                             <p><strong>Tasks: </strong>${batch.numTasks}</p>
                             <p><strong>Executions per task: </strong>${batch.executionsPerTask}</p>
-                            <p><strong>Completed: </strong>${batch.percentageComplete} %</p>
+                            <p><strong>Completed: </strong><fmt:formatNumber type="number" 
+            maxFractionDigits="2" value="${batch.percentageComplete}" /> %</p>
+                            <p>
+                                <c:choose>
+                                    <c:when test="${batch.state eq 'RUNNING'}">
+                                        <div class="progress progress-info progress-striped">
+                                            <div class="bar" style="width: ${batch.percentageComplete}%"></div>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${batch.state eq 'PAUSED'}">
+                                        <div class="progress progress-warning progress-striped">
+                                            <div class="bar" style="width: ${batch.percentageComplete}%"></div>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${batch.state eq 'COMPLETE'}">
+                                        <div class="progress progress-success progress-striped">
+                                            <div class="bar" style="width: ${batch.percentageComplete}%"></div>
+                                        </div>
+                                    </c:when>
+                                </c:choose>
+                            </p>
                         </div>
                         
                     </div>
