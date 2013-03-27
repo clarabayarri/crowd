@@ -32,7 +32,8 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 			<value>
 			<![CDATA[
 	Dear %s,
-To reset your password, please click on the following link: http://localhost:8080/forgot/%s
+	
+To reset your password please click on the following link: http://gentle-gorge-9660.herokuapp.com/forgot/%s
 				
 	Crowd Platform
 			]]>
