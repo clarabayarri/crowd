@@ -71,17 +71,38 @@
                 <dd>${batch.numTasks}</dd>
                 <dt>Executions per task</dt>
                 <dd>${batch.executionsPerTask}</dd>
+                <dt>Date created</dt>
+                <dd><fmt:formatDate value="${batch.creationDate}" type="date"/></dd>
                 <dt>Completed</dt>
-                <dd>${batch.percentageComplete} %</dd>
+                <dd><fmt:formatNumber type="number" 
+            maxFractionDigits="2" value="${batch.percentageComplete}" /> %</dd>
             </dl>
+            <p>
+                <c:choose>
+                    <c:when test="${batch.state eq 'RUNNING'}">
+                        <div class="progress progress-info progress-striped">
+                            <div class="bar" style="width: ${batch.percentageComplete}%"></div>
+                        </div>
+                    </c:when>
+                    <c:when test="${batch.state eq 'PAUSED'}">
+                        <div class="progress progress-warning progress-striped">
+                            <div class="bar" style="width: ${batch.percentageComplete}%"></div>
+                        </div>
+                    </c:when>
+                    <c:when test="${batch.state eq 'COMPLETE'}">
+                        <div class="progress progress-success progress-striped">
+                            <div class="bar" style="width: ${batch.percentageComplete}%"></div>
+                        </div>
+                    </c:when>
+                </c:choose>
+            </p>
 
             <h3>Tasks</h3>
 
             <c:forEach items="${batch.orderedTasks}" var="task">
                 <div class="well well-small">
-                    <h4>${task.id}</h4>
-
                     <div class="extra-info">
+                        <p><strong>Id: </strong>${task.id}</p>
                         <p><strong>Executions: </strong>${task.numExecutions}</p>
                         <p><strong>Contents: </strong>${task.contents}</p>
                     </div>

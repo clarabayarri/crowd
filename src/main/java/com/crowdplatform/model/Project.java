@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Formula;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -27,16 +29,19 @@ public class Project {
 	@Size(min=4)
 	private String name;
 	
+	private Date creationDate;
+	
 	@OneToMany
 	private Set<Batch> batches;
 	
 	@OneToMany
 	private Set<Field> fields;
 	
-	private Date creationDate;
-	
 	@OneToMany
 	private Set<ProjectUser> users;
+	
+	@Formula("(select count(*) from user_project up where up.projects_id=id)")
+	private Integer numUsers;
 	
 	public Project() {
 		batches = Sets.newHashSet();
@@ -123,6 +128,14 @@ public class Project {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public Integer getNumUsers() {
+		return numUsers;
+	}
+
+	public void setNumUsers(Integer numUsers) {
+		this.numUsers = numUsers;
 	}
 
 	public List<Field> getOrderedInputFields() {

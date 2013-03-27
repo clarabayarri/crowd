@@ -19,6 +19,9 @@
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
     <!-- /// -->
 
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tab.js"></script>
+
 </head>
 
 <body>
@@ -43,13 +46,57 @@
 
             <div class="clear-fix"></div>
 
-            <h3>Input fields</h3>
-            <dl class="dl-horizontal">
-                <c:forEach items="${project.orderedInputFields}" var="field">
-                    <dt>${field.name}</dt>
-                    <dd>${field.type}</dd>
-                </c:forEach>
-            </dl>
+            <h2>Project data</h2>
+
+            <div class="tabbable">
+                <ul id="tab-nav" class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+                    <li><a data-toggle="tab" href="#input">Input fields</a></li>
+                    <li><a data-toggle="tab" href="#output">Output fields</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="general">
+                        <dl class="dl-horizontal">
+                            <dt>Date created</dt>
+                            <dd><fmt:formatDate value="${project.creationDate}" type="date"/></dd>
+                            <dt>Registered users</dt>
+                            <dd>${project.numUsers}</dd>
+                        </dl>
+                    </div>
+                    <div class="tab-pane" id="input">
+                        <dl class="dl-horizontal">
+                            <c:forEach items="${project.orderedInputFields}" var="field">
+                                <dt>${field.name}</dt>
+                                <dd>${field.type}</dd>
+                            </c:forEach>
+                        </dl>
+                    </div>
+                    <div class="tab-pane" id="output">
+                        <dl class="dl-horizontal">
+                            <c:forEach items="${project.orderedOutputFields}" var="field">
+                                <dt>${field.name}</dt>
+                                <dd>${field.type}</dd>
+                            </c:forEach>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                $('#general a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                })
+                $('#input a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                })
+                $('#output a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                })
+            </script>
 
             <c:if  test="${!empty project.batches}">
                 <h2>Batches</h2>

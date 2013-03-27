@@ -11,7 +11,7 @@
 			always-use-default-target="false" />
 		<logout logout-url="/static/j_spring_security_logout"
 			logout-success-url="/home" />
-		<intercept-url pattern="/project*" access="hasRole('ROLE_PLATFORM_USER')" />
+		<intercept-url pattern="/proj*" access="hasRole('ROLE_PLATFORM_USER')" />
 	</http>
 
 	<beans:bean class="java.net.URI" id="dbUrl">
