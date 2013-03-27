@@ -26,7 +26,7 @@
 
 <ul class="breadcrumb">
     <li><a href="/">Home</a> <span class="divider">/</span></li>
-    <li class="active">Register</li>
+    <li class="active">Reset password</li>
 </ul>
 
 <div class="container">
@@ -36,40 +36,25 @@
                 <h1>Crowd platform</h1>
             </div>
 
-            <h2>Register</h2>
+            <h2>Change password</h2>
 
-            <spring:url var="registerUrl"
-                value="/register" />
-
-            <form:form method="post" action="${authUrl}" modelAttribute="registration">
+            <form:form method="post" action="/reset" modelAttribute="passwordResetData">
 
                 <c:set var="errors"><form:errors path="*"/></c:set>
                 <c:if test="${not empty errors}">
                     <div class="alert alert-error">
                         <h4>Warning!</h4>
-                        <p><spring:message code="registration.error" /></p>
+                        <p><spring:message code="password.change.error" /></p>
                     </div>
                 </c:if>
 
                 <fieldset>
+                    <form:hidden path="uid" value="${uid}"/>
                     <table>
-                        <tr>
-                            <th><label for="username">Username:</label></th>
-                            <td>
-                                <form:input id="username" path="username" />
-
-                                <div class="control-group error">
-                                    <div class="controls">
-                                        <form:errors path="username" cssClass="error help-inline" />
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
                         <tr>
                             <th><label for="password">Password:</label></th>
                             <td>
                                 <form:input path="password" type="password" id="password" />
-
                                 <div class="control-group error">
                                     <div class="controls">
                                         <form:errors path="password" cssClass="error help-inline" />
@@ -81,22 +66,9 @@
                             <th><label for="confirm-password">Confirm password:</label></th>
                             <td>
                                 <form:input path="confirmPassword" type="password" id="confirm-password" />
-
                                 <div class="control-group error">
                                     <div class="controls">
                                         <form:errors path="confirmPassword" cssClass="error help-inline" />
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><label for="email">Email:</label></th>
-                            <td>
-                                <form:input path="email" type="text" id="email" />
-
-                                <div class="control-group error">
-                                    <div class="controls">
-                                        <form:errors path="email" cssClass="error help-inline" />
                                     </div>
                                 </div>
                             </td>
@@ -111,7 +83,7 @@
             </form:form>
 
             <script type="text/javascript">
-                document.getElementById('username').focus();
+                document.getElementById('password').focus();
             </script>
         </div>
     </div>

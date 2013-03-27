@@ -13,8 +13,11 @@
 			logout-success-url="/home" />
 		<intercept-url pattern="/" access="permitAll" />
 		<intercept-url pattern="/home" access="permitAll" />
-		<intercept-url pattern="/login" access="permitAll" />
-		<intercept-url pattern="/register" access="permitAll" />
+		<intercept-url pattern="/login" access="isAnonymous()" />
+		<intercept-url pattern="/register" access="isAnonymous()" />
+		<intercept-url pattern="/forgot" access="isAnonymous()" />
+		<intercept-url pattern="/forgot/*" access="isAnonymous()" />
+		<intercept-url pattern="/reset" access="isAnonymous()" />
 		<intercept-url pattern="/**" access="hasRole('ROLE_PLATFORM_USER')" />
 	</http>
 

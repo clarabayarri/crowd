@@ -38,6 +38,24 @@ public class UserServiceImpl implements UserService {
 		user.getProjects().size();
 		return user;
 	}
+	
+	@Transactional
+	public PlatformUser getUserByUsernameOrEmail(String username) {
+		PlatformUser user = getUser(username);
+		if (user == null) {
+			user = getUserByEmail(username);
+		}
+		return user;
+	}
+	
+	@Transactional
+	public PlatformUser getUserByEmail(String email) {
+		Query query = em.createQuery("FROM PlatformUser WHERE email='" + email + "'");
+		if (query.getResultList().size() > 0) {
+			return (PlatformUser) query.getResultList().get(0);
+		}
+		return null;
+	}
 
 	@Transactional
 	public void saveUser(PlatformUser user) {

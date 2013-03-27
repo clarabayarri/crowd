@@ -19,6 +19,10 @@
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
     <!-- /// -->
 
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
+
 </head>
 
 <body>
@@ -29,6 +33,27 @@
     <li class="active">Login</li>
 </ul>
 
+<div id="forgot" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Forgot password?</h3>
+    </div>
+    <form action="/forgot" id="forgot-form" method="post">
+        <div class="modal-body">
+            <table>
+                <tr>
+                    <th><label for="forgot-username">Username or email:</label></th>
+                    <td><input id="forgot-username" name="username" type="text" /></td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" aria-hidden="true" class="btn">Close</button>
+            <button data-dismiss="modal" data-toggle="alert" class="btn btn-primary" id="forgot-send">Send reset email</button>
+        </div>
+    </form>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
@@ -37,6 +62,11 @@
             </div>
 
             <h2>Sign in</h2>
+
+            <div class="alert alert-success fade in hide" id="forgot-confirm" data-alert="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Success!</strong> An email has been sent to the email associated to your account with instructions on how to change your password.
+            </div>
 
             <form method="post" action="/static/j_spring_security_check">
                 <fieldset>
@@ -51,7 +81,7 @@
                             <th><label for="password">Password:</label></th>
                             <td>
                                 <input name="j_password" type="password" id="password" />
-                                <small><a href="/account/resend_password">Forgot?</a></small>
+                                <small><a href="#forgot" data-toggle="modal">Forgot?</a></small>
                             </td>
                         </tr>
                         <tr>
@@ -72,6 +102,11 @@
 
             <script type="text/javascript">
                 document.getElementById('username_or_email').focus();
+                $("#forgot-send").click(function() {
+                    $.post("/forgot", $("#forgot-form").serialize());
+                    $("#forgot-confirm").removeClass("hide");
+                });
+                $(".alert").alert();
             </script>
         </div>
     </div>

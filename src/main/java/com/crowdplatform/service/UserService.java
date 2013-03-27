@@ -11,6 +11,8 @@ public interface UserService {
 	
 	public PlatformUser getUser(String username);
 	
+	public PlatformUser getUserByUsernameOrEmail(String username);
+	
 	public void saveUser(PlatformUser user);
 
 	public List<PlatformUser> listUsers();

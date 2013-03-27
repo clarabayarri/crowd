@@ -16,9 +16,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Registration;
+import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.UserService;
+import com.crowdplatform.util.MailSender;
 import com.crowdplatform.util.RegistrationValidator;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,7 +37,13 @@ public class UserControllerTest {
 	private RegistrationValidator validator;
 	
 	@Mock
-	private UserService service;
+	private UserService userService;
+	
+	@Mock
+	private PasswordResetRequestService passwordService;
+	
+	@Mock
+	private MailSender mailSender;
 	
 	@Before
 	public void setUp() {
@@ -84,7 +93,7 @@ public class UserControllerTest {
 		registration.setUsername("username");
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-		Mockito.when(service.getUser("username")).thenReturn(new PlatformUser());
+		Mockito.when(userService.getUser("username")).thenReturn(new PlatformUser());
 		HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 		
 		String result = controller.processRegistration(registration, bindingResult, request);
@@ -112,6 +121,30 @@ public class UserControllerTest {
 		
 		controller.processRegistration(registration, bindingResult, request);
 		
-		Mockito.verify(service).addUser(Mockito.any(PlatformUser.class));
+		Mockito.verify(userService).addUser(Mockito.any(PlatformUser.class));
 	}
+	
+	@Test
+	public void testForgotPasswordRetrievesUserByUsernameOrEmail() {
+		controller.forgotPassword("username");
+		
+		Mockito.verify(userService).getUserByUsernameOrEmail("username");
+	}
+	
+	@Test
+	public void testForgotPasswordCreatesRequestIfUserExists() {
+		Mockito.when(userService.getUserByUsernameOrEmail("username")).thenReturn(new PlatformUser());
+		
+		controller.forgotPassword("username");
+		
+		Mockito.verify(passwordService).addRequest(Mockito.any(PasswordResetRequest.class));
+	}
+	
+	@Test
+	public void testForgotPasswordDoesntCreateRequestIfUserDoesntExist() {
+		controller.forgotPassword("username");
+		
+		Mockito.verifyZeroInteractions(passwordService);
+	}
+	
 }
