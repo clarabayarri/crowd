@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.crowdplatform.model.PlatformUser;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.UserService;
 
@@ -34,7 +35,15 @@ public class ProjectController {
 	
 	@RequestMapping("/project/{projectId}")
 	public String getProject(@PathVariable("projectId") Integer projectId, Model model) {
-		model.addAttribute(projectService.getProject(projectId));
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null) {
+	    	String username = auth.getName();
+		    PlatformUser user = userService.getUser(username);
+			Project project = projectService.getProject(projectId);
+			if (user.getProjects().contains(project)) {
+				model.addAttribute(project);
+			}
+	    }
 		return "project";
 	}
 }

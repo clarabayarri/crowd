@@ -26,6 +26,7 @@ import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.UserService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectControllerTest {
@@ -85,6 +86,8 @@ public class ProjectControllerTest {
 	
 	@Test
 	public void testGetProjectHandleRequestView() {
+		PlatformUser user = new PlatformUser();
+		Mockito.when(userService.getUser(Mockito.anyString())).thenReturn(user);
 		Model model = Mockito.mock(Model.class);
 		
 		String result = controller.getProject(1, model);
@@ -93,14 +96,30 @@ public class ProjectControllerTest {
 	}
 	
 	@Test
-	public void testGetProjectRetrievesProjectToModel() {
+	public void testGetProjectRetrievesProjectToModelWhenOwnedByUser() {
 		Project project = new Project();
 		Mockito.when(service.getProject(1)).thenReturn(project);
+		PlatformUser user = new PlatformUser();
+		user.setProjects(Sets.newHashSet(project));
+		Mockito.when(userService.getUser(Mockito.anyString())).thenReturn(user);
 		Model model = Mockito.mock(Model.class);
 		
 		controller.getProject(1, model);
 		
 		Mockito.verify(service).getProject(1);
 		Mockito.verify(model).addAttribute(project);
+	}
+	
+	@Test
+	public void testGetProjectDoesntRetrievesProjectToModelWhenNotOwnedByUser() {
+		Project project = new Project();
+		Mockito.when(service.getProject(1)).thenReturn(project);
+		PlatformUser user = new PlatformUser();
+		Mockito.when(userService.getUser(Mockito.anyString())).thenReturn(user);
+		Model model = Mockito.mock(Model.class);
+		
+		controller.getProject(1, model);
+		
+		Mockito.verifyZeroInteractions(model);
 	}
 }
