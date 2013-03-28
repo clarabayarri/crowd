@@ -98,7 +98,7 @@ public class UserControllerTest {
 		
 		String result = controller.processRegistration(registration, bindingResult, request);
 		
-		assertEquals("redirect:/projects", result);
+		assertEquals("redirect:/projects?registered=true", result);
 	}
 	
 	@Test

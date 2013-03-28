@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
@@ -23,12 +24,15 @@ public class ProjectController {
 	private ProjectService projectService;
 	
 	@RequestMapping("/projects")
-	public String listProjects(Model model) {
+	public String listProjects(Model model, @RequestParam(value="registered", required=false) Boolean registered) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null) {
 	    	String username = auth.getName();
 		    PlatformUser user = userService.getUser(username);
 			model.addAttribute(user.getOrderedProjects());
+	    }
+	    if (registered != null) {
+	    	model.addAttribute("registered", registered);
 	    }
 		return "projects";
 	}

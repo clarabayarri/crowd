@@ -62,7 +62,7 @@ public class ProjectControllerTest {
 		String username = "username";
 		Mockito.when(userService.getUser(username)).thenReturn(new PlatformUser());
 		
-		String result = controller.listProjects(model);
+		String result = controller.listProjects(model, null);
 		
 		assertEquals("projects", result);
 	}
@@ -78,10 +78,21 @@ public class ProjectControllerTest {
 		Mockito.when(context.getAuthentication()).thenReturn(auth);
 		Model model = Mockito.mock(Model.class);
 		
-		controller.listProjects(model);
+		controller.listProjects(model, null);
 		
 		Mockito.verify(userService).getUser(username);
 		Mockito.verify(model).addAttribute(Mockito.any());
+	}
+	
+	@Test
+	public void testListProjectsAddsRegisteredParameterIfProvided() {
+		Model model = Mockito.mock(Model.class);
+		String username = "username";
+		Mockito.when(userService.getUser(username)).thenReturn(new PlatformUser());
+		
+		controller.listProjects(model, true);
+		
+		Mockito.verify(model).addAttribute("registered", true);
 	}
 	
 	@Test

@@ -90,7 +90,7 @@ public class UserController {
 		PlatformUser user = userService.getUser(registration.getUsername());
 		if (user != null) {
 			authenticateUserAndSetSession(user, request);
-			return "redirect:/projects";
+			return "redirect:/projects?registered=true";
 		}
 		bindingResult.reject("registration.error");
 		return "register";

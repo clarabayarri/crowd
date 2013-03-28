@@ -19,6 +19,9 @@
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
     <!-- /// -->
 
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
+
 </head>
 
 <body>
@@ -36,6 +39,13 @@
                 <h1>Crowd platform</h1>
             </div>
 
+            <c:if test="${registered}">
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>Welcome to crowd platform!</h4>
+                    <p>You have successfully created an account. This is your projects summary page, create your first project to begin!</p>
+                </div>
+            </c:if>
 
             <c:if  test="${!empty projectList}">
                 <h2>Projects</h2>
@@ -60,9 +70,14 @@
 </div>
 
 <div class="span5 offset2">
-    <a href="/sample/" class="btn btn-primary" type="button">Create sample data</a>
+    <a href="/sample/" class="btn btn-primary pull-left" type="button">Create sample data</a>
     <a href="/sample/clean" class="btn" type="button">Clean sample data</a>
+    <div class="clear-fix"></div>
 </div>
+
+<script type="text/javascript">
+    $(".alert").alert();
+</script>
 
 </body>
 </html>
