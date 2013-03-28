@@ -52,9 +52,20 @@ public class UserControllerTest {
 	
 	@Test
 	public void testLoadLoginHandleRequestView() {
-		String result = controller.loadLogin();
+		Model model = Mockito.mock(Model.class);
+		
+		String result = controller.loadLogin(model, null);
 		
 		assertEquals("login", result);
+	}
+	
+	@Test
+	public void testLoadLoginAddsErrorParameterIfProvided() {
+		Model model = Mockito.mock(Model.class);
+		
+		controller.loadLogin(model, true);
+		
+		Mockito.verify(model).addAttribute("error", true);
 	}
 	
 	@Test

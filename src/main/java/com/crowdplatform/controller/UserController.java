@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.crowdplatform.model.PasswordResetData;
@@ -69,7 +70,10 @@ public class UserController {
     }
     
 	@RequestMapping("/login")
-	public String loadLogin() {
+	public String loadLogin(Model model, @RequestParam(value="error", required=false) Boolean error) {
+		if (error != null) {
+			model.addAttribute("error", error);
+		}
 		return "login";
 	}
 	

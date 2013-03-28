@@ -68,6 +68,14 @@
                 <strong>Success!</strong> An email has been sent to the email associated to your account with instructions on how to change your password.
             </div>
 
+            <c:if test="${error}">
+                <div class="alert alert-error" data-alert="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>Error!</h4> 
+                    <p>There was an error with your login, please try again.</p>
+                </div>
+            </c:if>
+
             <form method="post" action="/static/j_spring_security_check">
                 <fieldset>
                     <table>
