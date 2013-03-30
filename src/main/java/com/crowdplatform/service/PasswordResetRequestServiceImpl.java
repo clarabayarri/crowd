@@ -1,6 +1,7 @@
 package com.crowdplatform.service;
 
 import java.security.SecureRandom;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -42,6 +43,13 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
 	@Transactional
 	public void removeRequest(PasswordResetRequest request) {
 		em.remove(request);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<PasswordResetRequest> listRequests() {
+		Query query = em.createQuery("FROM PasswordResetRequest");
+		return query.getResultList();
 	}
 
 }

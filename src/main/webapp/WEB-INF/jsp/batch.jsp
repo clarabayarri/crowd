@@ -31,6 +31,14 @@
     <li class="active">${batch.name}</li>
 </ul>
 
+<c:if test="${created}">
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4>Success!</h4>
+        <p>Your batch was created. Please click the start button on your right to start providing these tasks.</p>
+    </div>
+</c:if>
+
 <div class="container">
     <div class="row">
         <div class="span8 offset2">

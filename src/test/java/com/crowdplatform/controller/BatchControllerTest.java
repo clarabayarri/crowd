@@ -39,7 +39,7 @@ public class BatchControllerTest {
 	public void testGetBatchHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
 		
-		String result = controller.getBatch(1, 1, model);
+		String result = controller.getBatch(1, 1, model, null);
 		
 		assertEquals("batch", result);
 	}
@@ -50,10 +50,19 @@ public class BatchControllerTest {
 		Mockito.when(service.getBatch(1)).thenReturn(batch);
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(1, 1, model);
+		controller.getBatch(1, 1, model, null);
 		
 		Mockito.verify(model).addAttribute(batch);
 		Mockito.verify(service).getBatch(1);
+	}
+	
+	@Test
+	public void testGetBatchAddsCreatedParameterIfProvided() {
+		Model model = Mockito.mock(Model.class);
+		
+		controller.getBatch(1, 1, model, true);
+		
+		Mockito.verify(model).addAttribute("created", true);
 	}
 	
 	@Test

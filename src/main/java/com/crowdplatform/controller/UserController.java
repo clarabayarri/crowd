@@ -104,7 +104,6 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public void forgotPassword(String username) {
 		PlatformUser user = userService.getUserByUsernameOrEmail(username);
-		System.out.println(username);
 		if (user != null) {
 			PasswordResetRequest request = new PasswordResetRequest();
 			request.setUser(user);

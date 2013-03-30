@@ -109,6 +109,7 @@ public class ProjectControllerTest {
 	@Test
 	public void testGetProjectRetrievesProjectToModelWhenOwnedByUser() {
 		Project project = new Project();
+		project.setId(1);
 		Mockito.when(service.getProject(1)).thenReturn(project);
 		PlatformUser user = new PlatformUser();
 		user.setProjects(Sets.newHashSet(project));

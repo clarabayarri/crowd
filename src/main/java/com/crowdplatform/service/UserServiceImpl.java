@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<PlatformUser> listUsers() {
-		Query query = em.createQuery("FROM User");
+		Query query = em.createQuery("FROM PlatformUser");
 		return query.getResultList();
 	}
 	

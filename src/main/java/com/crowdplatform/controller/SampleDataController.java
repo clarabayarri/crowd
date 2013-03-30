@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ExecutionService;
 import com.crowdplatform.service.FieldService;
+import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
 import com.crowdplatform.service.UserService;
@@ -46,6 +47,9 @@ public class SampleDataController {
 	
 	@Autowired
 	private ExecutionService executionService;
+	
+	@Autowired
+	private PasswordResetRequestService passwordService;
 	
 	private Random random = new Random();
 	

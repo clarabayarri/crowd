@@ -41,8 +41,12 @@ public class BatchController {
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
 	public String getBatch(@PathVariable("projectId") Integer projectId, 
-			@PathVariable("batchId") Integer batchId, Model model) {
+			@PathVariable("batchId") Integer batchId, Model model,
+			@RequestParam(value="created", required=false) Boolean created) {
 		model.addAttribute(batchService.getBatch(batchId));
+		if (created != null) {
+			model.addAttribute("created", created);
+		}
 		return "batch";
 	}
 
@@ -104,7 +108,7 @@ public class BatchController {
 			}
 		}
 
-		return "redirect:/project/" + projectId + "/batch/" + batch.getId();
+		return "redirect:/project/" + projectId + "/batch/" + batch.getId() + "?created=true";
 	}
 
 	private boolean validateFileFormat(MultipartFile file) {

@@ -44,8 +44,10 @@ public class ProjectController {
 	    	String username = auth.getName();
 		    PlatformUser user = userService.getUser(username);
 			Project project = projectService.getProject(projectId);
-			if (user.getProjects().contains(project)) {
-				model.addAttribute(project);
+			for (Project p : user.getProjects()) {
+				if (p.getId().equals(projectId)) {
+					model.addAttribute(project);
+				}
 			}
 	    }
 		return "project";

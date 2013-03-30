@@ -49,7 +49,7 @@ public class Project {
 		users = Sets.newHashSet();
 		creationDate = new Date();
 	}
-
+	
 	public Integer getId() {
 		return id;
 	}

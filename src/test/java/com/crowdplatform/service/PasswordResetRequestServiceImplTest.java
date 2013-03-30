@@ -52,4 +52,14 @@ public class PasswordResetRequestServiceImplTest {
 		
 		Mockito.verify(em).find(PasswordResetRequest.class, Long.MIN_VALUE);
 	}
+	
+	@Test
+	public void testListRequests() {
+		Query query = Mockito.mock(Query.class);
+		Mockito.when(em.createQuery("FROM PasswordResetRequest")).thenReturn(query);
+		
+		service.listRequests();
+		
+		Mockito.verify(query).getResultList();
+	}
 }
