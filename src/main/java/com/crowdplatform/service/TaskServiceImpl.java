@@ -27,6 +27,8 @@ public class TaskServiceImpl implements TaskService {
 	private BatchService batchService;
 	
 	private EntityManager em;
+	
+	private ObjectMapper mapper = new ObjectMapper();
 	 
 	@PersistenceContext
 	public void setEntityManager(EntityManager entityManager) {
@@ -66,38 +68,9 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public void createTasks(Batch batch, Set<Field> fields, List<Map<String, String>> fileContents) {
     	Set<Task> result = Sets.newHashSet();
-    	ObjectMapper mapper = new ObjectMapper();
     	
     	for (Map<String, String> line : fileContents) {
-    		ObjectNode contents = mapper.createObjectNode();
-    		for (Field field : fields) {
-    			String value = line.get(field.getName());
-    			if (value == null && field.getType() != Field.Type.MULTIVALUATE_STRING) {
-    				contents.putNull(field.getName());
-    			} else {
-    				switch (field.getType()) {
-        			case STRING:
-        				contents.put(field.getName(), value);
-        				break;
-        			case INTEGER:
-        				contents.put(field.getName(), Integer.valueOf(value));
-        				break;
-        			case DOUBLE:
-        				contents.put(field.getName(), Float.valueOf(value));
-        				break;
-        			case MULTIVALUATE_STRING:
-        				ArrayNode array = mapper.createArrayNode();
-        				for (String column : field.getColumnNames()) {
-        					if (line.get(column) != null && !line.get(column).isEmpty())
-        						array.add(line.get(column));
-        				}
-        				contents.put(field.getName(), array);
-        				break;
-        			case BOOL:
-        				break;
-        			} 
-    			}
-    		}
+    		ObjectNode contents = encodeLine(fields, line);
     		
     		Task task = new Task();
     		task.setContents(contents.toString());
@@ -108,5 +81,42 @@ public class TaskServiceImpl implements TaskService {
     	
     	batch.setTasks(result);
 		batchService.saveBatch(batch);
+    }
+    
+    private ObjectNode encodeLine(Set<Field> fields, Map<String, String> line) {
+    	ObjectNode contents = mapper.createObjectNode();
+		for (Field field : fields) {
+			String value = line.get(field.getName());
+			if (value == null && field.getType() != Field.Type.MULTIVALUATE_STRING) {
+				contents.putNull(field.getName());
+			} else{
+				switch (field.getType()) {
+    			case STRING:
+    				contents.put(field.getName(), value);
+    				break;
+    			case INTEGER:
+    				if (!value.isEmpty()) {
+    					contents.put(field.getName(), Integer.valueOf(value));
+    				}
+    				break;
+    			case DOUBLE:
+    				if (!value.isEmpty()) {
+    					contents.put(field.getName(), Float.valueOf(value));
+    				}
+    				break;
+    			case MULTIVALUATE_STRING:
+    				ArrayNode array = mapper.createArrayNode();
+    				for (String column : field.getColumnNames()) {
+    					if (line.get(column) != null && !line.get(column).isEmpty())
+    						array.add(line.get(column));
+    				}
+    				contents.put(field.getName(), array);
+    				break;
+    			case BOOL:
+    				break;
+    			} 
+			}
+		}
+		return contents;
     }
 }

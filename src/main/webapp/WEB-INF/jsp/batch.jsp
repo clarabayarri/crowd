@@ -19,6 +19,9 @@
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
     <!-- /// -->
 
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
+
 </head>
 
 <body>
@@ -31,17 +34,20 @@
     <li class="active">${batch.name}</li>
 </ul>
 
-<c:if test="${created}">
-    <div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <h4>Success!</h4>
-        <p>Your batch was created. Please click the start button on your right to start providing these tasks.</p>
-    </div>
-</c:if>
-
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
+
+            <c:if test="${created}">
+                <div class="alert alert-success alert-block fade in">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>Success!</h4>
+                    <p>Your batch was created. Please click the start button on your right to start providing these tasks.</p>
+                </div>
+
+                <div class="clear-fix"></div>
+            </c:if>
+
             <div class="pull-right">
                 <p>
                 <c:choose>
@@ -65,14 +71,18 @@
                     </c:when>
                 </c:choose>
                 </p>
+
                 <p><a href="/project/${batch.project.id}/batch/${batch.id}/download" class="btn btn-info">Download executions</a></p>
 
             </div>
             
+            <div class="clear-fix"></div>
 
             <div class="page-header">
                 <h1>Batch ${batch.name}</h1>
             </div>
+
+            <div class="clear-fix"></div>
 
             <dl class="dl-horizontal">
                 <dt>Tasks</dt>
@@ -112,7 +122,13 @@
                     <div class="extra-info">
                         <p><strong>Id: </strong>${task.id}</p>
                         <p><strong>Executions: </strong>${task.numExecutions}</p>
-                        <p><strong>Contents: </strong>${task.contents}</p>
+                        <p><strong>Contents:</p>
+                        <dl class="dl-horizontal">
+                            <c:forEach var="entry" items="${task.contentsMap}">
+                                <dt><c:out value="${entry.key}"/></dt>
+                                <dd><c:out value="${entry.value}"/></dd>
+                            </c:forEach>
+                        </dl>
                     </div>
                     
                 </div>
@@ -120,6 +136,10 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(".alert").alert();
+</script>
 
 </body>
 </html>
