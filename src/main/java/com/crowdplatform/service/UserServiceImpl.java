@@ -35,7 +35,9 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public PlatformUser getUser(String username) {
 		PlatformUser user = em.find(PlatformUser.class, username);
-		user.getProjects().size();
+		if (user.getProjects() != null) {
+			user.getProjects().size();
+		}
 		return user;
 	}
 	

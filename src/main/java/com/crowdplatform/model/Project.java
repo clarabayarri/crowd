@@ -40,7 +40,7 @@ public class Project {
 	@OneToMany
 	private Set<ProjectUser> users;
 	
-	@Formula("(select count(*) from user_project up where up.projects_id=id)")
+	@Formula("(select count(*) from project_projectuser up where up.project_id=id)")
 	private Integer numUsers;
 	
 	public Project() {
