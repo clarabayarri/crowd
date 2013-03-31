@@ -37,7 +37,7 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="pull-right">
-                <a href="/project/${project.id}/batch/new" class="btn">New batch</a>
+                <a href="/project/${project.id}/batch/create" class="btn">New batch</a>
             </div>
 
             <div class="page-header">
@@ -153,6 +153,10 @@
                         
                     </div>
                 </c:forEach>
+
+                <a href="/project/${project.id}/delete" class="btn btn-danger pull-right">Delete project</a>
+
+            <div class="clear-fix"></div>
             </c:if>
         </div>
     </div>

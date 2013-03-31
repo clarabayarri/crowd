@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,12 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
-import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
-import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
 
@@ -51,7 +48,7 @@ public class BatchController {
 	public String getBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId, Model model,
 			@RequestParam(value="created", required=false) Boolean created) {
-		if (userIsAuthorizedForBatch(projectId, batchId)) {
+		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			model.addAttribute(projectService.getProject(projectId));
 			model.addAttribute(batchService.getBatch(batchId));
 		}
@@ -64,7 +61,7 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/start")
 	public String startBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		if (userIsAuthorizedForBatch(projectId, batchId)) {
+		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.startBatch(batchId);
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
@@ -73,7 +70,7 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/pause")
 	public String pauseBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		if (userIsAuthorizedForBatch(projectId, batchId)) {
+		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.pauseBatch(batchId);
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
@@ -82,41 +79,21 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/delete")
 	public String deleteBatch(@PathVariable("projectId") Integer projectId,
 			@PathVariable("batchId") Integer batchId) {
-		if (userIsAuthorizedForBatch(projectId, batchId)) {
+		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.removeBatch(batchId);
 		}
 		return "redirect:/project/" + projectId;
 	}
 
-	@RequestMapping("/project/{projectId}/batch/new")
+	@RequestMapping(value={"/project/{projectId}/batch/create"}, method=RequestMethod.GET)
 	public String newBatch(@PathVariable("projectId") Integer projectId, Model model) {
 		Batch batch = new Batch();
-		if (userIsAuthorizedForProject(projectId)) {
+		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
 			model.addAttribute(project);
 	    }
 		model.addAttribute(batch);
 		return "create";
-	}
-	
-	private boolean userIsAuthorizedForProject(Integer projectId) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    if (auth != null) {
-	    	String username = auth.getName();
-		    PlatformUser user = userService.getUser(username);
-			return user.isOwnerOfProject(projectId);
-	    }
-	    return false;
-	}
-	
-	private boolean userIsAuthorizedForBatch(Integer projectId, Integer batchId) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    if (auth != null) {
-	    	String username = auth.getName();
-		    PlatformUser user = userService.getUser(username);
-			return user.isOwnerOfBatch(projectId, batchId);
-	    }
-	    return false;
 	}
 
 	@RequestMapping(value="/project/{projectId}/batch/create", method = RequestMethod.POST)
@@ -125,16 +102,12 @@ public class BatchController {
 			return "create";
 		}
 
-		if (taskFile != null && !taskFile.isEmpty()) {
-			if (validateFileFormat(taskFile)) {
-				System.out.println("OK");
-			} else {
-				bindingResult.reject("error.file.format");
-				return "create";
-			}
+		if (taskFile != null && !taskFile.isEmpty() && !validateFileFormat(taskFile)) {
+			bindingResult.reject("error.file.format");
+			return "create";
 		}
 
-		if (userIsAuthorizedForProject(projectId)) {
+		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
 			project.addBatch(batch);
 			

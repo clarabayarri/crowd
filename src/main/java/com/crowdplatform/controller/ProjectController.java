@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
-import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.PlatformUserService;
+import com.crowdplatform.service.ProjectService;
 
 @Controller
 public class ProjectController {
@@ -39,17 +39,18 @@ public class ProjectController {
 	
 	@RequestMapping("/project/{projectId}")
 	public String getProject(@PathVariable("projectId") Integer projectId, Model model) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    if (auth != null) {
-	    	String username = auth.getName();
-		    PlatformUser user = userService.getUser(username);
-			Project project = projectService.getProject(projectId);
-			for (Project p : user.getProjects()) {
-				if (p.getId().equals(projectId)) {
-					model.addAttribute(project);
-				}
-			}
+		if (userService.currentUserIsAuthorizedForProject(projectId)) {
+	    	Project project = projectService.getProject(projectId);
+			model.addAttribute(project);
 	    }
 		return "project";
+	}
+	
+	@RequestMapping("/project/{projectId}/delete")
+	public String deleteProject(@PathVariable Integer projectId) {
+		if (userService.currentUserIsAuthorizedForProject(projectId)) {
+			projectService.removeProject(projectId);
+		}
+		return "redirect:/projects";
 	}
 }

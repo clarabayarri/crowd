@@ -28,7 +28,5 @@ public class ProjectUserServiceImpl implements ProjectUserService {
 		ProjectUser user = em.find(ProjectUser.class, username);
 		return user;
 	}
-
 	
-
 }

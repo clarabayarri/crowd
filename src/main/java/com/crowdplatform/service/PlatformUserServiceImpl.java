@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +79,29 @@ public class PlatformUserServiceImpl implements PlatformUserService {
 	public boolean usernameExists(String username) {
 		PlatformUser user = em.find(PlatformUser.class, username);
 		return user !=  null;
+	}
+
+	@Transactional
+	public boolean currentUserIsAuthorizedForProject(Integer projectId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null) {
+	    	String username = auth.getName();
+		    PlatformUser user = getUser(username);
+			return user.isOwnerOfProject(projectId);
+	    }
+	    return false;
+	}
+
+	@Transactional
+	public boolean currentUserIsAuthorizedForBatch(Integer projectId,
+			Integer batchId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null) {
+	    	String username = auth.getName();
+		    PlatformUser user = getUser(username);
+			return user.isOwnerOfBatch(projectId, batchId);
+	    }
+	    return false;
 	}
 
 }
