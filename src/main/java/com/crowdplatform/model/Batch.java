@@ -18,9 +18,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Formula;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 
 @Entity
@@ -54,6 +57,7 @@ public class Batch {
 	private State state;
 	
 	@OneToMany
+	@Cascade({CascadeType.ALL})
 	private Set<Task> tasks;
 	
 	@Formula("(select count(*) from Task t where t.Batch_id=id)")
@@ -61,7 +65,9 @@ public class Batch {
 
 	public Batch() {
 		creationDate = new Date();
+		tasks = Sets.newHashSet();
 		executionsPerTask = 1;
+		state = State.PAUSED;
 	}
 	
 	public Integer getId() {
@@ -95,6 +101,10 @@ public class Batch {
 	public void setTasks(Set<Task> tasks) {
 		this.tasks = tasks;
 		updatePercentageComplete();
+	}
+	
+	public void addTask(Task task) {
+		this.tasks.add(task);
 	}
 
 	public double getPercentageComplete() {

@@ -12,8 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.crowdplatform.model.Execution;
-import com.crowdplatform.model.Task;
-import com.crowdplatform.service.ExecutionServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutionServiceImplTest {
@@ -31,7 +29,7 @@ public class ExecutionServiceImplTest {
 	
 	@Test
 	public void testAddExecution() {
-		Execution execution = new Execution("", new Task());
+		Execution execution = new Execution("");
 		
 		service.addExecution(execution);
 		

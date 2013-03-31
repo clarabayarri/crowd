@@ -5,8 +5,6 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class Execution {
@@ -19,17 +17,12 @@ public class Execution {
 	
 	private String contents;
 	
-	@ManyToOne
-	@JoinColumn(name="Task_id")
-	private Task task;
-	
 	public Execution() {
 		this.date = new Date();
 	}
 	
-	public Execution(String contents, Task task) {
+	public Execution(String contents) {
 		this.contents = contents;
-		this.task = task;
 		this.date = new Date();
 	}
 
@@ -56,15 +49,4 @@ public class Execution {
 	public void setContents(String contents) {
 		this.contents = contents;
 	}
-
-	public Task getTask() {
-		return task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
-	}
-	
-	
-	
 }

@@ -23,7 +23,6 @@ import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
-import com.crowdplatform.service.ExecutionService;
 import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 import com.crowdplatform.service.TaskService;
@@ -39,9 +38,6 @@ public class RemoteServiceController {
 	private TaskRetrievalStrategy taskRetrieval;
 	
 	@Autowired
-	private ExecutionService executionService;
-	
-	@Autowired
 	private ProjectUserService userService;
 	
 	@RequestMapping(value="/task", method=RequestMethod.GET)
@@ -55,8 +51,9 @@ public class RemoteServiceController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public void saveExecution(@RequestBody ExecutionInfo info) {
 		Task task = taskService.getTask(info.getTaskId());
-		Execution execution = new Execution(info.getContents(), task);
-		executionService.addExecution(execution);
+		Execution execution = new Execution(info.getContents());
+		task.getExecutions().add(execution);
+		taskService.saveTask(task);
 	}
 	
 	@RequestMapping(value="/user", method=RequestMethod.POST)

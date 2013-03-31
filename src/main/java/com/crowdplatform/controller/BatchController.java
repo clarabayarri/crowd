@@ -78,7 +78,7 @@ public class BatchController {
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
 
-	@RequestMapping("/project/{projectId}/batch/delete/{batchId}")
+	@RequestMapping("/project/{projectId}/batch/{batchId}/delete")
 	public String deleteBatch(@PathVariable("projectId") Integer projectId,
 			@PathVariable("batchId") Integer batchId) {
 		if (userIsAuthorized(projectId)) {
@@ -124,10 +124,13 @@ public class BatchController {
 		}
 
 		if (userIsAuthorized(projectId)) {
-			batchService.createBatch(batch, projectId);
+			Project project = projectService.getProject(projectId);
+			batch.setProject(project);
+			project.addBatch(batch);
+			projectService.saveProject(project);
 			
 			if (taskFile != null && !taskFile.isEmpty()) {
-				Set<Field> fields = projectService.getProject(projectId).getInputFields();
+				Set<Field> fields = project.getInputFields();
 				FileReader reader = new FileReader();
 				try {
 					List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
@@ -138,8 +141,6 @@ public class BatchController {
 				}
 			}
 		}
-
-		
 
 		return "redirect:/project/" + projectId + "/batch/" + batch.getId() + "?created=true";
 	}

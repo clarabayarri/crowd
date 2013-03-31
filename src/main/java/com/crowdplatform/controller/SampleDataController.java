@@ -3,7 +3,6 @@ package com.crowdplatform.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,15 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.service.BatchService;
-import com.crowdplatform.service.ExecutionService;
-import com.crowdplatform.service.FieldService;
 import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.TaskService;
 import com.crowdplatform.service.UserService;
 import com.google.common.collect.Sets;
 
@@ -35,18 +31,6 @@ public class SampleDataController {
 	
 	@Autowired
 	private ProjectService projectService;
-	
-	@Autowired
-    private BatchService batchService;
-	
-	@Autowired
-	private FieldService fieldService;
-	
-	@Autowired
-	private TaskService taskService;
-	
-	@Autowired
-	private ExecutionService executionService;
 	
 	@Autowired
 	private PasswordResetRequestService passwordService;
@@ -62,45 +46,13 @@ public class SampleDataController {
 	
 	@RequestMapping("/clean")
 	public String cleanSampleData() {
-		List<Project> projects = projectService.listProjects();
-		for (Project project : projects) {
-			project.setBatches(null);
-			project.setFields(null);
-			projectService.saveProject(project);
-			
+		List<PasswordResetRequest> requests = passwordService.listRequests();
+		for (PasswordResetRequest request : requests) {
+			passwordService.removeRequest(request);
 		}
 		List<PlatformUser> users = userService.listUsers();
 		for (PlatformUser user : users) {
-			user.setProjects(null);
-			userService.saveUser(user);
 			userService.removeUser(user.getUsername());
-		}
-		List<Field> fields = fieldService.listFields();
-		for (Field field : fields) {
-			fieldService.removeField(field.getId());
-		}
-		List<Batch> batches = batchService.listBatches();
-		for (Batch batch : batches) {
-			batch.setTasks(null);
-			batchService.saveBatch(batch);
-		}
-		List<Task> tasks = taskService.listTasks();
-		for (Task task : tasks) {
-			task.setExecutions(null);
-			taskService.saveTask(task);
-		}
-		List<Execution> executions = executionService.listExecutions();
-		for (Execution execution : executions) {
-			executionService.removeExecution(execution.getId());
-		}
-		for (Task task : tasks) {
-			taskService.removeTask(task.getId());
-		}
-		for (Batch batch : batches) {
-			batchService.removeBatch(batch.getId());
-		}
-		for (Project project : projects) {
-			projectService.removeProject(project.getId());
 		}
 		return "redirect:/projects";
 	}
@@ -118,18 +70,12 @@ public class SampleDataController {
 	private void createSampleProject() {
 		Project project = new Project();
 		project.setName("Awesome project");
+		createInputFields(project);
+		createOutputFields(project);
 		projectService.addProject(project);
 		
-		createInputFields(project);
-		projectService.saveProject(project);
-		createOutputFields(project);
-		projectService.saveProject(project);
-		
-		Set<Batch> batches = Sets.newHashSet();
 		for (int i = 0; i < 5; ++i)
-			batches.add(createSampleBatch(project));
-		project.setBatches(batches);
-		projectService.saveProject(project);
+			project.addBatch(createSampleBatch(project));
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null) {
@@ -137,7 +83,6 @@ public class SampleDataController {
 		    PlatformUser user = userService.getUser(username);
 		    user.addProject(project);
 		    userService.saveUser(user);
-		    projectService.saveProject(project);
 	    }
 	}
 	
@@ -146,44 +91,37 @@ public class SampleDataController {
 		field0.setName("id");
 		field0.setType(Field.Type.INTEGER);
 		field0.setFieldType(Field.FieldType.INPUT);
-		fieldService.addField(field0);
 		project.addField(field0);
 		Field field1 = new Field();
 		field1.setName("type");
 		field1.setType(Field.Type.STRING);
 		field1.setFieldType(Field.FieldType.INPUT);
-		fieldService.addField(field1);
 		project.addField(field1);
 		Field field2 = new Field();
 		field2.setName("level");
 		field2.setType(Field.Type.INTEGER);
 		field2.setFieldType(Field.FieldType.INPUT);
-		fieldService.addField(field2);
 		project.addField(field2);
 		Field field3 = new Field();
 		field3.setName("language");
 		field3.setType(Field.Type.STRING);
 		field3.setFieldType(Field.FieldType.INPUT);
-		fieldService.addField(field3);
 		project.addField(field3);
 		Field field4 = new Field();
 		field4.setName("word");
 		field4.setType(Field.Type.STRING);
 		field4.setFieldType(Field.FieldType.INPUT);
-		fieldService.addField(field4);
 		project.addField(field4);
 		Field field5 = new Field();
 		field5.setName("display");
 		field5.setType(Field.Type.STRING);
 		field5.setFieldType(Field.FieldType.INPUT);
-		fieldService.addField(field5);
 		project.addField(field5);
 		Field field6 = new Field();
 		field6.setName("answers");
 		field6.setType(Field.Type.MULTIVALUATE_STRING);
 		field6.setFieldType(Field.FieldType.INPUT);
 		field6.setColumnNames(Sets.newHashSet("correct", "dis_1", "dis_2", "dis_3", "dis_4", "dis_5", "dis_6"));
-		fieldService.addField(field6);
 		project.addField(field6);
 	}
 	
@@ -192,19 +130,16 @@ public class SampleDataController {
 		field0.setName("timeSpent");
 		field0.setType(Field.Type.INTEGER);
 		field0.setFieldType(Field.FieldType.OUTPUT);
-		fieldService.addField(field0);
 		project.addField(field0);
 		Field field1 = new Field();
 		field1.setName("failedAttempts");
 		field1.setType(Field.Type.INTEGER);
 		field1.setFieldType(Field.FieldType.OUTPUT);
-		fieldService.addField(field1);
 		project.addField(field1);
 		Field field2 = new Field();
 		field2.setName("wrongAnswers");
 		field2.setType(Field.Type.MULTIVALUATE_STRING);
 		field2.setFieldType(Field.FieldType.OUTPUT);
-		fieldService.addField(field2);
 		project.addField(field2);
 	}
 	
@@ -218,11 +153,6 @@ public class SampleDataController {
 		batch.setState(states[stateIndex]);
 		batch.setProject(project);
 		
-		batchService.addBatch(batch);
-		
-		Random random = new Random();
-		
-		Set<Task> tasks = Sets.newHashSet();
 		int numTasks = random.nextInt(15) + 1;
 		for (int i = 0; i < numTasks; ++i) {
 			Task task = new Task();
@@ -231,20 +161,13 @@ public class SampleDataController {
 			task.setBatch(batch);
 			int index = random.nextInt(definitions.length);
 			task.setContents(definitions[index]);
-			taskService.addTask(task);
 			
-			Set<Execution> executions = Sets.newHashSet();
 			for (int j = 0; j < numExecutions; ++ j) {
-				Execution execution = new Execution("{\"timeSpent\":300,\"failedAttempts\":1,\"wrongAnswers\":[\"answer\"]}", task);
-				executionService.addExecution(execution);
-				executions.add(execution);
+				Execution execution = new Execution("{\"timeSpent\":300,\"failedAttempts\":1,\"wrongAnswers\":[\"answer\"]}");
+				task.addExecution(execution);
 			}
-			task.setExecutions(executions);
-			taskService.saveTask(task);
-			tasks.add(task);
+			batch.addTask(task);
 		}
-		batch.setTasks(tasks);
-		batchService.saveBatch(batch);
 		
 		return batch;
 	}

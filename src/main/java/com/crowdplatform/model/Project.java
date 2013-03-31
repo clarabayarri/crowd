@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Formula;
 
 import com.google.common.collect.Lists;
@@ -32,12 +34,15 @@ public class Project {
 	private Date creationDate;
 	
 	@OneToMany
+	@Cascade({CascadeType.ALL})
 	private Set<Batch> batches;
 	
 	@OneToMany
+	@Cascade({CascadeType.ALL})
 	private Set<Field> fields;
 	
 	@OneToMany
+	@Cascade({CascadeType.ALL})
 	private Set<ProjectUser> users;
 	
 	@Formula("(select count(*) from project_projectuser up where up.project_id=id)")

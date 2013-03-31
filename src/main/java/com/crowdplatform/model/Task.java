@@ -15,9 +15,12 @@ import javax.persistence.OneToMany;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Formula;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Entity
 public class Task {
@@ -33,13 +36,15 @@ public class Task {
 	private Batch batch;
 	
 	@OneToMany
+	@Cascade({CascadeType.ALL})
 	Set<Execution> executions;
 	
-	@Formula("(select count(*) from Execution e where e.Task_id=id)")
+	@Formula("(select count(*) from task_execution te where te.task_id=id)")
 	private Integer numExecutions;
 
 	public Task() {
 		this.numExecutions = 0;
+		this.executions = Sets.newHashSet();
 	}
 	
 	public Integer getId() {
@@ -96,6 +101,10 @@ public class Task {
 
 	public void setExecutions(Set<Execution> executions) {
 		this.executions = executions;
+	}
+	
+	public void addExecution(Execution execution) {
+		this.executions.add(execution);
 	}
 
 	public void setNumExecutions(Integer numExecutions) {

@@ -133,6 +133,10 @@
                     
                 </div>
             </c:forEach>
+
+            <a href="/project/${batch.project.id}/batch/${batch.id}/delete" class="btn btn-danger pull-right">Delete batch</a>
+
+            <div class="clear-fix"></div>
         </div>
     </div>
 </div>

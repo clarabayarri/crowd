@@ -2,6 +2,8 @@ package com.crowdplatform.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
@@ -14,7 +16,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.service.BatchServiceImpl;
+import com.crowdplatform.model.Task;
+import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchServiceImplTest {
@@ -25,58 +28,70 @@ public class BatchServiceImplTest {
 	@Mock
 	private EntityManager em;
 	
+	private Batch batch = new Batch();
+	private Batch mockBatch;
+	
+	private static final Integer batchId = 1;
+	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
-	}
-	
-	@Test
-	public void testAddBatch() {
-		Batch batch = new Batch();
-		
-		service.addBatch(batch);
-		
-		Mockito.verify(em).persist(batch);
-	}
-	
-	@Test
-	public void testRemoveBatch() {
-		Batch newBatch = new Batch();
-		Mockito.when(em.find(Batch.class, 1)).thenReturn(newBatch);
-		
-		service.removeBatch(1);
-		
-		Mockito.verify(em).remove(newBatch);
+	    
+		Mockito.when(em.find(Batch.class, batchId)).thenReturn(batch);
 	}
 	
 	@Test
 	public void testSaveBatch() {
-		Batch batch = new Batch();
-		
 		service.saveBatch(batch);
 		
 		Mockito.verify(em).merge(batch);
 	}
 	
 	@Test
-	public void testStartBatch() {
-		Batch batch = new Batch();
-		batch.setState(Batch.State.PAUSED);
-		Mockito.when(em.find(Batch.class, 1)).thenReturn(batch);
+	public void testRemoveBatch() {
+		service.removeBatch(batchId);
 		
-		service.startBatch(1);
+		Mockito.verify(em).remove(batch);
+	}
+	
+	@Test
+	public void testGetBatch() {
+		service.getBatch(batchId);
+		
+		Mockito.verify(em).find(Batch.class, batchId);
+	}
+	
+	@Test
+	public void testGetBatchEagerlyLoadsRelations() {
+		mockBatch = Mockito.mock(Batch.class);
+	    mockBatch.setId(batchId);
+		Set<Task> tasks = Sets.newHashSet();
+		Mockito.when(mockBatch.getTasks()).thenReturn(tasks);
+		Mockito.when(em.find(Batch.class, batchId)).thenReturn(mockBatch);
+		
+		service.getBatch(batchId);
+		
+		Mockito.verify(mockBatch).getTasks();
+		Mockito.verify(mockBatch).getNumTasks();
+	}
+	
+	@Test
+	public void testStartBatch() {
+		batch.setState(Batch.State.PAUSED);
+		
+		service.startBatch(batchId);
 		
 		assertEquals(Batch.State.RUNNING, batch.getState());
+		Mockito.verify(em).merge(batch);
 	}
 	
 	@Test
 	public void testPauseBatch() {
-		Batch batch = new Batch();
 		batch.setState(Batch.State.RUNNING);
-		Mockito.when(em.find(Batch.class, 1)).thenReturn(batch);
 		
-		service.pauseBatch(1);
+		service.pauseBatch(batchId);
 		
 		assertEquals(Batch.State.PAUSED, batch.getState());
+		Mockito.verify(em).merge(batch);
 	}
 }

@@ -128,13 +128,15 @@ public class BatchControllerTest {
 	@Test
 	public void testCreateBatchCallsService() {
 		Batch batch = new Batch();
-		Mockito.when(projectService.getProject(1)).thenReturn(new Project());
+		Project project = Mockito.mock(Project.class);
+		Mockito.when(projectService.getProject(1)).thenReturn(project);
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		
 		controller.createBatch(batch, 1, bindingResult, null);
 		
-		Mockito.verify(service).createBatch(batch, 1);
+		Mockito.verify(project).addBatch(batch);
+		Mockito.verify(projectService).saveProject(project);
 	}
 
 }

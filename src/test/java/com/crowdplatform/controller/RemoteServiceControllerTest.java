@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
@@ -70,11 +69,12 @@ public class RemoteServiceControllerTest {
 	public void testSaveExecutionCallsServiceToSave() {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setTaskId(3);
-		Mockito.when(taskService.getTask(3)).thenReturn(new Task());
+		Task task = new Task();
+		Mockito.when(taskService.getTask(3)).thenReturn(task);
 		
 		controller.saveExecution(info);
 		
-		Mockito.verify(executionService).addExecution(Mockito.any(Execution.class));
+		Mockito.verify(taskService).saveTask(task);
 	}
 	
 	@Test
