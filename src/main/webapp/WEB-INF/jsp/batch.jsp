@@ -20,6 +20,7 @@
     <!-- /// -->
 
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
     <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
 
 </head>
@@ -33,6 +34,20 @@
     <li><a href="/project/${project.id}">${project.name}</a> <span class="divider">/</span></li>
     <li class="active">${batch.name}</li>
 </ul>
+
+<div id="confirm" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Are you sure?</h3>
+    </div>
+    <div class="modal-body">
+        <p>All associated tasks and executions will be deleted.</p>
+    </div>
+    <div class="modal-footer">
+        <button data-dismiss="modal" aria-hidden="true" class="btn">Cancel</button>
+        <a href="/project/${project.id}/batch/${batch.id}/delete" class="btn btn-danger" id="delete-send">Delete</a>
+    </div>
+</div>
 
 <div class="container">
     <div class="row">
@@ -135,8 +150,7 @@
             </c:forEach>
 
             <div>
-                <a href="/project/${project.id}/batch/${batch.id}/delete" class="btn btn-danger pull-right">Delete batch</a>
-
+                <a href="#confirm" data-toggle="modal" class="btn btn-danger pull-right">Delete batch</a>
                 
             </div>
 
@@ -150,6 +164,5 @@
 <script type="text/javascript">
     $(".alert").alert();
 </script>
-
 </body>
 </html>

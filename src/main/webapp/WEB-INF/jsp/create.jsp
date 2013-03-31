@@ -40,7 +40,7 @@
                 <h1>Create batch</h1>
             </div>
 
-            <form:form method="POST" modelAttribute="batch" action="/project/${project.id}/batch/create" enctype="multipart/form-data">
+            <form:form method="POST" modelAttribute="batch" action="/project/${project.id}/batch/create" enctype="multipart/form-data" id="batch-form">
                 <div class="control-group error">
                     <div class="controls">
                         <form:errors path="*" cssClass="error help-inline" />

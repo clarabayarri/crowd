@@ -20,6 +20,7 @@
     <!-- /// -->
 
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
     <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tab.js"></script>
 
 </head>
@@ -32,6 +33,20 @@
     <li><a href="/projects">Projects</a> <span class="divider">/</span></li>
     <li class="active">${project.name}</li>
 </ul>
+
+<div id="confirm" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Are you sure?</h3>
+    </div>
+    <div class="modal-body">
+        <p>All associated batches, users, tasks and executions will be deleted.</p>
+    </div>
+    <div class="modal-footer">
+        <button data-dismiss="modal" aria-hidden="true" class="btn">Cancel</button>
+        <a href="/project/${project.id}/delete" class="btn btn-danger" id="delete-send">Delete</a>
+    </div>
+</div>
 
 <div class="container">
     <div class="row">
@@ -155,7 +170,7 @@
                 </c:forEach>
             </c:if>
 
-            <a href="/project/${project.id}/delete" class="btn btn-danger pull-right">Delete project</a>
+            <a href="#confirm" data-toggle="modal" class="btn btn-danger pull-right">Delete project</a>
 
             <div class="clear-fix"></div>
         </div>
