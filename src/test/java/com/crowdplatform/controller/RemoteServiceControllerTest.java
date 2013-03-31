@@ -15,7 +15,6 @@ import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
-import com.crowdplatform.service.ExecutionService;
 import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 import com.crowdplatform.service.TaskService;
@@ -31,9 +30,6 @@ public class RemoteServiceControllerTest {
 	
 	@Mock
 	private TaskRetrievalStrategy taskRetrieval;
-	
-	@Mock
-	private ExecutionService executionService;
 	
 	@Mock
 	private ProjectUserService userService;
