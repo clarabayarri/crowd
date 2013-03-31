@@ -36,13 +36,13 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
 	}
 
 	@Transactional
-	public PasswordResetRequest getRequest(Long id) {
-		return em.find(PasswordResetRequest.class, id);
+	public void removeRequest(PasswordResetRequest request) {
+		em.remove(request);
 	}
 
 	@Transactional
-	public void removeRequest(PasswordResetRequest request) {
-		em.remove(request);
+	public PasswordResetRequest getRequest(Long id) {
+		return em.find(PasswordResetRequest.class, id);
 	}
 
 	@SuppressWarnings("unchecked")

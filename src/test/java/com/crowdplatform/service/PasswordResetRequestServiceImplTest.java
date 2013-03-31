@@ -27,14 +27,18 @@ public class PasswordResetRequestServiceImplTest {
 	@Mock
 	EntityManager em;
 	
+	private PasswordResetRequest request = new PasswordResetRequest();
+	private static final Long requestId = Long.MIN_VALUE;
+	
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
+		
+		Mockito.when(em.find(PasswordResetRequest.class, requestId)).thenReturn(request);
 	}
 	
 	@Test
 	public void testAddRequest() {
-		PasswordResetRequest request = new PasswordResetRequest();
 		request.setUser(new PlatformUser());
 		Query query = Mockito.mock(Query.class);
 		Mockito.when(em.createQuery(Mockito.anyString())).thenReturn(query);
@@ -47,10 +51,17 @@ public class PasswordResetRequestServiceImplTest {
 	}
 	
 	@Test
-	public void testGetRequest() {
-		service.getRequest(Long.MIN_VALUE);
+	public void testRemoveRequest() {
+		service.removeRequest(request);
 		
-		Mockito.verify(em).find(PasswordResetRequest.class, Long.MIN_VALUE);
+		Mockito.verify(em).remove(request);
+	}
+	
+	@Test
+	public void testGetRequest() {
+		service.getRequest(requestId);
+		
+		Mockito.verify(em).find(PasswordResetRequest.class, requestId);
 	}
 	
 	@Test
