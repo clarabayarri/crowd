@@ -31,6 +31,12 @@ public interface PlatformUserService {
 	public PlatformUser getUser(String username);
 	
 	/**
+	 * Retrieve the current authorized user.
+	 * @return PlatformUser currently authorized
+	 */
+	public PlatformUser getCurrentUser();
+	
+	/**
 	 * Retrieve a persisted user by username or email.
 	 * @param username The user username or email
 	 * @return PlatformUser corresponding to username or with email username

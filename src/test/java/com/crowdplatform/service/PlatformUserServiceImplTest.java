@@ -56,6 +56,13 @@ public class PlatformUserServiceImplTest {
 	}
 	
 	@Test
+	public void testGetUser() {
+		service.getUser(username);
+		
+		Mockito.verify(em).find(PlatformUser.class, username);
+	}
+	
+	@Test
 	public void testUsernameExistsForTrue() {
 		boolean result = service.usernameExists(username);
 		

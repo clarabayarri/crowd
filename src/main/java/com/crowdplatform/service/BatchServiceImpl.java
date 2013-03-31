@@ -42,6 +42,7 @@ public class BatchServiceImpl implements BatchService {
     	if (batch != null) {
     		batch.getTasks().size();
         	batch.getNumTasks();
+        	batch.updatePercentageComplete();
     	}
     	return batch;
     }

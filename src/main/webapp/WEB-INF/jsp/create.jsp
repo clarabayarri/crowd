@@ -81,6 +81,8 @@
     </div>
 </div>
 
+<%@ include file="/WEB-INF/jsp/footer.jsp" %>
+
 
 <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
 <script type="text/javascript" src="/resources/js/bootstrap-fileupload.min.js"></script>

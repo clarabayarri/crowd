@@ -134,12 +134,18 @@
                 </div>
             </c:forEach>
 
-            <a href="/project/${project.id}/batch/${batch.id}/delete" class="btn btn-danger pull-right">Delete batch</a>
+            <div>
+                <a href="/project/${project.id}/batch/${batch.id}/delete" class="btn btn-danger pull-right">Delete batch</a>
+
+                
+            </div>
 
             <div class="clear-fix"></div>
         </div>
     </div>
 </div>
+
+<%@ include file="/WEB-INF/jsp/footer.jsp" %>
 
 <script type="text/javascript">
     $(".alert").alert();

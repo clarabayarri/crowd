@@ -80,6 +80,9 @@ public class BatchController {
 	public String deleteBatch(@PathVariable("projectId") Integer projectId,
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
+			Project project = projectService.getProject(projectId);
+			project.removeBatch(batchId);
+			projectService.saveProject(project);
 			batchService.removeBatch(batchId);
 		}
 		return "redirect:/project/" + projectId;

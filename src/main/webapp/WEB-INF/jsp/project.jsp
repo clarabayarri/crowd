@@ -153,14 +153,16 @@
                         
                     </div>
                 </c:forEach>
+            </c:if>
 
-                <a href="/project/${project.id}/delete" class="btn btn-danger pull-right">Delete project</a>
+            <a href="/project/${project.id}/delete" class="btn btn-danger pull-right">Delete project</a>
 
             <div class="clear-fix"></div>
-            </c:if>
         </div>
     </div>
 </div>
+
+<%@ include file="/WEB-INF/jsp/footer.jsp" %>
 
 </body>
 </html>

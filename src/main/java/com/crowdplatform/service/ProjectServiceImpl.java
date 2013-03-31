@@ -6,6 +6,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Project;
 
 @Service
@@ -38,7 +39,11 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Transactional
 	public Project getProject(Integer id) {
-		return em.find(Project.class, id);
+		Project project = em.find(Project.class, id);
+		for (Batch batch : project.getBatches()) {
+			batch.updatePercentageComplete();
+		}
+		return project;
 	}
 
 }

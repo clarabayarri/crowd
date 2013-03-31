@@ -54,7 +54,7 @@ public class Batch {
 	@Cascade({CascadeType.ALL})
 	private Set<Task> tasks;
 	
-	@Formula("(select count(*) from Task t where t.Batch_id=id)")
+	@Formula("(select count(*) from batch_task t where t.batch_id=id)")
 	private Integer numTasks;
 
 	public Batch() {
@@ -111,7 +111,6 @@ public class Batch {
 			for(Task task : tasks) {
 				total += Math.min(executionsPerTask, task.getNumExecutions());
 			}
-			
 			if (total > 0) {
 				this.percentageComplete = ((double) total * 100) / (executionsPerTask * tasks.size());
 			}

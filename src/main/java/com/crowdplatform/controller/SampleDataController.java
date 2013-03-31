@@ -155,7 +155,7 @@ public class SampleDataController {
 		int numTasks = random.nextInt(15) + 1;
 		for (int i = 0; i < numTasks; ++i) {
 			Task task = new Task();
-			int numExecutions = random.nextInt(exPerTask);
+			int numExecutions = random.nextInt(exPerTask + 1);
 			task.setNumExecutions(numExecutions);
 			task.setBatch(batch);
 			int index = random.nextInt(definitions.length);

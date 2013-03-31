@@ -43,11 +43,17 @@ public class PlatformUserServiceImpl implements PlatformUserService {
 
 	@Transactional
 	public PlatformUser getUser(String username) {
-		PlatformUser user = em.find(PlatformUser.class, username);
-		if (user.getProjects() != null) {
-			user.getProjects().size();
-		}
-		return user;
+		return em.find(PlatformUser.class, username);
+	}
+	
+	@Transactional
+	public PlatformUser getCurrentUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null) {
+	    	String username = auth.getName();
+		    return getUser(username);
+	    }
+	    return null;
 	}
 	
 	@Transactional
@@ -83,24 +89,20 @@ public class PlatformUserServiceImpl implements PlatformUserService {
 
 	@Transactional
 	public boolean currentUserIsAuthorizedForProject(Integer projectId) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    if (auth != null) {
-	    	String username = auth.getName();
-		    PlatformUser user = getUser(username);
-			return user.isOwnerOfProject(projectId);
-	    }
+		PlatformUser user = getCurrentUser();
+		if (user != null) {
+			return getCurrentUser().isOwnerOfProject(projectId);
+		}
 	    return false;
 	}
 
 	@Transactional
 	public boolean currentUserIsAuthorizedForBatch(Integer projectId,
 			Integer batchId) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    if (auth != null) {
-	    	String username = auth.getName();
-		    PlatformUser user = getUser(username);
-			return user.isOwnerOfBatch(projectId, batchId);
-	    }
+		PlatformUser user = getCurrentUser();
+		if (user != null) {
+			return getCurrentUser().isOwnerOfBatch(projectId, batchId);
+		}
 	    return false;
 	}
 

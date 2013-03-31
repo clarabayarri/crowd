@@ -75,6 +75,12 @@
     <div class="clear-fix"></div>
 </div>
 
+<div class="clear-fix"></div>
+
+<br/>
+
+<%@ include file="/WEB-INF/jsp/footer.jsp" %>
+
 <script type="text/javascript">
     $(".alert").alert();
 </script>

@@ -80,6 +80,15 @@ public class PlatformUser {
 		this.projects.add(project);
 	}
 	
+	public void removeProject(Integer projectId) {
+		for (Project project : this.projects) {
+			if (project.getId().equals(projectId)) {
+				this.projects.remove(project);
+				break;
+			}
+		}
+	}
+	
 	public List<Project> getOrderedProjects() {
 		List<Project> list = Lists.newArrayList();
 		list.addAll(this.projects);

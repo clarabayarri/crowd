@@ -83,6 +83,15 @@ public class Project {
 	public void addBatch(Batch batch) {
 		this.batches.add(batch);
 	}
+	
+	public void removeBatch(Integer batchId) {
+		for (Batch batch : this.batches) {
+			if (batchId.equals(batch.getId())) {
+				this.batches.remove(batch);
+				return;
+			}
+		}
+	}
 
 	public Set<Field> getFields() {
 		return fields;
