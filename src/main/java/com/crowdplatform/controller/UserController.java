@@ -27,7 +27,7 @@ import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Registration;
 import com.crowdplatform.service.PasswordResetRequestService;
-import com.crowdplatform.service.UserService;
+import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.MailSender;
 import com.crowdplatform.util.PasswordResetDataValidator;
 import com.crowdplatform.util.RegistrationValidator;
@@ -45,7 +45,7 @@ public class UserController {
     protected AuthenticationManager authenticationManager;
 	
 	@Autowired
-	private UserService userService;
+	private PlatformUserService userService;
 	
 	@Autowired
 	private PasswordResetRequestService passwordService;

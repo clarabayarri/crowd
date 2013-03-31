@@ -28,7 +28,7 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
-import com.crowdplatform.service.UserService;
+import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
 
@@ -42,7 +42,7 @@ public class BatchController {
 	private BatchService batchService;
 	
 	@Autowired
-	private UserService userService;
+	private PlatformUserService userService;
 
 	@Autowired
 	private TaskService taskService;

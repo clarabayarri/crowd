@@ -6,13 +6,13 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.crowdplatform.model.Registration;
-import com.crowdplatform.service.UserService;
+import com.crowdplatform.service.PlatformUserService;
 
 @Component
 public class RegistrationValidator {
 
 	@Autowired
-	private UserService userService;
+	private PlatformUserService userService;
 	
 	public boolean supports(Class<?> klass) {
 		return Registration.class.isAssignableFrom(klass);

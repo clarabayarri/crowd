@@ -24,7 +24,7 @@ import org.springframework.ui.Model;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.UserService;
+import com.crowdplatform.service.PlatformUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -35,7 +35,7 @@ public class ProjectControllerTest {
 	private ProjectController controller = new ProjectController();
 	
 	@Mock
-	private UserService userService;
+	private PlatformUserService userService;
 	
 	@Mock
 	private ProjectService service;

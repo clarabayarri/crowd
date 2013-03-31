@@ -19,7 +19,7 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.UserService;
+import com.crowdplatform.service.PlatformUserService;
 import com.google.common.collect.Sets;
 
 @Controller
@@ -27,7 +27,7 @@ import com.google.common.collect.Sets;
 public class SampleDataController {
 
 	@Autowired
-	private UserService userService;
+	private PlatformUserService userService;
 	
 	@Autowired
 	private ProjectService projectService;

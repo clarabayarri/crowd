@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.crowdplatform.model.PlatformUser;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class PlatformUserServiceImpl implements PlatformUserService {
 
 	private EntityManager em;
 	 
@@ -20,16 +20,23 @@ public class UserServiceImpl implements UserService {
 	public void setEntityManager(EntityManager entityManager) {
 	        this.em = entityManager;
 	}
-	
-	@Transactional
-	public boolean usernameExists(String username) {
-		PlatformUser user = em.find(PlatformUser.class, username);
-		return user !=  null;
-	}
 
 	@Transactional
 	public void addUser(PlatformUser user) {
 		em.persist(user);
+	}
+
+	@Transactional
+	public void saveUser(PlatformUser user) {
+		em.merge(user);
+	}
+	
+	@Transactional
+	public void removeUser(String username) {
+		PlatformUser user = em.find(PlatformUser.class, username);
+		if (user != null) {
+			em.remove(user);
+		}
 	}
 
 	@Transactional
@@ -58,11 +65,6 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
-
-	@Transactional
-	public void saveUser(PlatformUser user) {
-		em.merge(user);
-	}
 	
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -72,11 +74,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Transactional
-	public void removeUser(String username) {
+	public boolean usernameExists(String username) {
 		PlatformUser user = em.find(PlatformUser.class, username);
-		if (user != null) {
-			em.remove(user);
-		}
+		return user !=  null;
 	}
 
 }

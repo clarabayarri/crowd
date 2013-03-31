@@ -20,7 +20,7 @@ import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Registration;
 import com.crowdplatform.service.PasswordResetRequestService;
-import com.crowdplatform.service.UserService;
+import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.MailSender;
 import com.crowdplatform.util.RegistrationValidator;
 
@@ -37,7 +37,7 @@ public class UserControllerTest {
 	private RegistrationValidator validator;
 	
 	@Mock
-	private UserService userService;
+	private PlatformUserService userService;
 	
 	@Mock
 	private PasswordResetRequestService passwordService;

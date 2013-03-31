@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.UserService;
+import com.crowdplatform.service.PlatformUserService;
 
 @Controller
 public class ProjectController {
 
 	@Autowired
-	private UserService userService;
+	private PlatformUserService userService;
 	
 	@Autowired
 	private ProjectService projectService;
