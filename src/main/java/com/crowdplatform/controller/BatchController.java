@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,9 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.PlatformUser;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
+import com.crowdplatform.service.UserService;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
 
@@ -35,6 +40,9 @@ public class BatchController {
 
 	@Autowired
 	private BatchService batchService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private TaskService taskService;
@@ -43,7 +51,9 @@ public class BatchController {
 	public String getBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId, Model model,
 			@RequestParam(value="created", required=false) Boolean created) {
-		model.addAttribute(batchService.getBatch(batchId));
+		if (userIsAuthorized(projectId)) {
+			model.addAttribute(batchService.getBatch(batchId));
+		}
 		if (created != null) {
 			model.addAttribute("created", created);
 		}
@@ -53,30 +63,49 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/start")
 	public String startBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		batchService.startBatch(batchId);
+		if (userIsAuthorized(projectId)) {
+			batchService.startBatch(batchId);
+		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/pause")
 	public String pauseBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		batchService.pauseBatch(batchId);
+		if (userIsAuthorized(projectId)) {
+			batchService.pauseBatch(batchId);
+		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
 
 	@RequestMapping("/project/{projectId}/batch/delete/{batchId}")
 	public String deleteBatch(@PathVariable("projectId") Integer projectId,
 			@PathVariable("batchId") Integer batchId) {
-		batchService.removeBatch(batchId);
+		if (userIsAuthorized(projectId)) {
+			batchService.removeBatch(batchId);
+		}
 		return "redirect:/project/" + projectId;
 	}
 
 	@RequestMapping("/project/{projectId}/batch/new")
 	public String newBatch(@PathVariable("projectId") Integer projectId, Model model) {
 		Batch batch = new Batch();
-		model.addAttribute("projectId", projectId);
+		if (userIsAuthorized(projectId)) {
+			Project project = projectService.getProject(projectId);
+			model.addAttribute(project);
+	    }
 		model.addAttribute(batch);
 		return "create";
+	}
+	
+	private boolean userIsAuthorized(Integer projectId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null) {
+	    	String username = auth.getName();
+		    PlatformUser user = userService.getUser(username);
+			return user.isOwnerOfProject(projectId);
+	    }
+	    return false;
 	}
 
 	@RequestMapping(value="/project/{projectId}/batch/create", method = RequestMethod.POST)
@@ -94,19 +123,23 @@ public class BatchController {
 			}
 		}
 
-		batchService.createBatch(batch, projectId);
-
-		if (taskFile != null && !taskFile.isEmpty()) {
-			Set<Field> fields = projectService.getProject(projectId).getInputFields();
-			FileReader reader = new FileReader();
-			try {
-				List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
-				taskService.createTasks(batch, fields, fileContents);
-			} catch (IOException e) {
-				bindingResult.reject("error.file.contents");
-				return "create";
+		if (userIsAuthorized(projectId)) {
+			batchService.createBatch(batch, projectId);
+			
+			if (taskFile != null && !taskFile.isEmpty()) {
+				Set<Field> fields = projectService.getProject(projectId).getInputFields();
+				FileReader reader = new FileReader();
+				try {
+					List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
+					taskService.createTasks(batch, fields, fileContents);
+				} catch (IOException e) {
+					bindingResult.reject("error.file.contents");
+					return "create";
+				}
 			}
 		}
+
+		
 
 		return "redirect:/project/" + projectId + "/batch/" + batch.getId() + "?created=true";
 	}

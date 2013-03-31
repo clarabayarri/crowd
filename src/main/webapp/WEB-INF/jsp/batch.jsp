@@ -122,7 +122,7 @@
                     <div class="extra-info">
                         <p><strong>Id: </strong>${task.id}</p>
                         <p><strong>Executions: </strong>${task.numExecutions}</p>
-                        <p><strong>Contents:</p>
+                        <p><strong>Contents:</strong></p>
                         <dl class="dl-horizontal">
                             <c:forEach var="entry" items="${task.contentsMap}">
                                 <dt><c:out value="${entry.key}"/></dt>

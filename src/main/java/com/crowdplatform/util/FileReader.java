@@ -23,10 +23,16 @@ public class FileReader {
 		while ((nextLine = reader.readNext()) != null) {
 			if (nextLine != null) {
 				Map<String, String> line = Maps.newHashMap();
+				boolean hasValue = false;
 				for (int i = 0; i < nextLine.length; ++i) {
 					line.put(headerLine[i], nextLine[i]);
+					if (!nextLine[i].isEmpty()) {
+						hasValue = true;
+					}
 				}
-				result.add(line);
+				if (hasValue) {
+					result.add(line);
+				}
 			}
 		}
 		reader.close();

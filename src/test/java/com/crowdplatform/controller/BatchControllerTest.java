@@ -2,6 +2,8 @@ package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,13 +12,22 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ProjectService;
+import com.crowdplatform.service.UserService;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchControllerTest {
@@ -30,9 +41,25 @@ public class BatchControllerTest {
 	@Mock
 	private BatchService service;
 	
+	@Mock
+	private UserService userService;
+	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
+	    
+	    GrantedAuthority authority = new GrantedAuthorityImpl("ROLE_PLATFORM_USER");
+	    List<GrantedAuthority> grantedAuthorities = Lists.newArrayList(authority);
+	    UserDetails userDetails = 
+	    		new org.springframework.security.core.userdetails.User("username", "123456", true, false, false, false, grantedAuthorities);
+	    Authentication authentication = new TestingAuthenticationToken(userDetails, "password", grantedAuthorities);
+	    SecurityContextHolder.getContext().setAuthentication(authentication);
+	    
+	    PlatformUser user = new PlatformUser();
+	    Project project = new Project();
+	    project.setId(1);
+	    user.addProject(project);
+	    Mockito.when(userService.getUser("username")).thenReturn(user);
 	}
 	
 	@Test
@@ -95,7 +122,7 @@ public class BatchControllerTest {
 		
 		controller.newBatch(1, model);
 		
-		Mockito.verify(model).addAttribute(Mockito.any(Batch.class));
+		Mockito.verify(model, Mockito.times(2)).addAttribute(Mockito.any());
 	}
 	
 	@Test

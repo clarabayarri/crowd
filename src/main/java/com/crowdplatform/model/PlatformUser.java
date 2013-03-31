@@ -86,5 +86,14 @@ public class PlatformUser {
 			}});
 		return list;
 	}
+	
+	public boolean isOwnerOfProject(Integer projectId) {
+		for (Project project : this.projects) {
+			if (projectId.equals(project.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

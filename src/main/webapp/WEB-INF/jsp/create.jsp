@@ -29,7 +29,7 @@
 <ul class="breadcrumb">
     <li><a href="/">Home</a> <span class="divider">/</span></li>
     <li><a href="/projects">Projects</a> <span class="divider">/</span></li>
-    <li><a href="/project/${batch.project.id}">${batch.project.name}</a> <span class="divider">/</span></li>
+    <li><a href="/project/${project.id}">${project.name}</a> <span class="divider">/</span></li>
     <li class="active">New batch</li>
 </ul>
 
@@ -40,7 +40,7 @@
                 <h1>Create batch</h1>
             </div>
 
-            <form:form method="POST" modelAttribute="batch" action="/project/${projectId}/batch/create" enctype="multipart/form-data">
+            <form:form method="POST" modelAttribute="batch" action="/project/${project.id}/batch/create" enctype="multipart/form-data">
                 <div class="control-group error">
                     <div class="controls">
                         <form:errors path="*" cssClass="error help-inline" />
