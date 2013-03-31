@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
@@ -29,7 +30,7 @@ public class PlatformUser {
 	@Column(name="email", unique=true)
 	private String email;
 	
-	@OneToMany
+	@OneToMany(fetch=FetchType.EAGER)
 	@Cascade({CascadeType.ALL})
 	Set<Project> projects;
 
@@ -95,6 +96,19 @@ public class PlatformUser {
 		for (Project project : this.projects) {
 			if (projectId.equals(project.getId())) {
 				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isOwnerOfBatch(Integer projectId, Integer batchId) {
+		for (Project project : this.projects) {
+			if (projectId.equals(project.getId())) {
+				for (Batch batch : project.getBatches()) {
+					if (batchId.equals(batch.getId())) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;

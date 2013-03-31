@@ -6,7 +6,6 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
 
 @Service
@@ -39,14 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Transactional
 	public Project getProject(Integer id) {
-		Project project = em.find(Project.class, id);
-		if (project != null) {
-			project.getBatches().size();
-			for (Field field : project.getFields()) {
-				field.getColumnNames().size();
-			}
-		}
-		return project;
+		return em.find(Project.class, id);
 	}
 
 }

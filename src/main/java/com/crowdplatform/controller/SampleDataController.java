@@ -75,7 +75,7 @@ public class SampleDataController {
 		projectService.addProject(project);
 		
 		for (int i = 0; i < 5; ++i)
-			project.addBatch(createSampleBatch(project));
+			project.addBatch(createSampleBatch());
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null) {
@@ -143,7 +143,7 @@ public class SampleDataController {
 		project.addField(field2);
 	}
 	
-	private Batch createSampleBatch(Project project) {
+	private Batch createSampleBatch() {
 		Batch batch = new Batch();
 		
 		batch.setName("Wonderful" + random.nextInt(99));
@@ -151,7 +151,6 @@ public class SampleDataController {
 		batch.setExecutionsPerTask(exPerTask);
 		int stateIndex = random.nextInt(states.length);
 		batch.setState(states[stateIndex]);
-		batch.setProject(project);
 		
 		int numTasks = random.nextInt(15) + 1;
 		for (int i = 0; i < numTasks; ++i) {

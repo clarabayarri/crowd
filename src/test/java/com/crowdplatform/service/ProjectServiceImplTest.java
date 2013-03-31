@@ -1,7 +1,5 @@
 package com.crowdplatform.service;
 
-import java.util.Set;
-
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
@@ -13,10 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
-import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectServiceImplTest {
@@ -63,20 +58,5 @@ public class ProjectServiceImplTest {
 		service.getProject(projectId);
 		
 		Mockito.verify(em).find(Project.class, projectId);
-	}
-	
-	@Test
-	public void testGetProjectEagerlyLoadsRelations() {
-		Project mockProject = Mockito.mock(Project.class);
-		Set<Field> fields = Sets.newHashSet();
-		Mockito.when(mockProject.getFields()).thenReturn(fields);
-		Set<Batch> batches = Sets.newHashSet();
-		Mockito.when(mockProject.getBatches()).thenReturn(batches);
-		Mockito.when(em.find(Project.class, projectId)).thenReturn(mockProject);
-		
-		service.getProject(projectId);
-		
-		Mockito.verify(mockProject).getFields();
-		Mockito.verify(mockProject).getBatches();
 	}
 }

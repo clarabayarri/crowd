@@ -30,7 +30,7 @@
 <ul class="breadcrumb">
     <li><a href="/">Home</a> <span class="divider">/</span></li>
     <li><a href="/projects">Projects</a> <span class="divider">/</span></li>
-    <li><a href="/project/${batch.project.id}">${batch.project.name}</a> <span class="divider">/</span></li>
+    <li><a href="/project/${project.id}">${project.name}</a> <span class="divider">/</span></li>
     <li class="active">${batch.name}</li>
 </ul>
 
@@ -52,10 +52,10 @@
                 <p>
                 <c:choose>
                     <c:when test="${batch.state eq 'RUNNING'}">
-                        <a href="/project/${batch.project.id}/batch/${batch.id}/pause" class="btn btn-danger pull-right">Stop</a>
+                        <a href="/project/${project.id}/batch/${batch.id}/pause" class="btn btn-danger pull-right">Stop</a>
                     </c:when>
                     <c:when test="${batch.state eq 'PAUSED'}">
-                        <a href="/project/${batch.project.id}/batch/${batch.id}/start" class="btn btn-success pull-right">Start</a>
+                        <a href="/project/${project.id}/batch/${batch.id}/start" class="btn btn-success pull-right">Start</a>
                     </c:when>
                 </c:choose>
 
@@ -72,7 +72,7 @@
                 </c:choose>
                 </p>
 
-                <p><a href="/project/${batch.project.id}/batch/${batch.id}/download" class="btn btn-info">Download executions</a></p>
+                <p><a href="/project/${project.id}/batch/${batch.id}/download" class="btn btn-info">Download executions</a></p>
 
             </div>
             
@@ -134,7 +134,7 @@
                 </div>
             </c:forEach>
 
-            <a href="/project/${batch.project.id}/batch/${batch.id}/delete" class="btn btn-danger pull-right">Delete batch</a>
+            <a href="/project/${project.id}/batch/${batch.id}/delete" class="btn btn-danger pull-right">Delete batch</a>
 
             <div class="clear-fix"></div>
         </div>

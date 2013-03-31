@@ -44,6 +44,11 @@ public class BatchControllerTest {
 	@Mock
 	private PlatformUserService userService;
 	
+	private Batch batch = new Batch();
+	private Project project = new Project();
+	private static final Integer projectId = 1;
+	private static final Integer batchId = 2;
+	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
@@ -56,62 +61,62 @@ public class BatchControllerTest {
 	    SecurityContextHolder.getContext().setAuthentication(authentication);
 	    
 	    PlatformUser user = new PlatformUser();
-	    Project project = new Project();
-	    project.setId(1);
+	    project.setId(projectId);
+	    batch.setId(batchId);
+	    project.addBatch(batch);
 	    user.addProject(project);
 	    Mockito.when(userService.getUser("username")).thenReturn(user);
+		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
+		Mockito.when(service.getBatch(batchId)).thenReturn(batch);
 	}
 	
 	@Test
 	public void testGetBatchHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
 		
-		String result = controller.getBatch(1, 1, model, null);
+		String result = controller.getBatch(projectId, batchId, model, null);
 		
 		assertEquals("batch", result);
 	}
 	
 	@Test
 	public void testGetBatchRetrievesBatchToModel() {
-		Batch batch = new Batch();
-		Mockito.when(service.getBatch(1)).thenReturn(batch);
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(1, 1, model, null);
+		controller.getBatch(projectId, batchId, model, null);
 		
 		Mockito.verify(model).addAttribute(batch);
-		Mockito.verify(service).getBatch(1);
+		Mockito.verify(service).getBatch(batchId);
 	}
 	
 	@Test
 	public void testGetBatchAddsCreatedParameterIfProvided() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(1, 1, model, true);
+		controller.getBatch(projectId, batchId, model, true);
 		
 		Mockito.verify(model).addAttribute("created", true);
 	}
 	
 	@Test
 	public void testStartBatchCallsService() {
-		controller.startBatch(1, 1);
+		controller.startBatch(projectId, batchId);
 		
-		Mockito.verify(service).startBatch(1);
+		Mockito.verify(service).startBatch(batchId);
 	}
 	
 	@Test
 	public void testPauseBatchCallsService() {
-		controller.pauseBatch(1, 1);
+		controller.pauseBatch(projectId, batchId);
 		
-		Mockito.verify(service).pauseBatch(1);
+		Mockito.verify(service).pauseBatch(batchId);
 	}
 	
 	@Test
 	public void testNewBatchHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
-		Mockito.when(projectService.getProject(1)).thenReturn(new Project());
 		
-		String result = controller.newBatch(1, model);
+		String result = controller.newBatch(projectId, model);
 		
 		assertEquals("create", result);
 	}
@@ -120,16 +125,15 @@ public class BatchControllerTest {
 	public void testNewBatchAddsEmptyBatchToModel() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.newBatch(1, model);
+		controller.newBatch(projectId, model);
 		
 		Mockito.verify(model, Mockito.times(2)).addAttribute(Mockito.any());
 	}
 	
 	@Test
 	public void testCreateBatchCallsService() {
-		Batch batch = new Batch();
 		Project project = Mockito.mock(Project.class);
-		Mockito.when(projectService.getProject(1)).thenReturn(project);
+		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		

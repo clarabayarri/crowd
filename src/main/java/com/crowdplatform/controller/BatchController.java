@@ -51,7 +51,8 @@ public class BatchController {
 	public String getBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId, Model model,
 			@RequestParam(value="created", required=false) Boolean created) {
-		if (userIsAuthorized(projectId)) {
+		if (userIsAuthorizedForBatch(projectId, batchId)) {
+			model.addAttribute(projectService.getProject(projectId));
 			model.addAttribute(batchService.getBatch(batchId));
 		}
 		if (created != null) {
@@ -63,7 +64,7 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/start")
 	public String startBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		if (userIsAuthorized(projectId)) {
+		if (userIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.startBatch(batchId);
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
@@ -72,7 +73,7 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/pause")
 	public String pauseBatch(@PathVariable("projectId") Integer projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		if (userIsAuthorized(projectId)) {
+		if (userIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.pauseBatch(batchId);
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
@@ -81,7 +82,7 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/delete")
 	public String deleteBatch(@PathVariable("projectId") Integer projectId,
 			@PathVariable("batchId") Integer batchId) {
-		if (userIsAuthorized(projectId)) {
+		if (userIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.removeBatch(batchId);
 		}
 		return "redirect:/project/" + projectId;
@@ -90,7 +91,7 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/new")
 	public String newBatch(@PathVariable("projectId") Integer projectId, Model model) {
 		Batch batch = new Batch();
-		if (userIsAuthorized(projectId)) {
+		if (userIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
 			model.addAttribute(project);
 	    }
@@ -98,12 +99,22 @@ public class BatchController {
 		return "create";
 	}
 	
-	private boolean userIsAuthorized(Integer projectId) {
+	private boolean userIsAuthorizedForProject(Integer projectId) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null) {
 	    	String username = auth.getName();
 		    PlatformUser user = userService.getUser(username);
 			return user.isOwnerOfProject(projectId);
+	    }
+	    return false;
+	}
+	
+	private boolean userIsAuthorizedForBatch(Integer projectId, Integer batchId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null) {
+	    	String username = auth.getName();
+		    PlatformUser user = userService.getUser(username);
+			return user.isOwnerOfBatch(projectId, batchId);
 	    }
 	    return false;
 	}
@@ -123,9 +134,8 @@ public class BatchController {
 			}
 		}
 
-		if (userIsAuthorized(projectId)) {
+		if (userIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
-			batch.setProject(project);
 			project.addBatch(batch);
 			
 			if (taskFile != null && !taskFile.isEmpty()) {
