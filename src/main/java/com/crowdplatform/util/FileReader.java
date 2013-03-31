@@ -16,8 +16,8 @@ public class FileReader {
 
 	public List<Map<String, String>> readCSVFile(MultipartFile file) throws IOException {
 		List<Map<String, String>> result = Lists.newArrayList();
-
-		CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()));
+		
+		CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream(), "UTF-8"));
 		String[] headerLine = reader.readNext();
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
