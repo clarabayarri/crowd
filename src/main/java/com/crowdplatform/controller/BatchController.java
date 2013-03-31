@@ -127,7 +127,6 @@ public class BatchController {
 			Project project = projectService.getProject(projectId);
 			batch.setProject(project);
 			project.addBatch(batch);
-			projectService.saveProject(project);
 			
 			if (taskFile != null && !taskFile.isEmpty()) {
 				Set<Field> fields = project.getInputFields();
@@ -140,6 +139,7 @@ public class BatchController {
 					return "create";
 				}
 			}
+			projectService.saveProject(project);
 		}
 
 		return "redirect:/project/" + projectId + "/batch/" + batch.getId() + "?created=true";

@@ -29,11 +29,6 @@ public class BatchServiceImpl implements BatchService {
 	}
     
     @Transactional
-    public void saveBatch(Batch batch) {
-    	em.merge(batch);
-    }
-    
-    @Transactional
     public void removeBatch(Integer id) {
     	Batch batch = em.find(Batch.class, id);
         if (null != batch) {

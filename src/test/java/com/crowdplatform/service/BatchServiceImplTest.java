@@ -41,13 +41,6 @@ public class BatchServiceImplTest {
 	}
 	
 	@Test
-	public void testSaveBatch() {
-		service.saveBatch(batch);
-		
-		Mockito.verify(em).merge(batch);
-	}
-	
-	@Test
 	public void testRemoveBatch() {
 		service.removeBatch(batchId);
 		

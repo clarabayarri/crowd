@@ -9,8 +9,8 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,40 +37,35 @@ public class TaskServiceImplTest {
 	@Mock
 	private EntityManager em;
 	
-	@Mock
-	private BatchService batchService;
+	private Task task = new Task();
+	private static final Integer taskId = 1;
 	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
+	    
+	    Mockito.when(em.find(Task.class, taskId)).thenReturn(task);
 	}
 	
 	@Test
-	public void testAddTask() {
-		Task task = new Task();
+	public void testSaveTask() {
+		service.saveTask(task);
 		
-		service.addTask(task);
-		
-		Mockito.verify(em).persist(task);
+		Mockito.verify(em).merge(task);
 	}
 	
 	@Test
 	public void testRemoveTask() {
-		Task task = new Task();
-		Mockito.when(em.find(Task.class, 1)).thenReturn(task);
-		
-		service.removeTask(1);
+		service.removeTask(taskId);
 		
 		Mockito.verify(em).remove(task);
 	}
 	
 	@Test
-	public void testSaveTask() {
-		Task task = new Task();
+	public void testGetTask() {
+		service.getTask(taskId);
 		
-		service.saveTask(task);
-		
-		Mockito.verify(em).merge(task);
+		Mockito.verify(em).find(Task.class, taskId);
 	}
 	
 	@SuppressWarnings("unchecked")

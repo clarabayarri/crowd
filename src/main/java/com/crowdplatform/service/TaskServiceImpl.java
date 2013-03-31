@@ -6,26 +6,20 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Task;
-import com.google.common.collect.Sets;
 
 @Service
 public class TaskServiceImpl implements TaskService {
 
-	@Autowired
-	private BatchService batchService;
-	
 	private EntityManager em;
 	
 	private ObjectMapper mapper = new ObjectMapper();
@@ -35,22 +29,10 @@ public class TaskServiceImpl implements TaskService {
 	        this.em = entityManager;
 	}
 	
-	@Transactional
-	public void addTask(Task task) {
-		em.persist(task);
-	}
-	
-	@Transactional
-	public Task getTask(Integer id) {
-		return em.find(Task.class, id);
-	}
-    
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<Task> listTasks() {
-		Query query = em.createQuery("FROM Task");
-        return query.getResultList();
-	}
+    @Transactional
+    public void saveTask(Task task) {
+    	em.merge(task);
+    }
 	
     @Transactional
     public void removeTask(Integer id) {
@@ -59,28 +41,22 @@ public class TaskServiceImpl implements TaskService {
             em.remove(task);
         }
     }
+
+	@Transactional
+	public Task getTask(Integer id) {
+		return em.find(Task.class, id);
+	}
 	
     @Transactional
-    public void saveTask(Task task) {
-    	em.merge(task);
-    }
-    
-    @Transactional
     public void createTasks(Batch batch, Set<Field> fields, List<Map<String, String>> fileContents) {
-    	Set<Task> result = Sets.newHashSet();
-    	
     	for (Map<String, String> line : fileContents) {
     		ObjectNode contents = encodeLine(fields, line);
     		
     		Task task = new Task();
     		task.setContents(contents.toString());
     		task.setBatch(batch);
-    		addTask(task);
-    		result.add(task);
+    		batch.addTask(task);
     	}
-    	
-    	batch.setTasks(result);
-		batchService.saveBatch(batch);
     }
     
     private ObjectNode encodeLine(Set<Field> fields, Map<String, String> line) {

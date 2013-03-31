@@ -8,12 +8,6 @@ import com.crowdplatform.model.Execution;
 public interface BatchService {
 
 	/**
-	 * Save an existing batch.
-	 * @param batch
-	 */
-    public void saveBatch(Batch batch);
-    
-    /**
      * Remove an existing batch.
      * @param id The batch id
      */

@@ -9,17 +9,32 @@ import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Task;
 
 public interface TaskService {
-
-	public void addTask(Task task);
 	
-	public Task getTask(Integer id);
-	
-	public List<Task> listTasks();
-	
-	public void removeTask(Integer id);
-	
+	/**
+	 * Save an existing task.
+	 * @param task
+	 */
 	public void saveTask(Task task);
 	
+	/**
+	 * Remove an existing task.
+	 * @param id The task id
+	 */
+	public void removeTask(Integer id);
+
+	/**
+	 * Retrieve a persisted task.
+	 * @param id The task id
+	 * @return Task corresponding to id
+	 */
+	public Task getTask(Integer id);
+	
+	/**
+	 * Create a set of tasks and add them to the provided Batch.
+	 * @param batch Batch that will contain the tasks
+	 * @param fields Fields that should be considered for the Task contents
+	 * @param fileContents Data used to create the tasks
+	 */
 	public void createTasks(Batch batch, Set<Field> fields, List<Map<String, String>> fileContents);
 	
 }
