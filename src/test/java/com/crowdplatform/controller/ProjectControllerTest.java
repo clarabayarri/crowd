@@ -70,7 +70,7 @@ public class ProjectControllerTest {
 	@Test
 	public void testListProjectsRetrievesProjectsToModel() {
 		List<Project> projects = Lists.newArrayList(new Project(), new Project());
-		Mockito.when(service.listProjects()).thenReturn(projects);
+		//Mockito.when(service.listProjects()).thenReturn(projects);
 		String username = "username";
 		Mockito.when(userService.getUser(username)).thenReturn(new PlatformUser());
 		Authentication auth = Mockito.mock(Authentication.class);

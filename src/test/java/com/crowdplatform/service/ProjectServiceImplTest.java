@@ -1,5 +1,7 @@
 package com.crowdplatform.service;
 
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
@@ -11,7 +13,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
+import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectServiceImplTest {
@@ -22,36 +27,56 @@ public class ProjectServiceImplTest {
 	@Mock
 	private EntityManager em;
 	
+	private Project project = new Project();
+	private static final Integer projectId = 1;
+	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
+	    
+	    Mockito.when(em.find(Project.class,	projectId)).thenReturn(project);
 	}
 	
 	@Test
 	public void testAddProject() {
-		Project project = new Project();
-		
 		service.addProject(project);
 		
 		Mockito.verify(em).persist(project);
 	}
 	
 	@Test
-	public void testRemoveProject() {
-		Project project = new Project();
-		Mockito.when(em.find(Project.class,	1)).thenReturn(project);
+	public void testSaveProject() {
+		service.saveProject(project);
 		
-		service.removeProject(1);
+		Mockito.verify(em).merge(project);
+	}
+	
+	@Test
+	public void testRemoveProject() {
+		service.removeProject(projectId);
 		
 		Mockito.verify(em).remove(project);
 	}
 	
 	@Test
-	public void testSaveProject() {
-		Project project = new Project();
+	public void testGetProject() {
+		service.getProject(projectId);
 		
-		service.saveProject(project);
+		Mockito.verify(em).find(Project.class, projectId);
+	}
+	
+	@Test
+	public void testGetProjectEagerlyLoadsRelations() {
+		Project mockProject = Mockito.mock(Project.class);
+		Set<Field> fields = Sets.newHashSet();
+		Mockito.when(mockProject.getFields()).thenReturn(fields);
+		Set<Batch> batches = Sets.newHashSet();
+		Mockito.when(mockProject.getBatches()).thenReturn(batches);
+		Mockito.when(em.find(Project.class, projectId)).thenReturn(mockProject);
 		
-		Mockito.verify(em).merge(project);
+		service.getProject(projectId);
+		
+		Mockito.verify(mockProject).getFields();
+		Mockito.verify(mockProject).getBatches();
 	}
 }

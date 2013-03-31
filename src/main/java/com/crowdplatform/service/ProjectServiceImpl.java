@@ -1,10 +1,7 @@
 package com.crowdplatform.service;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,27 +18,15 @@ public class ProjectServiceImpl implements ProjectService {
 	public void setEntityManager(EntityManager entityManager) {
 	        this.em = entityManager;
 	}
-	
-	@Transactional
-	public Project getProject(Integer id) {
-		Project project = em.find(Project.class, id);
-		project.getBatches().size();
-		for (Field field : project.getInputFields()) {
-			field.getColumnNames().size();
-		}
-		return project;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<Project> listProjects() {
-		Query query = em.createQuery("FROM Project");
-        return query.getResultList();
-	}
 
 	@Transactional
 	public void addProject(Project project) {
 		em.persist(project);
+	}
+
+	@Transactional
+	public void saveProject(Project project) {
+		em.merge(project);
 	}
 
 	@Transactional
@@ -51,10 +36,17 @@ public class ProjectServiceImpl implements ProjectService {
 			em.remove(project);
 		}
 	}
-
+	
 	@Transactional
-	public void saveProject(Project project) {
-		em.merge(project);
+	public Project getProject(Integer id) {
+		Project project = em.find(Project.class, id);
+		if (project != null) {
+			project.getBatches().size();
+			for (Field field : project.getFields()) {
+				field.getColumnNames().size();
+			}
+		}
+		return project;
 	}
 
 }
