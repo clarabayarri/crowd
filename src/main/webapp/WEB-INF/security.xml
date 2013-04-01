@@ -13,6 +13,7 @@
 			logout-success-url="/home" />
 		<intercept-url pattern="/" access="permitAll" />
 		<intercept-url pattern="/home" access="permitAll" />
+		<intercept-url pattern="/API/**" access="permitAll" />
 		<intercept-url pattern="/login" access="isAnonymous()" />
 		<intercept-url pattern="/register" access="isAnonymous()" />
 		<intercept-url pattern="/forgot" access="isAnonymous()" />

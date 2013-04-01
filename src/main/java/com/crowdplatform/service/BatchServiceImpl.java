@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.google.common.collect.Lists;
 
@@ -43,11 +43,32 @@ public class BatchServiceImpl implements BatchService {
     	return batch;
     }
     
-    @SuppressWarnings("unchecked")
-	@Transactional
+    @Transactional
     public List<Integer> listRunningBatchIds(Integer projectId) {
-    	Query query = em.createQuery("SELECT b.id FROM Batch b, project_batch pb WHERE b.state='RUNNING' AND pb.batches_id=id AND pb.project_id='" + projectId + "'");
-    	return query.getResultList();
+    	Project project = projectService.getProject(projectId);
+    	List<Integer> result = Lists.newArrayList();
+    	if (project != null) {
+    		for (Batch batch : project.getBatches()) {
+        		if (batch.getState() == Batch.State.RUNNING) {
+        			result.add(batch.getId());
+        		}
+        	}
+    	}
+    	return result;
+    }
+    
+    @Transactional
+    public List<Integer> listCompletedBatchIds(Integer projectId) {
+    	Project project = projectService.getProject(projectId);
+    	List<Integer> result = Lists.newArrayList();
+    	if (project != null) {
+    		for (Batch batch : project.getBatches()) {
+        		if (batch.getState() == Batch.State.COMPLETE) {
+        			result.add(batch.getId());
+        		}
+        	}
+    	}
+    	return result;
     }
     
     @Transactional

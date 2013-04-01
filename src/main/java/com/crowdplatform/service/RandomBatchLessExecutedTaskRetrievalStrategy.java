@@ -26,6 +26,9 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 	
 	private Batch getRandomBatch(Integer projectId) {
 		List<Integer> batches = batchService.listRunningBatchIds(projectId);
+		if (batches.isEmpty()) {
+			batches = batchService.listCompletedBatchIds(projectId);
+		}
 		int total = batches.size();
 		int index = (new Random()).nextInt(total);
 		return batchService.getBatch(batches.get(index));

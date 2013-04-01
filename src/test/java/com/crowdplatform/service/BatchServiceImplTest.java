@@ -1,11 +1,12 @@
 package com.crowdplatform.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.google.common.collect.Sets;
 
@@ -28,6 +30,9 @@ public class BatchServiceImplTest {
 	
 	@Mock
 	private EntityManager em;
+	
+	@Mock
+	private ProjectService projectService;
 	
 	private Batch batch = new Batch();
 	private Batch mockBatch;
@@ -72,13 +77,36 @@ public class BatchServiceImplTest {
 	
 	@Test
 	public void testListRunningBatchIds() {
-		Query query = Mockito.mock(Query.class);
-		Mockito.when(em.createQuery("SELECT b.id FROM Batch b, project_batch pb WHERE b.state='RUNNING' AND pb.batches_id=id AND pb.project_id='" + projectId + "'"))
-			.thenReturn(query);
+		Batch batch = new Batch();
+		batch.setId(1);
+		batch.setState(Batch.State.RUNNING);
+		Batch batch2 = new Batch();
+		batch2.setId(2);
+		Project project = new Project();
+		project.setBatches(Sets.newHashSet(batch, batch2));
+		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 	
-		service.listRunningBatchIds(projectId);
+		List<Integer> result = service.listRunningBatchIds(projectId);
 		
-		Mockito.verify(query).getResultList();
+		assertEquals(1, result.size());
+		assertSame(1, result.get(0));
+	}
+	
+	@Test
+	public void testListCompletedBatchIds() {
+		Batch batch = new Batch();
+		batch.setId(1);
+		batch.setState(Batch.State.COMPLETE);
+		Batch batch2 = new Batch();
+		batch2.setId(2);
+		Project project = new Project();
+		project.setBatches(Sets.newHashSet(batch, batch2));
+		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
+	
+		List<Integer> result = service.listCompletedBatchIds(projectId);
+		
+		assertEquals(1, result.size());
+		assertSame(1, result.get(0));
 	}
 	
 	@Test
