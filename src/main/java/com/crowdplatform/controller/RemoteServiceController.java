@@ -75,14 +75,9 @@ public class RemoteServiceController {
 	@RequestMapping(value="/project/{projectId}/user", method=RequestMethod.POST)
 	public @ResponseBody Integer saveUser(@PathVariable("projectId") Integer projectId, @RequestBody ProjectUser user) {
 		Project project = projectService.getProject(projectId);
-		System.out.println(user.getUsername() + ", " + user.getContents());
 		if (project != null) {
-			System.out.println("OK 1");
-			System.out.println(project.getNumUsers());
 			project.addUser(user);
 			projectService.saveProject(project);
-			System.out.println("OK 2");
-			System.out.println(project.getNumUsers());
 			return user.getId();
 		}
 		return 0;
