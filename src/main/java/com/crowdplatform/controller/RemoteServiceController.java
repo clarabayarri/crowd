@@ -12,9 +12,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -40,10 +42,18 @@ public class RemoteServiceController {
 	@Autowired
 	private ProjectUserService userService;
 	
-	@RequestMapping(value="/task", method=RequestMethod.GET)
-	public @ResponseBody TaskInfo provideTask() {
-		Task task = taskRetrieval.retrieveTaskForExecution();
-		return new TaskInfo(task);
+	@RequestMapping(value="/project/{projectId}/task", method=RequestMethod.GET)
+	public @ResponseBody TaskInfo[] provideTask(@PathVariable("projectId") Integer projectId,
+			@RequestParam(value="count", required=false) Integer count) {
+		if (count == null) {
+			count = 1;
+		}
+		List<Task> tasks = taskRetrieval.retrieveTasksForExecution(count);
+		TaskInfo[] data = new TaskInfo[tasks.size()];
+		for (int i = 0; i < tasks.size(); ++i) {
+			data[i] = new TaskInfo(tasks.get(i));
+		}
+		return data;
 	}
 	
 	

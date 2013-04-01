@@ -1,5 +1,6 @@
 package com.crowdplatform.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
 		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
 		
-		service.retrieveTaskForExecution();
+		service.retrieveTasksForExecution(1);
 		
 		Mockito.verify(batchService).listRunningBatchIds();
 	}
@@ -61,8 +62,47 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
 		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
 		
-		Task result = service.retrieveTaskForExecution();
+		List<Task> result = service.retrieveTasksForExecution(1);
 		
-		assertSame(task2, result);
+		assertEquals(1, result.size());
+		assertSame(task2, result.get(0));
+	}
+	
+	@Test
+	public void testRetrieveTaskGivesLessExecutedTasksFromBatch() {
+		List<Integer> batchIds = Lists.newArrayList(1,3);
+		Mockito.when(batchService.listRunningBatchIds()).thenReturn(batchIds);
+		Batch batch = Mockito.mock(Batch.class);
+		Task task1 = new Task();
+		task1.setNumExecutions(3);
+		Task task2 = new Task();
+		task2.setNumExecutions(1);
+		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
+		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
+		
+		List<Task> result = service.retrieveTasksForExecution(2);
+		
+		assertEquals(2, result.size());
+		assertSame(task2, result.get(0));
+		assertSame(task1, result.get(1));
+	}
+	
+	@Test
+	public void testRetrieveTaskGivesMinNumberBetweenAvailableAndRequested() {
+		List<Integer> batchIds = Lists.newArrayList(1,3);
+		Mockito.when(batchService.listRunningBatchIds()).thenReturn(batchIds);
+		Batch batch = Mockito.mock(Batch.class);
+		Task task1 = new Task();
+		task1.setNumExecutions(3);
+		Task task2 = new Task();
+		task2.setNumExecutions(1);
+		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
+		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
+		
+		List<Task> result = service.retrieveTasksForExecution(7);
+		
+		assertEquals(2, result.size());
+		assertSame(task2, result.get(0));
+		assertSame(task1, result.get(1));
 	}
 }

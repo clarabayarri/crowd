@@ -18,6 +18,7 @@ import com.crowdplatform.model.TaskInfo;
 import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 import com.crowdplatform.service.TaskService;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteServiceControllerTest {
@@ -34,6 +35,8 @@ public class RemoteServiceControllerTest {
 	@Mock
 	private ProjectUserService userService;
 	
+	private static final Integer projectId = 1;
+	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
@@ -43,11 +46,12 @@ public class RemoteServiceControllerTest {
 	public void testProvideTaskRetrievesTask() {
 		Task task = new Task();
 		task.setId(3);
-		Mockito.when(taskRetrieval.retrieveTaskForExecution()).thenReturn(task);
+		Mockito.when(taskRetrieval.retrieveTasksForExecution(1)).thenReturn(Lists.newArrayList(task));
 		
-		TaskInfo taskInfo = controller.provideTask();
+		TaskInfo[] taskInfo = controller.provideTask(projectId, 1);
 		
-		assertEquals(task.getId(), taskInfo.getId());
+		assertEquals(1, taskInfo.length);
+		assertEquals(task.getId(), taskInfo[0].getId());
 	}
 	
 	@Test

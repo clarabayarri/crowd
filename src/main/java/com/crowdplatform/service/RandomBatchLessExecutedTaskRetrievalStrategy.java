@@ -19,10 +19,9 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 	private BatchService batchService;
 	
 	@Override
-	public Task retrieveTaskForExecution() {
+	public List<Task> retrieveTasksForExecution(Integer number) {
 		Batch batch = getRandomBatch();
-		Task task = getLessExecutedTaskForBatch(batch);
-		return task;
+		return getLessExecutedTasksForBatch(batch, number);
 	}
 	
 	private Batch getRandomBatch() {
@@ -32,7 +31,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 		return batchService.getBatch(batches.get(index));
 	}
 
-	private Task getLessExecutedTaskForBatch(Batch batch) {
+	private List<Task> getLessExecutedTasksForBatch(Batch batch, Integer number) {
 		List<Task> tasks = Lists.newArrayList();
 		tasks.addAll(batch.getTasks());
 		Collections.sort(tasks, new Comparator<Task>() {
@@ -43,6 +42,6 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 				return n1.compareTo(n2);
 			}
 		});
-		return tasks.get(0);
+		return tasks.subList(0, Math.min(number, tasks.size()));
 	}
 }
