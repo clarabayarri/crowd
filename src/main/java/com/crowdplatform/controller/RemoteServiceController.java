@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.ExecutionInfo;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
+import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 import com.crowdplatform.service.TaskService;
@@ -33,6 +35,9 @@ import com.crowdplatform.service.TaskService;
 @RequestMapping("/API")
 public class RemoteServiceController {
 
+	@Autowired
+	private ProjectService projectService;
+	
 	@Autowired
 	private TaskService taskService;
 	
@@ -57,19 +62,30 @@ public class RemoteServiceController {
 	}
 	
 	
-	@RequestMapping(value="/execution", method=RequestMethod.POST)
+	@RequestMapping(value="/project/{projectId}/execution", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public void saveExecution(@RequestBody ExecutionInfo info) {
+	public void saveExecution(@PathVariable("projectId") Integer projectId, @RequestBody ExecutionInfo info) {
+		// TODO: check project
 		Task task = taskService.getTask(info.getTaskId());
 		Execution execution = new Execution(info.getContents());
 		task.getExecutions().add(execution);
 		taskService.saveTask(task);
 	}
 	
-	@RequestMapping(value="/user", method=RequestMethod.POST)
-	@ResponseStatus(HttpStatus.CREATED)
-	public void saveUser(@RequestBody ProjectUser user) {
-		userService.addProjectUser(user);
+	@RequestMapping(value="/project/{projectId}/user", method=RequestMethod.POST)
+	public @ResponseBody Integer saveUser(@PathVariable("projectId") Integer projectId, @RequestBody ProjectUser user) {
+		Project project = projectService.getProject(projectId);
+		System.out.println(user.getUsername() + ", " + user.getContents());
+		if (project != null) {
+			System.out.println("OK 1");
+			System.out.println(project.getNumUsers());
+			project.addUser(user);
+			projectService.saveProject(project);
+			System.out.println("OK 2");
+			System.out.println(project.getNumUsers());
+			return user.getId();
+		}
+		return 0;
 	}
 	
 	@ExceptionHandler

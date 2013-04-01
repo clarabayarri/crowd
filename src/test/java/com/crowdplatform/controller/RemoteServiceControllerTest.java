@@ -12,9 +12,11 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.crowdplatform.model.ExecutionInfo;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
+import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 import com.crowdplatform.service.TaskService;
@@ -25,6 +27,9 @@ public class RemoteServiceControllerTest {
 
 	@InjectMocks
 	private RemoteServiceController controller = new RemoteServiceController();
+	
+	@Mock
+	private ProjectService projectService;
 	
 	@Mock
 	private TaskService taskService;
@@ -60,7 +65,7 @@ public class RemoteServiceControllerTest {
 		info.setTaskId(3);
 		Mockito.when(taskService.getTask(3)).thenReturn(new Task());
 		
-		controller.saveExecution(info);
+		controller.saveExecution(projectId, info);
 		
 		Mockito.verify(taskService).getTask(3);
 	}
@@ -72,7 +77,7 @@ public class RemoteServiceControllerTest {
 		Task task = new Task();
 		Mockito.when(taskService.getTask(3)).thenReturn(task);
 		
-		controller.saveExecution(info);
+		controller.saveExecution(projectId, info);
 		
 		Mockito.verify(taskService).saveTask(task);
 	}
@@ -80,9 +85,10 @@ public class RemoteServiceControllerTest {
 	@Test
 	public void testSaveUserCallsServiceToSave() {
 		ProjectUser user = new ProjectUser();
+		Mockito.when(projectService.getProject(projectId)).thenReturn(new Project());
 		
-		controller.saveUser(user);
+		controller.saveUser(projectId, user);
 		
-		Mockito.verify(userService).addProjectUser(user);
+		Mockito.verify(projectService).saveProject(Mockito.any(Project.class));
 	}
 }
