@@ -16,7 +16,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Formula;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -42,12 +41,9 @@ public class Project {
 	@Cascade({CascadeType.ALL})
 	private Set<Field> fields;
 	
-	@OneToMany
+	@OneToMany(fetch=FetchType.EAGER)
 	@Cascade({CascadeType.ALL})
 	private Set<ProjectUser> users;
-	
-	@Formula("(select count(*) from project_projectuser up where up.project_id=id)")
-	private Integer numUsers;
 	
 	public Project() {
 		batches = Sets.newHashSet();
@@ -146,11 +142,7 @@ public class Project {
 	}
 
 	public Integer getNumUsers() {
-		return numUsers;
-	}
-
-	public void setNumUsers(Integer numUsers) {
-		this.numUsers = numUsers;
+		return users.size();
 	}
 
 	public List<Field> getOrderedInputFields() {
