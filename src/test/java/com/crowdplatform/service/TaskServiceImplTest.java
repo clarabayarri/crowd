@@ -124,6 +124,23 @@ public class TaskServiceImplTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
+	public void testCreateTasksReadsNullValues() throws JsonProcessingException, IOException {
+		Batch batch = new Batch();
+		Set<Field> fields = createTestFields();
+		Map<String, String> data = createTestDataMap();
+		
+		service.createTasks(batch, fields, Lists.newArrayList(data));
+	
+		Set<Task> tasks = batch.getTasks();
+		assertEquals(1, tasks.size());
+		for (Task task : tasks) {
+			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
+			assertTrue(node.get("null").isNull());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
 	public void testCreateTasksReadsMultivaluateStringFields() throws JsonProcessingException, IOException {
 		Batch batch = new Batch();
 		Set<Field> fields = createTestFields();
@@ -150,11 +167,14 @@ public class TaskServiceImplTest {
 		Field floatField = new Field();
 		floatField.setName("float");
 		floatField.setType(Field.Type.DOUBLE);
+		Field nullField = new Field();
+		nullField.setName("null");
+		nullField.setType(Field.Type.STRING);
 		Field multiField = new Field();
 		multiField.setName("multi");
 		multiField.setType(Field.Type.MULTIVALUATE_STRING);
 		multiField.setColumnNames(Sets.newHashSet("field_1", "field_2"));
-		return Sets.newHashSet(textField, integerField, floatField, multiField);
+		return Sets.newHashSet(textField, integerField, floatField, nullField, multiField);
 	}
 	
 	private Map<String, String> createTestDataMap() {
@@ -162,6 +182,7 @@ public class TaskServiceImplTest {
 		data.put("text", "bla");
 		data.put("integer", "33");
 		data.put("float", "33.3");
+		data.put("null", null);
 		data.put("field_1", "a");
 		data.put("field_2", "b");
 		return data;

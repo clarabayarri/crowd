@@ -10,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.Task;
 import com.google.common.collect.Sets;
 
 

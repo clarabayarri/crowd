@@ -20,14 +20,10 @@ import com.crowdplatform.model.Task;
 @Service
 public class TaskServiceImpl implements TaskService {
 
+	@PersistenceContext
 	private EntityManager em;
 	
 	private ObjectMapper mapper = new ObjectMapper();
-	 
-	@PersistenceContext
-	public void setEntityManager(EntityManager entityManager) {
-	        this.em = entityManager;
-	}
 	
     @Transactional
     public void saveTask(Task task) {

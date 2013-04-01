@@ -21,12 +21,8 @@ public class BatchServiceImpl implements BatchService {
 	@Autowired
 	private ProjectService projectService;
 	
-	private EntityManager em;
-	 
 	@PersistenceContext
-	public void setEntityManager(EntityManager entityManager) {
-	        this.em = entityManager;
-	}
+	private EntityManager em;
     
     @Transactional
     public void removeBatch(Integer id) {

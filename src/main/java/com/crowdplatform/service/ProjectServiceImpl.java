@@ -12,12 +12,8 @@ import com.crowdplatform.model.Project;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-	private EntityManager em;
-	 
 	@PersistenceContext
-	public void setEntityManager(EntityManager entityManager) {
-	        this.em = entityManager;
-	}
+	private EntityManager em;
 
 	@Transactional
 	public void addProject(Project project) {

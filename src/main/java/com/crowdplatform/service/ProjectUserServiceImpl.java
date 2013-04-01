@@ -11,12 +11,8 @@ import com.crowdplatform.model.ProjectUser;
 @Service
 public class ProjectUserServiceImpl implements ProjectUserService {
 
-	private EntityManager em;
-	 
 	@PersistenceContext
-	public void setEntityManager(EntityManager entityManager) {
-	        this.em = entityManager;
-	}
+	private EntityManager em;
 	
 	@Transactional
 	public void addProjectUser(ProjectUser user) {

@@ -16,12 +16,8 @@ import com.crowdplatform.model.PlatformUser;
 @Service
 public class PlatformUserServiceImpl implements PlatformUserService {
 
-	private EntityManager em;
-	 
 	@PersistenceContext
-	public void setEntityManager(EntityManager entityManager) {
-	        this.em = entityManager;
-	}
+	private EntityManager em;
 
 	@Transactional
 	public void addUser(PlatformUser user) {

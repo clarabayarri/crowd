@@ -15,14 +15,10 @@ import com.crowdplatform.model.PasswordResetRequest;
 @Service
 public class PasswordResetRequestServiceImpl implements PasswordResetRequestService {
 
+	@PersistenceContext
 	private EntityManager em;
 	
 	private SecureRandom secureRandom = new SecureRandom();
-	 
-	@PersistenceContext
-	public void setEntityManager(EntityManager entityManager) {
-	        this.em = entityManager;
-	}
 	
 	@Transactional
 	public void addRequest(PasswordResetRequest request) {

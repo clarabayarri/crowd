@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,6 +70,16 @@ public class BatchServiceImplTest {
 	}
 	
 	@Test
+	public void testListRunningBatchIds() {
+		Query query = Mockito.mock(Query.class);
+		Mockito.when(em.createQuery("SELECT id FROM Batch WHERE state='RUNNING'")).thenReturn(query);
+	
+		service.listRunningBatchIds();
+		
+		Mockito.verify(query).getResultList();
+	}
+	
+	@Test
 	public void testStartBatch() {
 		batch.setState(Batch.State.PAUSED);
 		
@@ -86,5 +97,16 @@ public class BatchServiceImplTest {
 		
 		assertEquals(Batch.State.PAUSED, batch.getState());
 		Mockito.verify(em).merge(batch);
+	}
+	
+	@Test
+	public void testListExecutions() {
+		Task task = Mockito.mock(Task.class);
+		Set<Task> tasks = Sets.newHashSet(task);
+		batch.setTasks(tasks);
+		
+		service.listExecutions(batchId);
+		
+		Mockito.verify(task).getExecutions();
 	}
 }
