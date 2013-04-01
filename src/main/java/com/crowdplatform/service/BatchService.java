@@ -21,10 +21,11 @@ public interface BatchService {
     public Batch getBatch(Integer id);
 	
     /**
-     * Retrieve all ids for batches in the system with a RUNNING status.
+     * Retrieve all ids for batches in the system with a RUNNING status for a given project.
+     * @param projectId The project id
      * @return List with the ids for the batches with status RUNNING
      */
-    public List<Integer> listRunningBatchIds();
+    public List<Integer> listRunningBatchIds(Integer projectId);
     
     /**
      * Set a batch's status to RUNNING.

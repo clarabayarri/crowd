@@ -19,13 +19,13 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 	private BatchService batchService;
 	
 	@Override
-	public List<Task> retrieveTasksForExecution(Integer number) {
-		Batch batch = getRandomBatch();
+	public List<Task> retrieveTasksForExecution(Integer projectId, Integer number) {
+		Batch batch = getRandomBatch(projectId);
 		return getLessExecutedTasksForBatch(batch, number);
 	}
 	
-	private Batch getRandomBatch() {
-		List<Integer> batches = batchService.listRunningBatchIds();
+	private Batch getRandomBatch(Integer projectId) {
+		List<Integer> batches = batchService.listRunningBatchIds(projectId);
 		int total = batches.size();
 		int index = (new Random()).nextInt(total);
 		return batchService.getBatch(batches.get(index));

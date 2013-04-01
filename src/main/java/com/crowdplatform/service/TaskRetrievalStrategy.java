@@ -6,6 +6,6 @@ import com.crowdplatform.model.Task;
 
 public interface TaskRetrievalStrategy {
 
-	public List<Task> retrieveTasksForExecution(Integer number);
+	public List<Task> retrieveTasksForExecution(Integer projectId, Integer number);
 	
 }

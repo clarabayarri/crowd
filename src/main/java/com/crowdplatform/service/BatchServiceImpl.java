@@ -45,8 +45,8 @@ public class BatchServiceImpl implements BatchService {
     
     @SuppressWarnings("unchecked")
 	@Transactional
-    public List<Integer> listRunningBatchIds() {
-    	Query query = em.createQuery("SELECT id FROM Batch WHERE state='RUNNING'");
+    public List<Integer> listRunningBatchIds(Integer projectId) {
+    	Query query = em.createQuery("SELECT b.id FROM Batch b, project_batch pb WHERE b.state='RUNNING' AND pb.batches_id=id AND pb.project_id='" + projectId + "'");
     	return query.getResultList();
     }
     

@@ -33,6 +33,7 @@ public class BatchServiceImplTest {
 	private Batch mockBatch;
 	
 	private static final Integer batchId = 1;
+	private static final Integer projectId = 2;
 	
 	@Before
 	public void setUp() {
@@ -72,9 +73,10 @@ public class BatchServiceImplTest {
 	@Test
 	public void testListRunningBatchIds() {
 		Query query = Mockito.mock(Query.class);
-		Mockito.when(em.createQuery("SELECT id FROM Batch WHERE state='RUNNING'")).thenReturn(query);
+		Mockito.when(em.createQuery("SELECT b.id FROM Batch b, project_batch pb WHERE b.state='RUNNING' AND pb.batches_id=id AND pb.project_id='" + projectId + "'"))
+			.thenReturn(query);
 	
-		service.listRunningBatchIds();
+		service.listRunningBatchIds(projectId);
 		
 		Mockito.verify(query).getResultList();
 	}

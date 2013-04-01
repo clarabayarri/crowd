@@ -28,6 +28,8 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 	@Mock
 	private BatchService batchService;
 	
+	private static final Integer projectId = 1;
+	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
@@ -36,7 +38,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 	@Test
 	public void testRetrieveTaskCallsForRunningBatchIds() {
 		List<Integer> batchIds = Lists.newArrayList(1,3);
-		Mockito.when(batchService.listRunningBatchIds()).thenReturn(batchIds);
+		Mockito.when(batchService.listRunningBatchIds(projectId)).thenReturn(batchIds);
 		Batch batch = Mockito.mock(Batch.class);
 		Task task1 = new Task();
 		task1.setNumExecutions(3);
@@ -45,15 +47,15 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
 		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
 		
-		service.retrieveTasksForExecution(1);
+		service.retrieveTasksForExecution(projectId, 1);
 		
-		Mockito.verify(batchService).listRunningBatchIds();
+		Mockito.verify(batchService).listRunningBatchIds(projectId);
 	}
 	
 	@Test
 	public void testRetrieveTaskGivesLessExecutedTaskFromBatch() {
 		List<Integer> batchIds = Lists.newArrayList(1,3);
-		Mockito.when(batchService.listRunningBatchIds()).thenReturn(batchIds);
+		Mockito.when(batchService.listRunningBatchIds(projectId)).thenReturn(batchIds);
 		Batch batch = Mockito.mock(Batch.class);
 		Task task1 = new Task();
 		task1.setNumExecutions(3);
@@ -62,7 +64,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
 		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
 		
-		List<Task> result = service.retrieveTasksForExecution(1);
+		List<Task> result = service.retrieveTasksForExecution(projectId, 1);
 		
 		assertEquals(1, result.size());
 		assertSame(task2, result.get(0));
@@ -71,7 +73,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 	@Test
 	public void testRetrieveTaskGivesLessExecutedTasksFromBatch() {
 		List<Integer> batchIds = Lists.newArrayList(1,3);
-		Mockito.when(batchService.listRunningBatchIds()).thenReturn(batchIds);
+		Mockito.when(batchService.listRunningBatchIds(projectId)).thenReturn(batchIds);
 		Batch batch = Mockito.mock(Batch.class);
 		Task task1 = new Task();
 		task1.setNumExecutions(3);
@@ -80,7 +82,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
 		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
 		
-		List<Task> result = service.retrieveTasksForExecution(2);
+		List<Task> result = service.retrieveTasksForExecution(projectId, 2);
 		
 		assertEquals(2, result.size());
 		assertSame(task2, result.get(0));
@@ -90,7 +92,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 	@Test
 	public void testRetrieveTaskGivesMinNumberBetweenAvailableAndRequested() {
 		List<Integer> batchIds = Lists.newArrayList(1,3);
-		Mockito.when(batchService.listRunningBatchIds()).thenReturn(batchIds);
+		Mockito.when(batchService.listRunningBatchIds(projectId)).thenReturn(batchIds);
 		Batch batch = Mockito.mock(Batch.class);
 		Task task1 = new Task();
 		task1.setNumExecutions(3);
@@ -99,7 +101,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		Mockito.when(batch.getTasks()).thenReturn(Sets.newHashSet(task1, task2));
 		Mockito.when(batchService.getBatch(Mockito.anyInt())).thenReturn(batch);
 		
-		List<Task> result = service.retrieveTasksForExecution(7);
+		List<Task> result = service.retrieveTasksForExecution(projectId, 7);
 		
 		assertEquals(2, result.size());
 		assertSame(task2, result.get(0));

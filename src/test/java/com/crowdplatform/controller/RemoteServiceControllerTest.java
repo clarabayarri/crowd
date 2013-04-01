@@ -46,7 +46,7 @@ public class RemoteServiceControllerTest {
 	public void testProvideTaskRetrievesTask() {
 		Task task = new Task();
 		task.setId(3);
-		Mockito.when(taskRetrieval.retrieveTasksForExecution(1)).thenReturn(Lists.newArrayList(task));
+		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 1)).thenReturn(Lists.newArrayList(task));
 		
 		TaskInfo[] taskInfo = controller.provideTask(projectId, 1);
 		

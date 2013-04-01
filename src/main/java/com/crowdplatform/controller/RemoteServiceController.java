@@ -48,7 +48,7 @@ public class RemoteServiceController {
 		if (count == null) {
 			count = 1;
 		}
-		List<Task> tasks = taskRetrieval.retrieveTasksForExecution(count);
+		List<Task> tasks = taskRetrieval.retrieveTasksForExecution(projectId, count);
 		TaskInfo[] data = new TaskInfo[tasks.size()];
 		for (int i = 0; i < tasks.size(); ++i) {
 			data[i] = new TaskInfo(tasks.get(i));
