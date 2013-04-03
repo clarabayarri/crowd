@@ -42,10 +42,10 @@ public class TaskServiceImpl implements TaskService {
 	@Transactional
 	public Task getTask(Integer projectId, Integer taskId) {
 		System.out.println(projectId + ", " + taskId);
-		Query query = em.createQuery("SELECT count(*) FROM project_batch pb, batch_task bt WHERE pb.project_id=:projectId AND pb.batches_id=bt.batch_id AND bt.tasks_id=:taskId");
-		query.setParameter("projectId", projectId);
-		query.setParameter("taskId", taskId);
-		if (query.getSingleResult().equals(1)) {
+		Query query = em.createNativeQuery("SELECT bt.tasks_id FROM project_batch pb, batch_task bt WHERE pb.project_id=:project AND pb.batches_id=bt.batch_id AND bt.tasks_id=:task");
+		query.setParameter("project", projectId);
+		query.setParameter("task", taskId);
+		if (query.getResultList().size() == 1) {
 			return em.find(Task.class, taskId);
 		}
 		return null;
