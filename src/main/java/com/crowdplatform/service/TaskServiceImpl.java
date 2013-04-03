@@ -1,5 +1,6 @@
 package com.crowdplatform.service;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,10 +43,12 @@ public class TaskServiceImpl implements TaskService {
 	@Transactional
 	public Task getTask(Integer projectId, Integer taskId) {
 		System.out.println(projectId + ", " + taskId);
-		Query query = em.createNativeQuery("SELECT bt.tasks_id FROM project_batch pb, batch_task bt WHERE pb.project_id=:project AND pb.batches_id=bt.batch_id AND bt.tasks_id=:task");
+		Query query = em.createNativeQuery("SELECT count(*) FROM project_batch pb, batch_task bt WHERE pb.project_id=:project AND pb.batches_id=bt.batch_id AND bt.tasks_id=:task");
 		query.setParameter("project", projectId);
 		query.setParameter("task", taskId);
-		if (query.getResultList().size() == 1) {
+		BigInteger result = (BigInteger) query.getSingleResult();
+		System.out.println(result);
+		if (result.equals(BigInteger.ONE)) {
 			return em.find(Task.class, taskId);
 		}
 		return null;

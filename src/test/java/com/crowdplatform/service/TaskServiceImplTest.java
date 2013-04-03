@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,8 +68,8 @@ public class TaskServiceImplTest {
 	@Test
 	public void testGetTask() {
 		Query query = Mockito.mock(Query.class);
-		Mockito.when(em.createQuery(Mockito.anyString())).thenReturn(query);
-		Mockito.when(query.getSingleResult()).thenReturn(1);
+		Mockito.when(em.createNativeQuery(Mockito.anyString())).thenReturn(query);
+		Mockito.when(query.getSingleResult()).thenReturn(BigInteger.ONE);
 		
 		service.getTask(projectId, taskId);
 		
@@ -78,8 +79,8 @@ public class TaskServiceImplTest {
 	@Test
 	public void testGetTaskReturnsNullIfTaskDoesntMatchProject() {
 		Query query = Mockito.mock(Query.class);
-		Mockito.when(em.createQuery(Mockito.anyString())).thenReturn(query);
-		Mockito.when(query.getSingleResult()).thenReturn(0);
+		Mockito.when(em.createNativeQuery(Mockito.anyString())).thenReturn(query);
+		Mockito.when(query.getSingleResult()).thenReturn(BigInteger.ZERO);
 		
 		Task result = service.getTask(projectId, taskId);
 		
