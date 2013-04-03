@@ -49,7 +49,9 @@ public class TaskServiceImpl implements TaskService {
 		BigInteger result = (BigInteger) query.getSingleResult();
 		System.out.println(result);
 		if (result.equals(BigInteger.ONE)) {
-			return em.find(Task.class, taskId);
+			Task task = em.find(Task.class, taskId);
+			task.getExecutions().size();
+			return task;
 		}
 		return null;
 	}
