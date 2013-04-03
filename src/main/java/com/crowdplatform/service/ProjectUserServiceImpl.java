@@ -26,7 +26,7 @@ public class ProjectUserServiceImpl implements ProjectUserService {
 		return user;
 	}
 
-	@Override
+	@Transactional
 	public ProjectUser getProjectUserByUsername(String username) {
 		Query query = em.createQuery("FROM ProjectUser WHERE username=:username");
 		query.setParameter("username", username);
