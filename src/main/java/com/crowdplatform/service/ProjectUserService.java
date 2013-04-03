@@ -7,5 +7,7 @@ public interface ProjectUserService {
 	public void addProjectUser(ProjectUser user);
 	
 	public ProjectUser getProjectUser(Integer id);
+	
+	public ProjectUser getProjectUserByUsername(String username);
 
 }

@@ -81,7 +81,10 @@ public class RemoteServiceController {
 		if (project != null) {
 			project.addUser(user);
 			projectService.saveProject(project);
-			return user.getId();
+			ProjectUser createdUser = userService.getProjectUserByUsername(user.getUsername());
+			if (createdUser != null) {
+				return createdUser.getId();
+			}
 		}
 		return 0;
 	}
