@@ -18,11 +18,13 @@ public class ProjectServiceImpl implements ProjectService {
 	@Transactional
 	public void addProject(Project project) {
 		em.persist(project);
+		em.flush();
 	}
 
 	@Transactional
 	public void saveProject(Project project) {
 		em.merge(project);
+		em.flush();
 	}
 
 	@Transactional

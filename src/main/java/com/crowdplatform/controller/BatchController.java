@@ -111,6 +111,7 @@ public class BatchController {
 		}
 
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
+			batchService.addBatch(batch);
 			Project project = projectService.getProject(projectId);
 			project.addBatch(batch);
 			

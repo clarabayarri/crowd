@@ -23,6 +23,11 @@ public class BatchServiceImpl implements BatchService {
 	
 	@PersistenceContext
 	private EntityManager em;
+	
+	@Transactional
+	public void addBatch(Batch batch) {
+		em.persist(batch);
+	}
     
     @Transactional
     public void removeBatch(Integer id) {

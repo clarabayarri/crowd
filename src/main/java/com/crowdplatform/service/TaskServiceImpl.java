@@ -46,7 +46,6 @@ public class TaskServiceImpl implements TaskService {
 		query.setParameter("project", projectId);
 		query.setParameter("task", taskId);
 		BigInteger result = (BigInteger) query.getSingleResult();
-		System.out.println(result);
 		if (result.equals(BigInteger.ONE)) {
 			Task task = em.find(Task.class, taskId);
 			task.getExecutions().size();
