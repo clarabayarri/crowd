@@ -42,8 +42,7 @@ public class TaskServiceImpl implements TaskService {
 	@Transactional
 	public Task getTask(Integer projectId, Integer taskId) {
 		System.out.println(projectId + ", " + taskId);
-		Query query = em.createQuery("(SELECT count(*) FROM project_batch pb, batch_task bt " +
-				"WHERE pb.project_id=:projectId AND pb.batches_id=bt.batch_id AND bt.tasks_id=:taskId)");
+		Query query = em.createQuery("SELECT count(*) FROM project_batch pb, batch_task bt WHERE pb.project_id=:projectId AND pb.batches_id=bt.batch_id AND bt.tasks_id=:taskId");
 		query.setParameter("projectId", projectId);
 		query.setParameter("taskId", taskId);
 		if (query.getSingleResult().equals(1)) {
