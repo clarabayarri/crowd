@@ -31,7 +31,8 @@ public class ProjectUserServiceImpl implements ProjectUserService {
 		Query query = em.createQuery("FROM ProjectUser WHERE username=:username");
 		query.setParameter("username", username);
 		if (query.getResultList().size() > 0) {
-			return (ProjectUser) query.getResultList().get(0);
+			ProjectUser user = (ProjectUser) query.getResultList().get(0);
+			return user;
 		}
 		return null;
 	}

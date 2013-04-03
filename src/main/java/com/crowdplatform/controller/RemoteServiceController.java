@@ -69,7 +69,9 @@ public class RemoteServiceController {
 		if (task != null) {
 			ProjectUser user = userService.getProjectUser(info.getUserId());
 			Execution execution = new Execution(info.getContents());
-			execution.setProjectUser(user);
+			if (user != null) {
+				execution.setProjectUser(user);
+			}
 			task.getExecutions().add(execution);
 			taskService.saveTask(task);
 		}
