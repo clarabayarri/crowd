@@ -40,13 +40,12 @@ public class ProjectUserServiceImplTest {
 	
 	@Test
 	public void testGetProjectUser() {
-		String username = "username";
 		ProjectUser user = new ProjectUser();
-		Mockito.when(em.find(ProjectUser.class, username)).thenReturn(user);
+		Mockito.when(em.find(ProjectUser.class, 1)).thenReturn(user);
 		
-		ProjectUser result = service.getProjectUser(username);
+		ProjectUser result = service.getProjectUser(1);
 		
-		Mockito.verify(em).find(ProjectUser.class, username);
+		Mockito.verify(em).find(ProjectUser.class, 1);
 		assertEquals(user, result);
 	}
 

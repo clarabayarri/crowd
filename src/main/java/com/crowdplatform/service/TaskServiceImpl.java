@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -39,8 +40,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
 	@Transactional
-	public Task getTask(Integer id) {
-		return em.find(Task.class, id);
+	public Task getTask(Integer projectId, Integer taskId) {
+		Query query = em.createQuery("(SELECT count(*) FROM project_batch pb, batch_task bt " +
+				"WHERE pb.project_id='" + projectId + "' AND " +
+				"pb.batches_id=bt.batch_id AND " +
+				"bt.tasks_id='" + taskId + "')");
+		if (query.getSingleResult().equals(1)) {
+			return em.find(Task.class, taskId);
+		}
+		return null;
 	}
 	
     @Transactional

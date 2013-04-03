@@ -16,16 +16,19 @@ import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 
 public class FileWriter {
+	
+	private static final int NUM_STATIC_FIELDS = 3;
 
 	public String writeExecutions(List<Execution> executions, List<Field> fields) throws IOException {
 		StringWriter writer = new StringWriter();
 		CSVWriter csvWriter = new CSVWriter(writer);
 		
-		String[] headers = new String[2 + fields.size()];
+		String[] headers = new String[NUM_STATIC_FIELDS + fields.size()];
 		headers[0] = "id";
 		headers[1] = "date";
+		headers[2] = "userId";
 		for (int i = 0; i < fields.size(); ++i) {
-			headers[2 + i] = fields.get(i).getName();
+			headers[NUM_STATIC_FIELDS + i] = fields.get(i).getName();
 		}
 		csvWriter.writeNext(headers);
 		
@@ -41,9 +44,12 @@ public class FileWriter {
 	}
 	
 	private String[] decodeExecution(Execution execution, List<Field> fields) {
-		String[] values = new String[2 + fields.size()];
+		String[] values = new String[NUM_STATIC_FIELDS + fields.size()];
 		values[0] = String.valueOf(execution.getId());
 		values[1] = execution.getDate().toString();
+		if (execution.getProjectUser() != null) {
+			values[2] = String.valueOf(execution.getProjectUser().getId());
+		}
 		
 		try {
 			JsonNode node = new ObjectMapper().readTree(execution.getContents());
@@ -51,20 +57,20 @@ public class FileWriter {
 				JsonNode fieldNode = node.get(fields.get(i).getName());
 				switch (fields.get(i).getType()) {
 				case STRING:
-					values[2 + i] = fieldNode.getTextValue();
+					values[NUM_STATIC_FIELDS + i] = fieldNode.getTextValue();
 					break;
 				case INTEGER:
-					values[2 + i] = String.valueOf(fieldNode.getIntValue());
+					values[NUM_STATIC_FIELDS + i] = String.valueOf(fieldNode.getIntValue());
 					break;
 				case DOUBLE:
-					values[2 + i] = String.valueOf(fieldNode.getDoubleValue());
+					values[NUM_STATIC_FIELDS + i] = String.valueOf(fieldNode.getDoubleValue());
 					break;
 				case MULTIVALUATE_STRING:
 					ArrayNode array = (ArrayNode)fieldNode;
 					Iterator<JsonNode> iterator = array.getElements();
-					values[2 + i] = "";
+					values[NUM_STATIC_FIELDS + i] = "";
 					while (iterator.hasNext()) {
-						values[2 + i] += iterator.next().getTextValue() + ",";
+						values[NUM_STATIC_FIELDS + i] += iterator.next().getTextValue() + ",";
 					}
 					break;
 				case BOOL:

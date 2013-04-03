@@ -7,6 +7,8 @@ public class ExecutionInfo {
 	
 	private String contents;
 	
+	private Integer userId;
+	
 	public ExecutionInfo() {
 		
 	}
@@ -25,6 +27,14 @@ public class ExecutionInfo {
 
 	public void setContents(String contents) {
 		this.contents = contents;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 	
 	

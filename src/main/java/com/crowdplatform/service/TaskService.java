@@ -24,10 +24,11 @@ public interface TaskService {
 
 	/**
 	 * Retrieve a persisted task.
-	 * @param id The task id
+	 * @param projectId The Project id
+	 * @param taskId The task id
 	 * @return Task corresponding to id
 	 */
-	public Task getTask(Integer id);
+	public Task getTask(Integer projectId, Integer taskId);
 	
 	/**
 	 * Create a set of tasks and add them to the provided Batch.

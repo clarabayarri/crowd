@@ -34,7 +34,7 @@ public class FileWriterTest {
 		
 		String result = writer.writeExecutions(executions, fields);
 		
-		String expected = "\"id\",\"date\"\n";
+		String expected = "\"id\",\"date\",\"userId\"\n";
 		assertEquals(expected, result);
 	}
 	
@@ -47,7 +47,7 @@ public class FileWriterTest {
 		
 		String result = writer.writeExecutions(executions, fields);
 		
-		String expected = "\"id\",\"date\",\"field\"\n";
+		String expected = "\"id\",\"date\",\"userId\",\"field\"\n";
 		assertEquals(expected, result);
 	}
 	
@@ -61,7 +61,7 @@ public class FileWriterTest {
 		
 		String result = writer.writeExecutions(executions, fields);
 		
-		String expected = "\"id\",\"date\"\n\"1\",";
+		String expected = "\"id\",\"date\",\"userId\"\n\"1\",";
 		assertTrue(result.contains(expected));
 	}
 	

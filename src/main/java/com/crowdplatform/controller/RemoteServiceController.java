@@ -65,11 +65,14 @@ public class RemoteServiceController {
 	@RequestMapping(value="/project/{projectId}/execution", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public void saveExecution(@PathVariable("projectId") Integer projectId, @RequestBody ExecutionInfo info) {
-		// TODO: check project
-		Task task = taskService.getTask(info.getTaskId());
-		Execution execution = new Execution(info.getContents());
-		task.getExecutions().add(execution);
-		taskService.saveTask(task);
+		Task task = taskService.getTask(projectId, info.getTaskId());
+		if (task != null) {
+			ProjectUser user = userService.getProjectUser(info.getUserId());
+			Execution execution = new Execution(info.getContents());
+			execution.setProjectUser(user);
+			task.getExecutions().add(execution);
+			taskService.saveTask(task);
+		}
 	}
 	
 	@RequestMapping(value="/project/{projectId}/user", method=RequestMethod.POST)

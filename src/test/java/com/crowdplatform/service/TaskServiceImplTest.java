@@ -1,6 +1,7 @@
 package com.crowdplatform.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -38,6 +40,7 @@ public class TaskServiceImplTest {
 	private EntityManager em;
 	
 	private Task task = new Task();
+	private static final Integer projectId = 1;
 	private static final Integer taskId = 1;
 	
 	@Before
@@ -63,9 +66,24 @@ public class TaskServiceImplTest {
 	
 	@Test
 	public void testGetTask() {
-		service.getTask(taskId);
+		Query query = Mockito.mock(Query.class);
+		Mockito.when(em.createQuery(Mockito.anyString())).thenReturn(query);
+		Mockito.when(query.getSingleResult()).thenReturn(1);
+		
+		service.getTask(projectId, taskId);
 		
 		Mockito.verify(em).find(Task.class, taskId);
+	}
+	
+	@Test
+	public void testGetTaskReturnsNullIfTaskDoesntMatchProject() {
+		Query query = Mockito.mock(Query.class);
+		Mockito.when(em.createQuery(Mockito.anyString())).thenReturn(query);
+		Mockito.when(query.getSingleResult()).thenReturn(0);
+		
+		Task result = service.getTask(projectId, taskId);
+		
+		assertNull(result);
 	}
 	
 	@SuppressWarnings("unchecked")

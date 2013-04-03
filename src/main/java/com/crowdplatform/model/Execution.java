@@ -3,8 +3,10 @@ package com.crowdplatform.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Execution {
@@ -16,6 +18,9 @@ public class Execution {
 	private Date date;
 	
 	private String contents;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	private ProjectUser projectUser;
 	
 	public Execution() {
 		this.date = new Date();
@@ -48,5 +53,13 @@ public class Execution {
 
 	public void setContents(String contents) {
 		this.contents = contents;
+	}
+
+	public ProjectUser getProjectUser() {
+		return projectUser;
+	}
+
+	public void setProjectUser(ProjectUser projectUser) {
+		this.projectUser = projectUser;
 	}
 }

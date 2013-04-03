@@ -6,6 +6,6 @@ public interface ProjectUserService {
 
 	public void addProjectUser(ProjectUser user);
 	
-	public ProjectUser getProjectUser(String username);
+	public ProjectUser getProjectUser(Integer id);
 
 }

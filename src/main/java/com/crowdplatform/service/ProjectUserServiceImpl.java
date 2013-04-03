@@ -20,8 +20,8 @@ public class ProjectUserServiceImpl implements ProjectUserService {
 	}
 
 	@Transactional
-	public ProjectUser getProjectUser(String username) {
-		ProjectUser user = em.find(ProjectUser.class, username);
+	public ProjectUser getProjectUser(Integer id) {
+		ProjectUser user = em.find(ProjectUser.class, id);
 		return user;
 	}
 	

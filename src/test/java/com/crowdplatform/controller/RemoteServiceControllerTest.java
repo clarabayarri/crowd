@@ -63,11 +63,11 @@ public class RemoteServiceControllerTest {
 	public void testSaveExecutionRetrievesAssociatedTask() {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setTaskId(3);
-		Mockito.when(taskService.getTask(3)).thenReturn(new Task());
+		Mockito.when(taskService.getTask(1,3)).thenReturn(new Task());
 		
 		controller.saveExecution(projectId, info);
 		
-		Mockito.verify(taskService).getTask(3);
+		Mockito.verify(taskService).getTask(1,3);
 	}
 	
 	@Test
@@ -75,7 +75,7 @@ public class RemoteServiceControllerTest {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setTaskId(3);
 		Task task = new Task();
-		Mockito.when(taskService.getTask(3)).thenReturn(task);
+		Mockito.when(taskService.getTask(1,3)).thenReturn(task);
 		
 		controller.saveExecution(projectId, info);
 		
