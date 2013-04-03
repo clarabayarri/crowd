@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ public class Field {
 	@NotNull
 	private String name;
 	
-	@ElementCollection
+	@ElementCollection(fetch=FetchType.EAGER)
 	private Set<String> columnNames;
 	
 	public enum Type {
