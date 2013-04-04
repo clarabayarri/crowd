@@ -145,7 +145,6 @@ public class RemoteServiceControllerTest {
 	@Test
 	public void testSaveUserReturnsUserIdIfCorrect() {
 		ProjectUser user = new ProjectUser();
-		user.setUsername("username");
 		user.setId(30);
 		
 		int result = controller.saveUser(projectId, projectUid, user);
