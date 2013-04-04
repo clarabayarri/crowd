@@ -9,15 +9,7 @@
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
-
-    <!--
-      IMPORTANT:
-      This is Heroku specific styling. Remove to customize.
-    -->
-    <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
-    <!-- /// -->
+    <%@ include file="/WEB-INF/jsp/style.jsp" %>
 
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
@@ -107,6 +99,8 @@
                 </fieldset>
                     
             </form>
+
+            <p>Don't have an account yet? <a href="/register">Register now!</a></p>
 
             <script type="text/javascript">
                 document.getElementById('username_or_email').focus();
