@@ -28,7 +28,7 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 	@Mock
 	private BatchService batchService;
 	
-	private static final Integer projectId = 1;
+	private static final Long projectId = new Long(1);
 	
 	@Before
 	public void setUp() {

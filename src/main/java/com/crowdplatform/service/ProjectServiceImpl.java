@@ -28,7 +28,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Transactional
-	public void removeProject(Integer id) {
+	public void removeProject(Long id) {
 		Project project = em.find(Project.class, id);
 		if (null != project) {
 			em.remove(project);
@@ -36,7 +36,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Transactional
-	public Project getProject(Integer id) {
+	public Project getProject(Long id) {
 		Project project = em.find(Project.class, id);
 		for (Batch batch : project.getBatches()) {
 			batch.updatePercentageComplete();

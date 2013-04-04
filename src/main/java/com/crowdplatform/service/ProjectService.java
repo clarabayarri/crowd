@@ -20,13 +20,13 @@ public interface ProjectService {
 	 * Remove an existing project.
 	 * @param id The project id
 	 */
-	public void removeProject(Integer id);
+	public void removeProject(Long id);
 
 	/**
 	 * Retrieve a persisted project.
 	 * @param id The project id
 	 * @return Project corresponding to id
 	 */
-	public Project getProject(Integer id);
+	public Project getProject(Long id);
 	
 }

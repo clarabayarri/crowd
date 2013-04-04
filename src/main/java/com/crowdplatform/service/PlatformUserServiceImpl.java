@@ -84,7 +84,7 @@ public class PlatformUserServiceImpl implements PlatformUserService {
 	}
 
 	@Transactional
-	public boolean currentUserIsAuthorizedForProject(Integer projectId) {
+	public boolean currentUserIsAuthorizedForProject(Long projectId) {
 		PlatformUser user = getCurrentUser();
 		if (user != null) {
 			return getCurrentUser().isOwnerOfProject(projectId);
@@ -93,7 +93,7 @@ public class PlatformUserServiceImpl implements PlatformUserService {
 	}
 
 	@Transactional
-	public boolean currentUserIsAuthorizedForBatch(Integer projectId,
+	public boolean currentUserIsAuthorizedForBatch(Long projectId,
 			Integer batchId) {
 		PlatformUser user = getCurrentUser();
 		if (user != null) {

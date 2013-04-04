@@ -25,7 +25,9 @@ public class Project {
 
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Long id;
+	
+	private Long uid;
 	
 	@NotNull
 	@Size(min=4)
@@ -52,12 +54,20 @@ public class Project {
 		creationDate = new Date();
 	}
 	
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getUid() {
+		return uid;
+	}
+
+	public void setUid(Long uid) {
+		this.uid = uid;
 	}
 
 	public String getName() {

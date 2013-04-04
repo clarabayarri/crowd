@@ -1,5 +1,6 @@
 package com.crowdplatform.controller;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -18,8 +19,8 @@ import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.service.PasswordResetRequestService;
-import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.PlatformUserService;
+import com.crowdplatform.service.ProjectService;
 import com.google.common.collect.Sets;
 
 @Controller
@@ -69,7 +70,9 @@ public class SampleDataController {
 	
 	private void createSampleProject() {
 		Project project = new Project();
-		project.setName("Awesome project");
+		project.setName("Dyseggxia project");
+		SecureRandom random = new SecureRandom();
+		project.setUid(random.nextLong());
 		createInputFields(project);
 		createOutputFields(project);
 		projectService.addProject(project);

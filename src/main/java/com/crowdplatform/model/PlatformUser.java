@@ -80,7 +80,7 @@ public class PlatformUser {
 		this.projects.add(project);
 	}
 	
-	public void removeProject(Integer projectId) {
+	public void removeProject(Long projectId) {
 		for (Project project : this.projects) {
 			if (project.getId().equals(projectId)) {
 				this.projects.remove(project);
@@ -101,7 +101,7 @@ public class PlatformUser {
 		return list;
 	}
 	
-	public boolean isOwnerOfProject(Integer projectId) {
+	public boolean isOwnerOfProject(Long projectId) {
 		for (Project project : this.projects) {
 			if (projectId.equals(project.getId())) {
 				return true;
@@ -110,7 +110,7 @@ public class PlatformUser {
 		return false;
 	}
 	
-	public boolean isOwnerOfBatch(Integer projectId, Integer batchId) {
+	public boolean isOwnerOfBatch(Long projectId, Integer batchId) {
 		for (Project project : this.projects) {
 			if (projectId.equals(project.getId())) {
 				for (Batch batch : project.getBatches()) {

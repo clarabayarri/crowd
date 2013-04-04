@@ -1,6 +1,7 @@
 package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,11 +41,16 @@ public class RemoteServiceControllerTest {
 	@Mock
 	private ProjectUserService userService;
 	
-	private static final Integer projectId = 1;
+	private Project project = new Project();
+	private static final Long projectId = new Long(1);
+	private static final Long projectUid = new Long(2);
 	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
+	    
+	    project.setUid(projectUid);
+	    Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 	}
 	
 	@Test
@@ -53,21 +59,50 @@ public class RemoteServiceControllerTest {
 		task.setId(3);
 		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 1)).thenReturn(Lists.newArrayList(task));
 		
-		TaskInfo[] taskInfo = controller.provideTask(projectId, 1);
+		TaskInfo[] taskInfo = controller.provideTask(projectId, projectUid, 1);
 		
 		assertEquals(1, taskInfo.length);
 		assertEquals(task.getId(), taskInfo[0].getId());
 	}
 	
 	@Test
+	public void testProvideTaskRetrievesOneTaskIfNoCountProvided() {
+		Task task = new Task();
+		task.setId(3);
+		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 1)).thenReturn(Lists.newArrayList(task));
+		
+		TaskInfo[] taskInfo = controller.provideTask(projectId, projectUid, null);
+		
+		assertEquals(1, taskInfo.length);
+	}
+	
+	@Test
+	public void testProvideTaskRetrievesMoreTasksIfCountProvided() {
+		Task task = new Task();
+		task.setId(3);
+		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 2)).thenReturn(Lists.newArrayList(task, task));
+		
+		TaskInfo[] taskInfo = controller.provideTask(projectId, projectUid, 2);
+		
+		assertEquals(2, taskInfo.length);
+	}
+	
+	@Test
+	public void testProvideTaskRetrievesNothingIfWrongCredentials() {
+		TaskInfo[] taskInfo = controller.provideTask(projectId, new Long(1), 2);
+		
+		assertNull(taskInfo);
+	}
+	
+	@Test
 	public void testSaveExecutionRetrievesAssociatedTask() {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setTaskId(3);
-		Mockito.when(taskService.getTask(1,3)).thenReturn(new Task());
+		Mockito.when(taskService.getTask(projectId,3)).thenReturn(new Task());
 		
-		controller.saveExecution(projectId, info);
+		controller.saveExecution(projectId, projectUid, info);
 		
-		Mockito.verify(taskService).getTask(1,3);
+		Mockito.verify(taskService).getTask(projectId,3);
 	}
 	
 	@Test
@@ -75,20 +110,53 @@ public class RemoteServiceControllerTest {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setTaskId(3);
 		Task task = new Task();
-		Mockito.when(taskService.getTask(1,3)).thenReturn(task);
+		Mockito.when(taskService.getTask(projectId,3)).thenReturn(task);
 		
-		controller.saveExecution(projectId, info);
+		controller.saveExecution(projectId, projectUid, info);
 		
 		Mockito.verify(taskService).saveTask(task);
 	}
 	
 	@Test
+	public void testSaveExecutionDoesNothingIfWrongCredentials() {
+		controller.saveExecution(projectId, new Long(3), null);
+		
+		Mockito.verifyZeroInteractions(taskService);
+	}
+	
+	@Test
 	public void testSaveUserCallsServiceToSave() {
 		ProjectUser user = new ProjectUser();
-		Mockito.when(projectService.getProject(projectId)).thenReturn(new Project());
 		
-		controller.saveUser(projectId, user);
+		controller.saveUser(projectId, projectUid, user);
 		
 		Mockito.verify(projectService).saveProject(Mockito.any(Project.class));
+	}
+	
+	@Test
+	public void testSaveUserReturnsZeroIfGoneWrong() {
+		ProjectUser user = new ProjectUser();
+		
+		int result = controller.saveUser(projectId, new Long(3), user);
+		
+		assertEquals(0, result);
+	}
+	
+	@Test
+	public void testSaveUserReturnsUserIdIfCorrect() {
+		ProjectUser user = new ProjectUser();
+		user.setUsername("username");
+		user.setId(30);
+		
+		int result = controller.saveUser(projectId, projectUid, user);
+		
+		assertEquals(30, result);
+	}
+	
+	@Test
+	public void testSaveUserDoesNothingIfWrongCredentials() {
+		controller.saveUser(projectId, new Long(3), null);
+		
+		Mockito.verifyZeroInteractions(userService);
 	}
 }

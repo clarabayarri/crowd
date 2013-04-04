@@ -38,7 +38,7 @@ public class BatchServiceImplTest {
 	private Batch mockBatch;
 	
 	private static final Integer batchId = 1;
-	private static final Integer projectId = 2;
+	private static final Long projectId = new Long(2);
 	
 	@Before
 	public void setUp() {

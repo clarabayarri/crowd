@@ -28,7 +28,7 @@ public interface TaskService {
 	 * @param taskId The task id
 	 * @return Task corresponding to id
 	 */
-	public Task getTask(Integer projectId, Integer taskId);
+	public Task getTask(Long projectId, Integer taskId);
 	
 	/**
 	 * Create a set of tasks and add them to the provided Batch.

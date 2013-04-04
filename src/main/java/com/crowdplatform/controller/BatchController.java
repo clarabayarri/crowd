@@ -45,7 +45,7 @@ public class BatchController {
 	private TaskService taskService;
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
-	public String getBatch(@PathVariable("projectId") Integer projectId, 
+	public String getBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId, Model model,
 			@RequestParam(value="created", required=false) Boolean created) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
@@ -59,7 +59,7 @@ public class BatchController {
 	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/start")
-	public String startBatch(@PathVariable("projectId") Integer projectId, 
+	public String startBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.startBatch(batchId);
@@ -68,7 +68,7 @@ public class BatchController {
 	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/pause")
-	public String pauseBatch(@PathVariable("projectId") Integer projectId, 
+	public String pauseBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.pauseBatch(batchId);
@@ -77,7 +77,7 @@ public class BatchController {
 	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/delete")
-	public String deleteBatch(@PathVariable("projectId") Integer projectId,
+	public String deleteBatch(@PathVariable("projectId") Long projectId,
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			Project project = projectService.getProject(projectId);
@@ -89,7 +89,7 @@ public class BatchController {
 	}
 
 	@RequestMapping(value={"/project/{projectId}/batch/create"}, method=RequestMethod.GET)
-	public String newBatch(@PathVariable("projectId") Integer projectId, Model model) {
+	public String newBatch(@PathVariable("projectId") Long projectId, Model model) {
 		Batch batch = new Batch();
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
@@ -100,7 +100,7 @@ public class BatchController {
 	}
 
 	@RequestMapping(value="/project/{projectId}/batch/create", method = RequestMethod.POST)
-	public String createBatch(@Valid Batch batch, @PathVariable("projectId") Integer projectId, BindingResult bindingResult, @RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
+	public String createBatch(@Valid Batch batch, @PathVariable("projectId") Long projectId, BindingResult bindingResult, @RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
 		if (bindingResult.hasErrors()) {
 			return "create";
 		}
@@ -140,7 +140,7 @@ public class BatchController {
 
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/download")
-	public void downloadBatch(@PathVariable("projectId") Integer projectId, 
+	public void downloadBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId, HttpServletResponse response) {
 		List<Execution> executions = batchService.listExecutions(batchId);
 		List<Field> fields = projectService.getProject(projectId).getOrderedOutputFields();

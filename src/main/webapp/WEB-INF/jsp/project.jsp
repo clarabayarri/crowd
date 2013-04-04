@@ -68,6 +68,7 @@
                     <li class="active"><a data-toggle="tab" href="#general">General</a></li>
                     <li><a data-toggle="tab" href="#input">Input fields</a></li>
                     <li><a data-toggle="tab" href="#output">Output fields</a></li>
+                    <li><a data-toggle="tab" href="#security">Security</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -93,6 +94,14 @@
                                 <dt>${field.name}</dt>
                                 <dd>${field.type}</dd>
                             </c:forEach>
+                        </dl>
+                    </div>
+                    <div class="tab-pane" id="security">
+                        <dl class="dl-horizontal">
+                            <dt>Project id</dt>
+                            <dd>${project.id}</dd>
+                            <dt>Security code</dt>
+                            <dd>${project.uid} <a href="/project/${project.id}/resetUID" class="btn btn-mini btn-danger">reset</a></dd>
                         </dl>
                     </div>
                 </div>

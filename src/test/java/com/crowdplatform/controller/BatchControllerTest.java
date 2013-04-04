@@ -42,7 +42,7 @@ public class BatchControllerTest {
 	
 	private Batch batch = new Batch();
 	private Project project = new Project();
-	private static final Integer projectId = 1;
+	private static final Long projectId = new Long(1);
 	private static final Integer batchId = 2;
 	
 	@Before
@@ -208,7 +208,7 @@ public class BatchControllerTest {
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(true);
 		
-		String result = controller.createBatch(batch, 1, bindingResult, null);
+		String result = controller.createBatch(batch, projectId, bindingResult, null);
 		
 		assertEquals("create", result);
 	}
@@ -220,7 +220,7 @@ public class BatchControllerTest {
 		MultipartFile file = Mockito.mock(MultipartFile.class);
 		Mockito.when(file.getContentType()).thenReturn("text");
 		
-		String result = controller.createBatch(batch, 1, bindingResult, file);
+		String result = controller.createBatch(batch, projectId, bindingResult, file);
 		
 		assertEquals("create", result);
 		Mockito.verify(bindingResult).reject("error.file.format");
@@ -233,7 +233,7 @@ public class BatchControllerTest {
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		
-		controller.createBatch(batch, 1, bindingResult, null);
+		controller.createBatch(batch, projectId, bindingResult, null);
 		
 		Mockito.verify(project).addBatch(batch);
 		Mockito.verify(projectService).saveProject(project);
