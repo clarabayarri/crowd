@@ -12,8 +12,7 @@
     <%@ include file="/WEB-INF/jsp/style.jsp" %>
 
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
-    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
-    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
+    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
 
 </head>
 
