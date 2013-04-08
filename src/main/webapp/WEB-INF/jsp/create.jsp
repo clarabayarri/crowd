@@ -72,6 +72,10 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    document.getElementById('batch_name').focus();
+</script>
+
 <%@ include file="/WEB-INF/jsp/footer.jsp" %>
 
 

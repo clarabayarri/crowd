@@ -135,6 +135,10 @@
                                 <dd><c:out value="${entry.value}"/></dd>
                             </c:forEach>
                         </dl>
+                        <c:set var="perc" value="${100*task.numExecutions / batch.executionsPerTask}" />
+                        <div class="progress progress-info progress-striped">
+                            <div class="bar" style="width: ${perc}%"></div>
+                        </div>
                     </div>
                     
                 </div>

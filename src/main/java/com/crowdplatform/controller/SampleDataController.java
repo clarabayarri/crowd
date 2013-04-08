@@ -77,7 +77,7 @@ public class SampleDataController {
 		createOutputFields(project);
 		projectService.addProject(project);
 		
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 1; ++i)
 			project.addBatch(createSampleBatch());
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

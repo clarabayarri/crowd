@@ -90,17 +90,19 @@ public class BatchController {
 
 	@RequestMapping(value={"/project/{projectId}/batch/create"}, method=RequestMethod.GET)
 	public String newBatch(@PathVariable("projectId") Long projectId, Model model) {
-		Batch batch = new Batch();
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
 			model.addAttribute(project);
 	    }
+		Batch batch = new Batch();
 		model.addAttribute(batch);
 		return "create";
 	}
 
 	@RequestMapping(value="/project/{projectId}/batch/create", method = RequestMethod.POST)
-	public String createBatch(@Valid Batch batch, @PathVariable("projectId") Long projectId, BindingResult bindingResult, @RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
+	public String createBatch(@Valid Batch batch, @PathVariable("projectId") Long projectId, 
+			BindingResult bindingResult, 
+			@RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
 		if (bindingResult.hasErrors()) {
 			return "create";
 		}
