@@ -3,7 +3,7 @@ package com.crowdplatform.service;
 import java.util.List;
 
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.Execution;
+import com.crowdplatform.model.Task;
 
 public interface BatchService {
 
@@ -55,7 +55,7 @@ public interface BatchService {
     /**
      * Retrieve all executions associated to a batch's tasks.
      * @param id The batch id
-     * @return List with all the executions associated to tasks from the batch identified by id
+     * @return List with all the tasks from the batch identified by id with their executions loaded
      */
-    public List<Execution> listExecutions(Integer id);
+    public List<Task> listTasksWithExecutions(Integer id);
 }

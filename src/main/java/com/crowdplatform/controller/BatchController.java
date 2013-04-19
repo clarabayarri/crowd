@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
+import com.crowdplatform.model.Task;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
@@ -144,10 +144,10 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/download")
 	public void downloadBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId, HttpServletResponse response) {
-		List<Execution> executions = batchService.listExecutions(batchId);
-		List<Field> fields = projectService.getProject(projectId).getOrderedOutputFields();
+		List<Task> tasks = batchService.listTasksWithExecutions(batchId);
+		Project project = projectService.getProject(projectId);
 		try {
-			String writer = (new FileWriter()).writeExecutions(executions, fields);
+			String writer = (new FileWriter()).writeTasksExecutions(tasks, project.getOrderedInputFields(), project.getOrderedOutputFields());
 			response.getWriter().write(writer);
 			response.setContentType("text/csv");
 			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batchId + ".csv");

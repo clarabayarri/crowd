@@ -34,6 +34,14 @@ import com.crowdplatform.service.TaskService;
 @Controller
 @RequestMapping("/API")
 public class RemoteServiceController {
+	
+	public static final String uid = "-3596985136239043284";
+	
+	public static final String TASK_GET_URL = "http://gentle-gorge-9660.herokuapp.com/API/project/1/uid/" + uid + "/task?count=10";
+	
+	public static final String EXECUTION_POST_URL = "http://gentle-gorge-9660.herokuapp.com/API/project/1/uid/" + uid + "/execution";
+	
+	public static final String CREATE_USER_POST_URL = "http://gentle-gorge-9660.herokuapp.com/API/project/1/uid/" + uid + "/user";
 
 	@Autowired
 	private ProjectService projectService;
@@ -77,9 +85,9 @@ public class RemoteServiceController {
 		if (project.getUid().equals(uid)) {
 			Task task = taskService.getTask(projectId, info.getTaskId());
 			if (task != null) {
-				ProjectUser user = userService.getProjectUser(info.getUserId());
 				Execution execution = new Execution(info.getContents());
-				if (user != null) {
+				if (info.getUserId() != null && info.getUserId() > 0) {
+					ProjectUser user = userService.getProjectUser(info.getUserId());
 					execution.setProjectUser(user);
 				}
 				task.getExecutions().add(execution);

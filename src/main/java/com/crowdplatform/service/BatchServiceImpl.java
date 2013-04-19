@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.google.common.collect.Lists;
@@ -91,13 +90,12 @@ public class BatchServiceImpl implements BatchService {
     }
     
     @Transactional
-    public List<Execution> listExecutions(Integer id) {
+    public List<Task> listTasksWithExecutions(Integer id) {
     	Batch batch = em.find(Batch.class, id);
-    	List<Execution> results = Lists.newArrayList();
     	for (Task task : batch.getTasks()) {
-    		results.addAll(task.getExecutions());
+    		task.getExecutions().size();
     	}
-    	return results;
+    	return Lists.newArrayList(batch.getTasks());
     }
     
 }
