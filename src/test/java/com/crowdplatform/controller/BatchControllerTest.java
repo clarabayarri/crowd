@@ -66,7 +66,7 @@ public class BatchControllerTest {
 	public void testGetBatchHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
 		
-		String result = controller.getBatch(projectId, batchId, model, null);
+		String result = controller.getBatch(projectId, batchId, model, null, null);
 		
 		assertEquals("batch", result);
 	}
@@ -75,7 +75,7 @@ public class BatchControllerTest {
 	public void testGetBatchRetrievesBatchToModelIfAuthorized() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(projectId, batchId, model, null);
+		controller.getBatch(projectId, batchId, model, null, null);
 		
 		Mockito.verify(model).addAttribute(batch);
 		Mockito.verify(projectService).getProject(projectId);
@@ -87,7 +87,7 @@ public class BatchControllerTest {
 		Model model = Mockito.mock(Model.class);
 		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batchId)).thenReturn(false);
 		
-		controller.getBatch(projectId, batchId, model, null);
+		controller.getBatch(projectId, batchId, model, null, null);
 		
 		Mockito.verifyZeroInteractions(model);
 		Mockito.verifyZeroInteractions(batchService);
@@ -98,7 +98,7 @@ public class BatchControllerTest {
 	public void testGetBatchAddsCreatedParameterIfProvided() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(projectId, batchId, model, true);
+		controller.getBatch(projectId, batchId, model, true, null);
 		
 		Mockito.verify(model).addAttribute("created", true);
 	}

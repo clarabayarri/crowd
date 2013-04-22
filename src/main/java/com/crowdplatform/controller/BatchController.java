@@ -51,13 +51,17 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
 	public String getBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId, Model model,
-			@RequestParam(value="created", required=false) Boolean created) {
+			@RequestParam(value="created", required=false) Boolean created,
+			@RequestParam(value="export-error", required=false) Boolean exportError) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			model.addAttribute(projectService.getProject(projectId));
 			model.addAttribute(batchService.getBatch(batchId));
 		}
 		if (created != null) {
 			model.addAttribute("created", created);
+		}
+		if (exportError != null) {
+			model.addAttribute("export-error", exportError);
 		}
 		return "batch";
 	}
@@ -152,7 +156,7 @@ public class BatchController {
 		Project project = projectService.getProject(projectId);
 		try {
 			String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getOrderedTasks()), 
-					project.getOrderedInputFields(), project.getOrderedOutputFields());
+					project.getOrderedInputFields(), project.getOrderedOutputFields(), true);
 			response.getWriter().write(writer);
 			response.setContentType("text/csv");
 			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batchId + ".csv");
@@ -166,12 +170,13 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/export")
 	public String exportBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId) {
+		Project project = projectService.getProject(projectId);
 		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
-		String url = dataExporter.exportDataURL(batch);
+		String url = dataExporter.exportDataURL(project, batch);
 		batchService.saveBatch(batch);
 		if (url != null) {
 			return "redirect:" + url;
 		}
-		return "redirect:/project/" + projectId + "/batch/" + batchId;
+		return "redirect:/project/" + projectId + "/batch/" + batchId + "?export-error=true";
 	}
 }

@@ -43,7 +43,6 @@
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
-
             <c:if test="${created}">
                 <div class="alert alert-success alert-block fade in">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -53,42 +52,53 @@
 
                 <div class="clear-fix"></div>
             </c:if>
+            <c:if test="${export-error}">
+                <div class="alert alert-error alert-block fade in">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>Error!</h4>
+                    <p>There was an error exporting your data to Fusion Tables. Please try again later.</p>
+                </div>
 
-            <ul class="pull-right">
-                <li>
-                <c:choose>
-                    <c:when test="${batch.state eq 'RUNNING'}">
-                        <a href="/project/${project.id}/batch/${batch.id}/pause" class="btn btn-danger pull-right">Stop</a>
-                    </c:when>
-                    <c:when test="${batch.state eq 'PAUSED'}">
-                        <a href="/project/${project.id}/batch/${batch.id}/start" class="btn btn-success pull-right">Start</a>
-                    </c:when>
-                </c:choose>
-
-                <c:choose>
-                    <c:when test="${batch.state eq 'RUNNING'}">
-                        <img src="/resources/img/status_green.png"/>
-                    </c:when>
-                    <c:when test="${batch.state eq 'PAUSED'}">
-                        <img src="/resources/img/status_grey.png"/>
-                    </c:when>
-                    <c:when test="${batch.state eq 'COMPLETE'}">
-                        <img src="/resources/img/status_blue.png"/>
-                    </c:when>
-                </c:choose>
-                </li>
-
-                <li><a href="/project/${project.id}/batch/${batch.id}/download" class="btn btn-info">Download executions</a></li>
-
-                <li><a href="/project/${project.id}/batch/${batch.id}/export" class="btn btn-info" target="_blank">Export to Fusiontables</a></li>
-
-            </ul>
+                <div class="clear-fix"></div>
+            </c:if>
 
             <div class="page-header">
+                <div>
+                    <p>
+                        <c:choose>
+                            <c:when test="${batch.state eq 'RUNNING'}">
+                                <a href="/project/${project.id}/batch/${batch.id}/pause" class="btn btn-danger pull-right">Stop</a>
+                            </c:when>
+                            <c:when test="${batch.state eq 'PAUSED'}">
+                                <a href="/project/${project.id}/batch/${batch.id}/start" class="btn btn-success pull-right">Start</a>
+                            </c:when>
+                        </c:choose>
+
+                        <c:choose>
+                            <c:when test="${batch.state eq 'RUNNING'}">
+                                <img src="/resources/img/status_green.png" class="pull-right"/>
+                            </c:when>
+                            <c:when test="${batch.state eq 'PAUSED'}">
+                                <img src="/resources/img/status_grey.png" class="pull-right"/>
+                            </c:when>
+                            <c:when test="${batch.state eq 'COMPLETE'}">
+                                <img src="/resources/img/status_blue.png" class="pull-right"/>
+                            </c:when>
+                        </c:choose>
+                    </p>
+                    <div class="clearfix"></div>
+                    
+ 
+                </div>
+                <div class="clearfix"></div>
+                <div class="pull-right">
+                    <p><a href="/project/${project.id}/batch/${batch.id}/download" class="btn btn-info pull-right">Download executions</a></p>
+                    <p><a href="/project/${project.id}/batch/${batch.id}/export" class="btn btn-info pull-right" target="_blank">Export to Fusiontables</a></p>
+                    <div class="clearfix"></div>
+                </div>
+                
                 <h1>Batch ${batch.name}</h1>
             </div>
-
-            <div class="clear-fix"></div>
 
             <dl class="dl-horizontal">
                 <dt>Tasks</dt>

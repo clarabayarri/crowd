@@ -22,11 +22,13 @@ public class FileWriter {
 	private static final int NUM_STATIC_TASK_FIELDS = 1;
 	private static final int NUM_STATIC_EXECUTION_FIELDS = 3;
 	
-	public String writeTasksExecutions(List<Task> tasks, List<Field> taskFields, List<Field> executionFields) throws IOException {
+	public String writeTasksExecutions(List<Task> tasks, List<Field> taskFields, List<Field> executionFields, Boolean header) throws IOException {
 		StringWriter writer = new StringWriter();
 		CSVWriter csvWriter = new CSVWriter(writer);
 		
-		writeHeaders(csvWriter, taskFields, executionFields);
+		if (header) {
+			writeHeaders(csvWriter, taskFields, executionFields);
+		}
 		
 		for (Task task : tasks) {
 			writeTaskExecutions(csvWriter, task, taskFields, executionFields);
