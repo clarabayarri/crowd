@@ -54,8 +54,8 @@
                 <div class="clear-fix"></div>
             </c:if>
 
-            <div class="pull-right">
-                <p>
+            <ul class="pull-right">
+                <li>
                 <c:choose>
                     <c:when test="${batch.state eq 'RUNNING'}">
                         <a href="/project/${project.id}/batch/${batch.id}/pause" class="btn btn-danger pull-right">Stop</a>
@@ -76,13 +76,13 @@
                         <img src="/resources/img/status_blue.png"/>
                     </c:when>
                 </c:choose>
-                </p>
+                </li>
 
-                <p><a href="/project/${project.id}/batch/${batch.id}/download" class="btn btn-info">Download executions</a></p>
+                <li><a href="/project/${project.id}/batch/${batch.id}/download" class="btn btn-info">Download executions</a></li>
 
-            </div>
-            
-            <div class="clear-fix"></div>
+                <li><a href="/project/${project.id}/batch/${batch.id}/export" class="btn btn-info" target="_blank">Export to Fusiontables</a></li>
+
+            </ul>
 
             <div class="page-header">
                 <h1>Batch ${batch.name}</h1>

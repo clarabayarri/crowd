@@ -48,6 +48,11 @@ public class BatchServiceImpl implements BatchService {
     }
     
     @Transactional
+    public void saveBatch(Batch batch) {
+    	em.merge(batch);
+    }
+    
+    @Transactional
     public List<Integer> listRunningBatchIds(Long projectId) {
     	Project project = projectService.getProject(projectId);
     	List<Integer> result = Lists.newArrayList();
@@ -90,12 +95,12 @@ public class BatchServiceImpl implements BatchService {
     }
     
     @Transactional
-    public List<Task> listTasksWithExecutions(Integer id) {
+    public Batch getBatchWithTasksWithExecutions(Integer id) {
     	Batch batch = em.find(Batch.class, id);
     	for (Task task : batch.getTasks()) {
     		task.getExecutions().size();
     	}
-    	return Lists.newArrayList(batch.getTasks());
+    	return batch;
     }
     
 }

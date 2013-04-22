@@ -21,13 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
-import com.crowdplatform.model.Task;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
+import com.crowdplatform.util.GoogleFusiontablesAdapter;
+import com.google.common.collect.Lists;
 
 @Controller
 public class BatchController {
@@ -43,6 +44,9 @@ public class BatchController {
 
 	@Autowired
 	private TaskService taskService;
+	
+	@Autowired
+	private GoogleFusiontablesAdapter dataExporter;
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
 	public String getBatch(@PathVariable("projectId") Long projectId, 
@@ -144,10 +148,11 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/download")
 	public void downloadBatch(@PathVariable("projectId") Long projectId, 
 			@PathVariable("batchId") Integer batchId, HttpServletResponse response) {
-		List<Task> tasks = batchService.listTasksWithExecutions(batchId);
+		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
 		Project project = projectService.getProject(projectId);
 		try {
-			String writer = (new FileWriter()).writeTasksExecutions(tasks, project.getOrderedInputFields(), project.getOrderedOutputFields());
+			String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getOrderedTasks()), 
+					project.getOrderedInputFields(), project.getOrderedOutputFields());
 			response.getWriter().write(writer);
 			response.setContentType("text/csv");
 			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batchId + ".csv");
@@ -156,5 +161,17 @@ public class BatchController {
 			throw new RuntimeException("IOError writing file to output stream");
 		}
 
+	}
+	
+	@RequestMapping("/project/{projectId}/batch/{batchId}/export")
+	public String exportBatch(@PathVariable("projectId") Long projectId, 
+			@PathVariable("batchId") Integer batchId) {
+		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
+		String url = dataExporter.exportDataURL(batch);
+		batchService.saveBatch(batch);
+		if (url != null) {
+			return "redirect:" + url;
+		}
+		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
 }

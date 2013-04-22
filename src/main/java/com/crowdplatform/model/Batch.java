@@ -43,6 +43,8 @@ public class Batch {
 	
 	private double percentageComplete;
 	
+	private String fusiontableId;
+	
 	public enum State {
 		RUNNING, PAUSED, COMPLETE
 	}
@@ -151,5 +153,13 @@ public class Batch {
 				return o1.getId().compareTo(o2.getId());
 			}});
 		return list;
+	}
+
+	public String getFusiontableId() {
+		return fusiontableId;
+	}
+
+	public void setFusiontableId(String fusiontableId) {
+		this.fusiontableId = fusiontableId;
 	}
 }

@@ -132,6 +132,27 @@
 			<artifactId>mail</artifactId>
 			<version>1.4.3</version>
 		</dependency>
+		<!-- Google APIs -->
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.14.1-beta</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-fusiontables</artifactId>
+			<version>v1-rev19-1.14.1-beta</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.http-client</groupId>
+			<artifactId>google-http-client-jackson2</artifactId>
+			<version>1.14.1-beta</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-jetty</artifactId>
+			<version>1.14.1-beta</version>
+		</dependency>
 	</dependencies>
 
 	<build>

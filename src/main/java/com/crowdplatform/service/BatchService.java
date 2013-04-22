@@ -3,7 +3,6 @@ package com.crowdplatform.service;
 import java.util.List;
 
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.Task;
 
 public interface BatchService {
 
@@ -25,6 +24,12 @@ public interface BatchService {
      * @return Batch corresponding to id
      */
     public Batch getBatch(Integer id);
+    
+    /**
+     * Persist changes to an existing batch
+     * @param batch The batch to be saved
+     */
+    public void saveBatch(Batch batch);
 	
     /**
      * Retrieve all ids for batches in the system with a RUNNING status for a given project.
@@ -57,5 +62,5 @@ public interface BatchService {
      * @param id The batch id
      * @return List with all the tasks from the batch identified by id with their executions loaded
      */
-    public List<Task> listTasksWithExecutions(Integer id);
+    public Batch getBatchWithTasksWithExecutions(Integer id);
 }

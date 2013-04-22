@@ -135,7 +135,7 @@ public class BatchServiceImplTest {
 		Set<Task> tasks = Sets.newHashSet(task);
 		batch.setTasks(tasks);
 		
-		service.listTasksWithExecutions(batchId);
+		service.getBatchWithTasksWithExecutions(batchId);
 		
 		Mockito.verify(task).getExecutions();
 	}
