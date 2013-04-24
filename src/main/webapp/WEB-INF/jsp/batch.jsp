@@ -43,20 +43,11 @@
 <div class="container">
     <div class="row">
         <div class="span8 offset2">
-            <c:if test="${created}">
+            <c:if test="${! (created eq null)}">
                 <div class="alert alert-success alert-block fade in">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     <h4>Success!</h4>
                     <p>Your batch was created. Please click the start button on your right to start providing these tasks.</p>
-                </div>
-
-                <div class="clear-fix"></div>
-            </c:if>
-            <c:if test="${export-error}">
-                <div class="alert alert-error alert-block fade in">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <h4>Error!</h4>
-                    <p>There was an error exporting your data to Fusion Tables. Please try again later.</p>
                 </div>
 
                 <div class="clear-fix"></div>
