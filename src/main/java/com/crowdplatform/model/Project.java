@@ -130,6 +130,16 @@ public class Project {
 		}
 		return result;
 	}
+	
+	public Set<Field> getUserFields() {
+		Set<Field> result = Sets.newHashSet();
+		for (Field field : fields) {
+			if (field.getFieldType() == Field.FieldType.USER) {
+				result.add(field);
+			}
+		}
+		return result;
+	}
 
 	public Set<ProjectUser> getUsers() {
 		return users;
@@ -170,6 +180,18 @@ public class Project {
 	public List<Field> getOrderedOutputFields() {
 		List<Field> list = Lists.newArrayList();
 		list.addAll(getOutputFields());
+		Collections.sort(list, new Comparator<Field>() {
+
+			@Override
+			public int compare(Field arg0, Field arg1) {
+				return arg0.getId().compareTo(arg1.getId());
+			}});
+		return list;
+	}
+	
+	public List<Field> getOrderedUserFields() {
+		List<Field> list = Lists.newArrayList();
+		list.addAll(getUserFields());
 		Collections.sort(list, new Comparator<Field>() {
 
 			@Override

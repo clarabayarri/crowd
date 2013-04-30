@@ -156,10 +156,10 @@ public class BatchController {
 		Project project = projectService.getProject(projectId);
 		try {
 			String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getOrderedTasks()), 
-					project.getOrderedInputFields(), project.getOrderedOutputFields(), true);
+					project.getOrderedInputFields(), project.getOrderedOutputFields(), project.getOrderedUserFields(), true);
 			response.getWriter().write(writer);
 			response.setContentType("text/csv");
-			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batchId + ".csv");
+			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batch.getName().trim().replace(" ", "-") + ".csv");
 			response.flushBuffer();
 		} catch (IOException ex) {
 			throw new RuntimeException("IOError writing file to output stream");

@@ -24,7 +24,7 @@ public class FileWriterTest {
 		List<Task> tasks = Lists.newArrayList();
 		List<Field> fields = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(tasks, fields, fields, true);
+		String result = writer.writeTasksExecutions(tasks, fields, fields, fields, true);
 		
 		assertNotNull(result);
 	}
@@ -34,7 +34,7 @@ public class FileWriterTest {
 		List<Task> tasks = Lists.newArrayList();
 		List<Field> fields = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(tasks, fields, fields, true);
+		String result = writer.writeTasksExecutions(tasks, fields, fields, fields, true);
 		
 		String expected = "\"task_id\",\"execution_id\",\"date\",\"userId\"\n";
 		assertEquals(expected, result);
@@ -49,8 +49,9 @@ public class FileWriterTest {
 		Field field2 = new Field();
 		field2.setName("field2");
 		List<Field> fields2 = Lists.newArrayList(field2);
+		List<Field> fields3 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(tasks, fields, fields2, true);
+		String result = writer.writeTasksExecutions(tasks, fields, fields2, fields3, true);
 		
 		String expected = "\"task_id\",\"field\",\"execution_id\",\"date\",\"userId\",\"field2\"\n";
 		assertEquals(expected, result);
@@ -67,7 +68,7 @@ public class FileWriterTest {
 		task.setExecutions(Sets.newHashSet(execution));
 		List<Field> fields = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields, fields, true);
 		
 		String expected = "\"task_id\",\"execution_id\",\"date\",\"userId\"\n\"1\",\"2\",";
 		assertTrue(result.contains(expected));
@@ -88,7 +89,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList(field);
 		List<Field> fields2 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
 		
 		String expected = "\n\"1\",\"contents\"";
 		assertTrue(result.contains(expected));
@@ -109,7 +110,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList();
 		List<Field> fields2 = Lists.newArrayList(field);
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
 		
 		String expected = ",\"contents\"\n";
 		assertTrue(result.contains(expected));
@@ -130,7 +131,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList(field);
 		List<Field> fields2 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
 		
 		String expected = "\n\"1\",\"1\"";
 		assertTrue(result.contains(expected));
@@ -151,7 +152,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList();
 		List<Field> fields2 = Lists.newArrayList(field);
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
 		
 		String expected = ",\"1\"\n";
 		assertTrue(result.contains(expected));
@@ -172,7 +173,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList(field);
 		List<Field> fields2 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
 		
 		String expected = "\n\"1\",\"1.07\"";
 		assertTrue(result.contains(expected));
@@ -193,7 +194,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList();
 		List<Field> fields2 = Lists.newArrayList(field);
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
 		
 		String expected = ",\"1.07\"\n";
 		assertTrue(result.contains(expected));
@@ -214,7 +215,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList(field);
 		List<Field> fields2 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
 		
 		String expected = "\n\"1\",\"a,b,\"";
 		assertTrue(result.contains(expected));
@@ -235,7 +236,7 @@ public class FileWriterTest {
 		List<Field> fields = Lists.newArrayList();
 		List<Field> fields2 = Lists.newArrayList(field);
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, true);
+		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
 		
 		String expected = ",\"a,b,\"\n";
 		assertTrue(result.contains(expected));

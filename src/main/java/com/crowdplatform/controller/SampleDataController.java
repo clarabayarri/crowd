@@ -75,6 +75,7 @@ public class SampleDataController {
 		project.setUid(random.nextLong());
 		createInputFields(project);
 		createOutputFields(project);
+		createUserFields(project);
 		projectService.addProject(project);
 		
 		for (int i = 0; i < 1; ++i)
@@ -144,6 +145,14 @@ public class SampleDataController {
 		field2.setType(Field.Type.MULTIVALUATE_STRING);
 		field2.setFieldType(Field.FieldType.OUTPUT);
 		project.addField(field2);
+	}
+	
+	private void createUserFields(Project project) {
+		Field field = new Field();
+		field.setName("dyslexic");
+		field.setType(Field.Type.BOOL);
+		field.setFieldType(Field.FieldType.USER);
+		project.addField(field);
 	}
 	
 	private Batch createSampleBatch() {

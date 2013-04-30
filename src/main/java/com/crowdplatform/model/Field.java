@@ -30,7 +30,7 @@ public class Field {
 	private Type type;
 	
 	public enum FieldType {
-		INPUT, OUTPUT
+		INPUT, OUTPUT, USER
 	}
 	
 	@NotNull

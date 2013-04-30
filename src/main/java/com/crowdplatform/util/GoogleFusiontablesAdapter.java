@@ -144,7 +144,7 @@ public class GoogleFusiontablesAdapter {
 	
 	private void insertData(Table table, Project project, Batch batch) throws IOException {
 		String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getOrderedTasks()), 
-				project.getOrderedInputFields(), project.getOrderedOutputFields(), false);
+				project.getOrderedInputFields(), project.getOrderedOutputFields(), project.getOrderedUserFields(), false);
 		ByteArrayContent byteArrayContent = ByteArrayContent.fromString("application/octet-stream", writer);
 		Fusiontables.Table.ImportRows importRows = fusiontables.table().importRows(table.getTableId(), byteArrayContent);
 		importRows.setIsStrict(false);
