@@ -59,6 +59,7 @@
                     <li class="active"><a data-toggle="tab" href="#general">General</a></li>
                     <li><a data-toggle="tab" href="#input">Input fields</a></li>
                     <li><a data-toggle="tab" href="#output">Output fields</a></li>
+                    <li><a data-toggle="tab" href="#user">User fields</a></li>
                     <li><a data-toggle="tab" href="#security">Security</a></li>
                 </ul>
 
@@ -82,6 +83,14 @@
                     <div class="tab-pane" id="output">
                         <dl class="dl-horizontal">
                             <c:forEach items="${project.orderedOutputFields}" var="field">
+                                <dt>${field.name}</dt>
+                                <dd>${field.type}</dd>
+                            </c:forEach>
+                        </dl>
+                    </div>
+                    <div class="tab-pane" id="user">
+                        <dl class="dl-horizontal">
+                            <c:forEach items="${project.orderedUserFields}" var="field">
                                 <dt>${field.name}</dt>
                                 <dd>${field.type}</dd>
                             </c:forEach>

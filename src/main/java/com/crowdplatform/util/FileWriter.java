@@ -15,12 +15,14 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Task;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ObjectArrays;
 
 public class FileWriter {
 	
-	private static final int NUM_STATIC_TASK_FIELDS = 1;
-	private static final int NUM_STATIC_EXECUTION_FIELDS = 3;
+	public static final int NUM_STATIC_TASK_FIELDS = 1;
+	@VisibleForTesting
+	public static final int NUM_STATIC_EXECUTION_FIELDS = 3;
 	
 	public String writeTasksExecutions(List<Task> tasks, List<Field> taskFields, List<Field> executionFields, 
 			List<Field> userFields, Boolean header) throws IOException {
@@ -28,7 +30,8 @@ public class FileWriter {
 		CSVWriter csvWriter = new CSVWriter(writer);
 		
 		if (header) {
-			writeHeaders(csvWriter, taskFields, executionFields, userFields);
+			String[] headers = writeHeaders(taskFields, executionFields, userFields);
+			csvWriter.writeNext(headers);
 		}
 		
 		for (Task task : tasks) {
@@ -42,7 +45,8 @@ public class FileWriter {
 		return result;
 	}
 	
-	private void writeHeaders(CSVWriter csvWriter, List<Field> taskFields, List<Field> executionFields, List<Field> userFields) {
+	@VisibleForTesting
+	public String[] writeHeaders(List<Field> taskFields, List<Field> executionFields, List<Field> userFields) {
 		String[] taskHeaders = new String[NUM_STATIC_TASK_FIELDS + taskFields.size()];
 		taskHeaders[0] = "task_id";
 		for (int i = 0; i < taskFields.size(); ++i) {
@@ -59,7 +63,8 @@ public class FileWriter {
 		for (int i = 0; i < userFields.size(); ++i) {
 			executionHeaders[NUM_STATIC_EXECUTION_FIELDS + executionFields.size() + i] = userFields.get(i).getName();
 		}
-		csvWriter.writeNext(ObjectArrays.concat(taskHeaders, executionHeaders, String.class));
+		
+		return ObjectArrays.concat(taskHeaders, executionHeaders, String.class);
 	}
 	
 	private void writeTaskExecutions(CSVWriter csvWriter, Task task, List<Field> taskFields, List<Field> executionFields, 
@@ -71,7 +76,8 @@ public class FileWriter {
 		}
 	}
 	
-	private String[] decodeTask(Task task, List<Field> fields) {
+	@VisibleForTesting
+	public String[] decodeTask(Task task, List<Field> fields) {
 		String[] values = new String[NUM_STATIC_TASK_FIELDS];
 		values[0] = String.valueOf(task.getId());
 		
@@ -80,7 +86,8 @@ public class FileWriter {
 		return values;
 	}
 	
-	private String[] decodeExecution(Execution execution, List<Field> fields, List<Field> userFields) {
+	@VisibleForTesting
+	public String[] decodeExecution(Execution execution, List<Field> fields, List<Field> userFields) {
 		String[] values = new String[NUM_STATIC_EXECUTION_FIELDS];
 		values[0] = String.valueOf(execution.getId());
 		values[1] = execution.getDate().toString();
@@ -100,7 +107,8 @@ public class FileWriter {
 		return values;
 	}
 	
-	private String[] decode(String contents, List<Field> fields) {
+	@VisibleForTesting
+	public String[] decode(String contents, List<Field> fields) {
 		String[] values = new String[fields.size()];
 		try {
 			JsonNode node = new ObjectMapper().readTree(contents);

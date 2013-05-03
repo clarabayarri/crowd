@@ -2,6 +2,7 @@ package com.crowdplatform.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -11,9 +12,9 @@ import org.junit.Test;
 
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class FileWriterTest {
 
@@ -58,187 +59,209 @@ public class FileWriterTest {
 	}
 	
 	@Test
-	public void testWriteExecutionsAddsExecutionBasicInformation() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{}");
-		task.setExecutions(Sets.newHashSet(execution));
-		List<Field> fields = Lists.newArrayList();
-		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields, fields, true);
-		
-		String expected = "\"task_id\",\"execution_id\",\"date\",\"userId\"\n\"1\",\"2\",";
-		assertTrue(result.contains(expected));
-	}
-	
-	@Test
-	public void testWriteExecutionsAddsTaskFields() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{\"field\":\"contents\"}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{}");
-		task.setExecutions(Sets.newHashSet(execution));
+	public void testWriteHeaders() {
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.STRING);
 		List<Field> fields = Lists.newArrayList(field);
-		List<Field> fields2 = Lists.newArrayList();
+		Field field2 = new Field();
+		field2.setName("field2");
+		field2.setType(Field.Type.STRING);
+		List<Field> fields2 = Lists.newArrayList(field2);
+		Field field3 = new Field();
+		field3.setName("field3");
+		field3.setType(Field.Type.STRING);
+		List<Field> fields3 = Lists.newArrayList(field3);
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
+		String[] result = writer.writeHeaders(fields, fields2, fields3);
 		
-		String expected = "\n\"1\",\"contents\"";
-		assertTrue(result.contains(expected));
+		assertEquals(FileWriter.NUM_STATIC_TASK_FIELDS + FileWriter.NUM_STATIC_EXECUTION_FIELDS + 
+				fields.size() + fields2.size() + fields3.size(), result.length);
+		assertEquals("task_id", result[0]);
+		assertEquals("field", result[FileWriter.NUM_STATIC_TASK_FIELDS]);
+		assertEquals("execution_id", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size()]);
+		assertEquals("date", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + 1]);
+		assertEquals("userId", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + 2]);
+		assertEquals("field2", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
+		assertEquals("field3", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields2.size()]);
 	}
 	
 	@Test
-	public void testWriteExecutionsAddsExecutionFields() throws IOException {
+	public void testDecodeTask() {
 		Task task = new Task();
-		task.setId(1);
-		task.setContents("{}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{\"field\":\"contents\"}");
-		task.setExecutions(Sets.newHashSet(execution));
+		task.setId(2);
+		task.setContents("{\"field\":\"string\"}");
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.STRING);
-		List<Field> fields = Lists.newArrayList();
-		List<Field> fields2 = Lists.newArrayList(field);
+		List<Field> fields = Lists.newArrayList(field);
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
+		String[] result = writer.decodeTask(task, fields);
 		
-		String expected = ",\"contents\"\n";
-		assertTrue(result.contains(expected));
+		assertEquals(FileWriter.NUM_STATIC_TASK_FIELDS + fields.size(), result.length);
+		assertEquals("2", result[0]);
+		assertEquals("string", result[1]);
 	}
 	
 	@Test
-	public void testWriteExecutionsAddsTaskIntegerFields() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{\"field\":1}");
+	public void testDecodeExecutionWithoutUser() {
 		Execution execution = new Execution();
 		execution.setId(2);
 		execution.setContents("{}");
-		task.setExecutions(Sets.newHashSet(execution));
+		List<Field> fields = Lists.newArrayList();
+		
+		String[] result = writer.decodeExecution(execution, fields, fields);
+		
+		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
+		assertEquals("2", result[0]);
+		assertTrue(!result[1].isEmpty());
+		assertNull(result[2]);
+	}
+	
+	@Test
+	public void testDecodeExecutionWithoutUserWithUserFields() {
+		Execution execution = new Execution();
+		execution.setId(2);
+		execution.setContents("{}");
+		List<Field> fields = Lists.newArrayList();
+		Field field = new Field();
+		List<Field> fields2 = Lists.newArrayList(field);
+		
+		String[] result = writer.decodeExecution(execution, fields, fields2);
+		
+		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields2.size(), result.length);
+		assertNull(result[2]);
+		assertNull(result[FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
+	}
+	
+	@Test
+	public void testDecodeExecutionWithEmptyUser() {
+		ProjectUser user = new ProjectUser();
+		user.setId(3);
+		user.setContents("{}");
+		Execution execution = new Execution();
+		execution.setId(2);
+		execution.setContents("{}");
+		execution.setProjectUser(user);
+		List<Field> fields = Lists.newArrayList();
+		
+		String[] result = writer.decodeExecution(execution, fields, fields);
+		
+		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
+		assertEquals("3", result[2]);
+	}
+	
+	@Test
+	public void testDecodeExecutionWithFields() {
+		ProjectUser user = new ProjectUser();
+		user.setId(3);
+		user.setContents("{\"field\":\"string2\"}");
+		Execution execution = new Execution();
+		execution.setId(2);
+		execution.setContents("{\"field\":\"string1\"}");
+		execution.setProjectUser(user);
+		Field field = new Field();
+		field.setName("field");
+		field.setType(Field.Type.STRING);
+		List<Field> fields = Lists.newArrayList(field);
+		
+		String[] result = writer.decodeExecution(execution, fields, fields);
+		
+		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size() + fields.size(), 
+				result.length);
+		assertEquals("string1", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
+		assertEquals("string2", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size()]);
+	}
+	
+	@Test
+	public void testDecodeAddsStringFields() {
+		String contents = "{\"field\":\"string\"}";
+		Field field = new Field();
+		field.setName("field");
+		field.setType(Field.Type.STRING);
+		List<Field> fields = Lists.newArrayList(field);
+		
+		String[] result = writer.decode(contents, fields);
+		
+		assertEquals(1, result.length);
+		assertEquals("string", result[0]);
+	}
+	
+	@Test
+	public void testDecodeAddsIntegerFields() {
+		String contents = "{\"field\":1}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.INTEGER);
 		List<Field> fields = Lists.newArrayList(field);
-		List<Field> fields2 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
+		String[] result = writer.decode(contents, fields);
 		
-		String expected = "\n\"1\",\"1\"";
-		assertTrue(result.contains(expected));
+		assertEquals(1, result.length);
+		assertEquals("1", result[0]);
 	}
 	
 	@Test
-	public void testWriteExecutionsAddsExecutionIntegerFields() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{\"field\":1}");
-		task.setExecutions(Sets.newHashSet(execution));
-		Field field = new Field();
-		field.setName("field");
-		field.setType(Field.Type.INTEGER);
-		List<Field> fields = Lists.newArrayList();
-		List<Field> fields2 = Lists.newArrayList(field);
-		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
-		
-		String expected = ",\"1\"\n";
-		assertTrue(result.contains(expected));
-	}
-	
-	@Test
-	public void testWriteTasksAddsExecutionDoubleFields() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{\"field\":1.07}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{}");
-		task.setExecutions(Sets.newHashSet(execution));
+	public void testDecodeAddsDoubleFields() {
+		String contents = "{\"field\":1.3}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.DOUBLE);
 		List<Field> fields = Lists.newArrayList(field);
-		List<Field> fields2 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
+		String[] result = writer.decode(contents, fields);
 		
-		String expected = "\n\"1\",\"1.07\"";
-		assertTrue(result.contains(expected));
+		assertEquals(1, result.length);
+		assertEquals("1.3", result[0]);
 	}
 	
 	@Test
-	public void testWriteExecutionsAddsExecutionDoubleFields() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{\"field\":1.07}");
-		task.setExecutions(Sets.newHashSet(execution));
-		Field field = new Field();
-		field.setName("field");
-		field.setType(Field.Type.DOUBLE);
-		List<Field> fields = Lists.newArrayList();
-		List<Field> fields2 = Lists.newArrayList(field);
-		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
-		
-		String expected = ",\"1.07\"\n";
-		assertTrue(result.contains(expected));
-	}
-	
-	@Test
-	public void testWriteTasksAddsExecutionMultivaluateFields() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{\"field\":[\"a\",\"b\"]}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{}");
-		task.setExecutions(Sets.newHashSet(execution));
+	public void testDecodeAddsMultivaluateStringFields() {
+		String contents = "{\"field\":[\"a\",\"b\"]}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.MULTIVALUATE_STRING);
 		List<Field> fields = Lists.newArrayList(field);
-		List<Field> fields2 = Lists.newArrayList();
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields2, true);
+		String[] result = writer.decode(contents, fields);
 		
-		String expected = "\n\"1\",\"a,b,\"";
-		assertTrue(result.contains(expected));
+		assertEquals(1, result.length);
+		assertEquals("a,b,", result[0]);
 	}
 	
 	@Test
-	public void testWriteExecutionsAddsExecutionMultivaluateFields() throws IOException {
-		Task task = new Task();
-		task.setId(1);
-		task.setContents("{}");
-		Execution execution = new Execution();
-		execution.setId(2);
-		execution.setContents("{\"field\":[\"a\",\"b\"]}");
-		task.setExecutions(Sets.newHashSet(execution));
+	public void testDecodeAddsBooleanFields() {
+		String contents = "{\"field\":true}";
+		Field field = new Field();
+		field.setName("field");
+		field.setType(Field.Type.BOOL);
+		List<Field> fields = Lists.newArrayList(field);
+		
+		String[] result = writer.decode(contents, fields);
+		
+		assertEquals(1, result.length);
+		assertEquals("true", result[0]);
+	}
+	
+	@Test
+	public void testDecodeAddsSeveralFields() {
+		String contents = "{\"field\":[\"a\",\"b\"],\"field2\":true,\"field3\":1}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.MULTIVALUATE_STRING);
-		List<Field> fields = Lists.newArrayList();
-		List<Field> fields2 = Lists.newArrayList(field);
+		Field field2 = new Field();
+		field2.setName("field2");
+		field2.setType(Field.Type.BOOL);
+		Field field3 = new Field();
+		field3.setName("field3");
+		field3.setType(Field.Type.INTEGER);
+		List<Field> fields = Lists.newArrayList(field, field2, field3);
 		
-		String result = writer.writeTasksExecutions(Lists.newArrayList(task), fields, fields2, fields, true);
+		String[] result = writer.decode(contents, fields);
 		
-		String expected = ",\"a,b,\"\n";
-		assertTrue(result.contains(expected));
+		assertEquals(3, result.length);
+		assertEquals("a,b,", result[0]);
+		assertEquals("true", result[1]);
+		assertEquals("1", result[2]);
 	}
 }

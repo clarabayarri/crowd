@@ -12,6 +12,7 @@
                            http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
 	<context:annotation-config />
+	<context:property-placeholder/>
 	<context:component-scan base-package="com.crowdplatform" />
 
 	<mvc:annotation-driven />
@@ -117,6 +118,4 @@
 			</property>
 		</bean>
 	</beans>
-
-
 </beans>
