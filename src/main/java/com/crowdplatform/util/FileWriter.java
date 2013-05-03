@@ -20,6 +20,7 @@ import com.google.common.collect.ObjectArrays;
 
 public class FileWriter {
 	
+	@VisibleForTesting
 	public static final int NUM_STATIC_TASK_FIELDS = 1;
 	@VisibleForTesting
 	public static final int NUM_STATIC_EXECUTION_FIELDS = 3;

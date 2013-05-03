@@ -60,6 +60,7 @@ public class GoogleFusiontablesAdapter {
 				
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
+				e.printStackTrace();
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
