@@ -16,11 +16,13 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Entity
+@Document
 public class Project {
 
 	@Id
