@@ -28,6 +28,7 @@ import com.crowdplatform.service.TaskService;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
 import com.crowdplatform.util.GoogleFusiontablesAdapter;
+import com.crowdplatform.util.TaskCreator;
 import com.google.common.collect.Lists;
 
 @Controller
@@ -47,6 +48,9 @@ public class BatchController {
 	
 	@Autowired
 	private GoogleFusiontablesAdapter dataExporter;
+	
+	@Autowired
+	private TaskCreator taskCreator;
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
 	public String getBatch(@PathVariable("projectId") Long projectId, 
@@ -130,7 +134,7 @@ public class BatchController {
 				FileReader reader = new FileReader();
 				try {
 					List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
-					taskService.createTasks(batch, fields, fileContents);
+					taskCreator.createTasks(batch, fields, fileContents);
 				} catch (IOException e) {
 					bindingResult.reject("error.file.contents");
 					return "create";
