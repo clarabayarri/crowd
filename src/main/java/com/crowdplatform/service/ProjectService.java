@@ -1,5 +1,7 @@
 package com.crowdplatform.service;
 
+import java.util.List;
+
 import com.crowdplatform.model.Project;
 
 public interface ProjectService {
@@ -20,13 +22,15 @@ public interface ProjectService {
 	 * Remove an existing project.
 	 * @param id The project id
 	 */
-	public void removeProject(Long id);
+	public void removeProject(String id);
 
 	/**
 	 * Retrieve a persisted project.
 	 * @param id The project id
 	 * @return Project corresponding to id
 	 */
-	public Project getProject(Long id);
+	public Project getProject(String id);
+	
+	public List<Project> getProjectsForUser(String userId);
 	
 }

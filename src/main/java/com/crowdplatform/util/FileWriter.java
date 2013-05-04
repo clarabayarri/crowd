@@ -9,21 +9,29 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
+import com.crowdplatform.service.ProjectUserService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ObjectArrays;
 
+@Service
 public class FileWriter {
 	
 	@VisibleForTesting
 	public static final int NUM_STATIC_TASK_FIELDS = 1;
 	@VisibleForTesting
 	public static final int NUM_STATIC_EXECUTION_FIELDS = 3;
+	
+	@Autowired
+	private ProjectUserService userService;
 	
 	public String writeTasksExecutions(List<Task> tasks, List<Field> taskFields, List<Field> executionFields, 
 			List<Field> userFields, Boolean header) throws IOException {
@@ -96,10 +104,11 @@ public class FileWriter {
 		String[] executionValues = decode(execution.getContents(), fields);
 		values = ObjectArrays.concat(values, executionValues, String.class);
 		
-		if (execution.getProjectUser() != null) {
-			values[2] = String.valueOf(execution.getProjectUser().getId());
-			String[] userValues = decode(execution.getProjectUser().getContents(), userFields);
-			values = ObjectArrays.concat(values,  userValues, String.class);
+		ProjectUser user = userService.getProjectUser(execution.getProjectUserId());
+		if (user != null && user.getContents() != null && !user.getContents().isEmpty()) {
+			values[2] = String.valueOf(execution.getProjectUserId());
+			String[] userValues = decode(user.getContents(), userFields);
+			values = ObjectArrays.concat(values,  userValues, String.class);			
 		} else {
 			String[] userValues = new String[userFields.size()];
 			values = ObjectArrays.concat(values,  userValues, String.class);

@@ -85,9 +85,11 @@ public class SampleDataController {
 	    if (auth != null) {
 	    	String username = auth.getName();
 		    PlatformUser user = userService.getUser(username);
-		    user.addProject(project);
+		    user.addProject(project.getId());
+		    project.setOwnerId(user.getUsername());
 		    userService.saveUser(user);
 	    }
+	    projectService.saveProject(project);
 	}
 	
 	private void createInputFields(Project project) {
@@ -95,38 +97,38 @@ public class SampleDataController {
 		field0.setName("id");
 		field0.setType(Field.Type.INTEGER);
 		field0.setFieldType(Field.FieldType.INPUT);
-		project.addField(field0);
+		project.addInputField(field0);
 		Field field1 = new Field();
 		field1.setName("type");
 		field1.setType(Field.Type.STRING);
 		field1.setFieldType(Field.FieldType.INPUT);
-		project.addField(field1);
+		project.addInputField(field1);
 		Field field2 = new Field();
 		field2.setName("level");
 		field2.setType(Field.Type.INTEGER);
 		field2.setFieldType(Field.FieldType.INPUT);
-		project.addField(field2);
+		project.addInputField(field2);
 		Field field3 = new Field();
 		field3.setName("language");
 		field3.setType(Field.Type.STRING);
 		field3.setFieldType(Field.FieldType.INPUT);
-		project.addField(field3);
+		project.addInputField(field3);
 		Field field4 = new Field();
 		field4.setName("word");
 		field4.setType(Field.Type.STRING);
 		field4.setFieldType(Field.FieldType.INPUT);
-		project.addField(field4);
+		project.addInputField(field4);
 		Field field5 = new Field();
 		field5.setName("display");
 		field5.setType(Field.Type.STRING);
 		field5.setFieldType(Field.FieldType.INPUT);
-		project.addField(field5);
+		project.addInputField(field5);
 		Field field6 = new Field();
 		field6.setName("answers");
 		field6.setType(Field.Type.MULTIVALUATE_STRING);
 		field6.setFieldType(Field.FieldType.INPUT);
 		field6.setColumnNames(Sets.newHashSet("correct", "dis_1", "dis_2", "dis_3", "dis_4", "dis_5", "dis_6"));
-		project.addField(field6);
+		project.addInputField(field6);
 	}
 	
 	private void createOutputFields(Project project) {
@@ -134,17 +136,17 @@ public class SampleDataController {
 		field0.setName("timeSpent");
 		field0.setType(Field.Type.INTEGER);
 		field0.setFieldType(Field.FieldType.OUTPUT);
-		project.addField(field0);
+		project.addOutputField(field0);
 		Field field1 = new Field();
 		field1.setName("failedAttempts");
 		field1.setType(Field.Type.INTEGER);
 		field1.setFieldType(Field.FieldType.OUTPUT);
-		project.addField(field1);
+		project.addOutputField(field1);
 		Field field2 = new Field();
 		field2.setName("wrongAnswers");
 		field2.setType(Field.Type.MULTIVALUATE_STRING);
 		field2.setFieldType(Field.FieldType.OUTPUT);
-		project.addField(field2);
+		project.addOutputField(field2);
 	}
 	
 	private void createUserFields(Project project) {
@@ -152,7 +154,7 @@ public class SampleDataController {
 		field.setName("dyslexic");
 		field.setType(Field.Type.BOOL);
 		field.setFieldType(Field.FieldType.USER);
-		project.addField(field);
+		project.addUserField(field);
 	}
 	
 	private Batch createSampleBatch() {
@@ -169,7 +171,6 @@ public class SampleDataController {
 			Task task = new Task();
 			int numExecutions = random.nextInt(exPerTask + 1);
 			task.setNumExecutions(numExecutions);
-			task.setBatch(batch);
 			int index = random.nextInt(definitions.length);
 			task.setContents(definitions[index]);
 			

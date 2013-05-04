@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class TaskCreatorTest {
 	@Test
 	public void testCreateTasksReadsStringFields() throws JsonProcessingException, IOException {
 		Batch batch = new Batch();
-		Set<Field> fields = createTestFields();
+		List<Field> fields = createTestFields();
 		Map<String, String> data = createTestDataMap();
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
@@ -45,7 +46,7 @@ public class TaskCreatorTest {
 	@Test
 	public void testCreateTasksReadsIntegerFields() throws JsonProcessingException, IOException {
 		Batch batch = new Batch();
-		Set<Field> fields = createTestFields();
+		List<Field> fields = createTestFields();
 		Map<String, String> data = createTestDataMap();
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
@@ -63,7 +64,7 @@ public class TaskCreatorTest {
 	@Test
 	public void testCreateTasksReadsFloatFields() throws JsonProcessingException, IOException {
 		Batch batch = new Batch();
-		Set<Field> fields = createTestFields();
+		List<Field> fields = createTestFields();
 		Map<String, String> data = createTestDataMap();
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
@@ -81,7 +82,7 @@ public class TaskCreatorTest {
 	@Test
 	public void testCreateTasksReadsNullValues() throws JsonProcessingException, IOException {
 		Batch batch = new Batch();
-		Set<Field> fields = createTestFields();
+		List<Field> fields = createTestFields();
 		Map<String, String> data = createTestDataMap();
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
@@ -98,7 +99,7 @@ public class TaskCreatorTest {
 	@Test
 	public void testCreateTasksReadsMultivaluateStringFields() throws JsonProcessingException, IOException {
 		Batch batch = new Batch();
-		Set<Field> fields = createTestFields();
+		List<Field> fields = createTestFields();
 		Map<String, String> data = createTestDataMap();
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
@@ -112,7 +113,7 @@ public class TaskCreatorTest {
 		}
 	}
 	
-	private Set<Field> createTestFields() {
+	private List<Field> createTestFields() {
 		Field textField = new Field();
 		textField.setName("text");
 		textField.setType(Field.Type.STRING);
@@ -129,7 +130,7 @@ public class TaskCreatorTest {
 		multiField.setName("multi");
 		multiField.setType(Field.Type.MULTIVALUATE_STRING);
 		multiField.setColumnNames(Sets.newHashSet("field_1", "field_2"));
-		return Sets.newHashSet(textField, integerField, floatField, nullField, multiField);
+		return Lists.newArrayList(textField, integerField, floatField, nullField, multiField);
 	}
 	
 	private Map<String, String> createTestDataMap() {

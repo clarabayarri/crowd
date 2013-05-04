@@ -42,7 +42,7 @@ public class RemoteServiceControllerTest {
 	private ProjectUserService userService;
 	
 	private Project project = new Project();
-	private static final Long projectId = new Long(1);
+	private static final String projectId = "1";
 	private static final Long projectUid = new Long(2);
 	
 	@Before

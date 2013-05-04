@@ -10,7 +10,7 @@ import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Project;
 
 @Service
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectServiceImpl {
 
 	@PersistenceContext
 	private EntityManager em;

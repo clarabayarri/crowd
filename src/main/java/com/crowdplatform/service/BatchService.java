@@ -36,14 +36,14 @@ public interface BatchService {
      * @param projectId The project id
      * @return List with the ids for the batches with status RUNNING
      */
-    public List<Integer> listRunningBatchIds(Long projectId);
+    public List<Integer> listRunningBatchIds(String projectId);
 	
     /**
      * Retrieve all ids for batches in the system with a COMPLETED status for a given project.
      * @param projectId The project id
      * @return List with the ids for the batches with status COMPLETED
      */
-    public List<Integer> listCompletedBatchIds(Long projectId);
+    public List<Integer> listCompletedBatchIds(String projectId);
     
     /**
      * Set a batch's status to RUNNING.

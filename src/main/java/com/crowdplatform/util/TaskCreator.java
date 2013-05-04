@@ -2,7 +2,6 @@ package com.crowdplatform.util;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -26,18 +25,17 @@ public class TaskCreator {
 	 * @param fileContents Data used to create the tasks
 	 */
 	@Transactional
-    public void createTasks(Batch batch, Set<Field> fields, List<Map<String, String>> fileContents) {
+    public void createTasks(Batch batch, List<Field> fields, List<Map<String, String>> fileContents) {
     	for (Map<String, String> line : fileContents) {
     		ObjectNode contents = encodeLine(fields, line);
     		
     		Task task = new Task();
     		task.setContents(contents.toString());
-    		task.setBatch(batch);
     		batch.addTask(task);
     	}
     }
     
-    private ObjectNode encodeLine(Set<Field> fields, Map<String, String> line) {
+    private ObjectNode encodeLine(List<Field> fields, Map<String, String> line) {
     	ObjectNode contents = mapper.createObjectNode();
 		for (Field field : fields) {
 			String value = line.get(field.getName());

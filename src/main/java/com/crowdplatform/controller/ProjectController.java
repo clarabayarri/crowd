@@ -1,6 +1,7 @@
 package com.crowdplatform.controller;
 
 import java.security.SecureRandom;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,8 @@ public class ProjectController {
 	public String listProjects(Model model, @RequestParam(value="registered", required=false) Boolean registered) {
 		PlatformUser user = userService.getCurrentUser();
 	    if (user != null) {
-	    	model.addAttribute(user.getOrderedProjects());
+	    	List<Project> projects = projectService.getProjectsForUser(user.getUsername());
+	    	model.addAttribute(projects);
 	    }
 	    if (registered != null) {
 	    	model.addAttribute("registered", registered);
@@ -36,7 +38,7 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/{projectId}")
-	public String getProject(@PathVariable("projectId") Long projectId, Model model) {
+	public String getProject(@PathVariable("projectId") String projectId, Model model) {
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
 			model.addAttribute(project);
@@ -45,7 +47,7 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/{projectId}/resetUID")
-	public String resetProjectUID(@PathVariable("projectId") Long projectId) {
+	public String resetProjectUID(@PathVariable("projectId") String projectId) {
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
 			SecureRandom random = new SecureRandom();
@@ -56,7 +58,7 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/{projectId}/delete")
-	public String deleteProject(@PathVariable Long projectId) {
+	public String deleteProject(@PathVariable String projectId) {
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			PlatformUser user = userService.getCurrentUser();
 			user.removeProject(projectId);

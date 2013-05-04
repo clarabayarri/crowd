@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -30,12 +31,11 @@ public class PlatformUser {
 	@Column(name="email", unique=true)
 	private String email;
 	
-	@OneToMany(fetch=FetchType.EAGER)
-	@Cascade({CascadeType.ALL})
-	Set<Project> projects;
+	@ElementCollection(fetch=FetchType.EAGER)
+	List<String> projects;
 
 	public PlatformUser() {
-		this.projects = Sets.newHashSet();
+		this.projects = Lists.newArrayList();
 	}
 	
 	public PlatformUser(Registration registration) {
@@ -68,56 +68,45 @@ public class PlatformUser {
 		this.email = email;
 	}
 
-	public Set<Project> getProjects() {
+	public List<String> getProjects() {
 		return projects;
 	}
 
-	public void setProjects(Set<Project> projects) {
+	public void setProjects(List<String> projects) {
 		this.projects = projects;
 	}
 	
-	public void addProject(Project project) {
+	public void addProject(String project) {
 		this.projects.add(project);
 	}
 	
-	public void removeProject(Long projectId) {
-		for (Project project : this.projects) {
-			if (project.getId().equals(projectId)) {
+	public void removeProject(String projectId) {
+		for (String project : this.projects) {
+			if (project.equals(projectId)) {
 				this.projects.remove(project);
 				break;
 			}
 		}
 	}
 	
-	public List<Project> getOrderedProjects() {
-		List<Project> list = Lists.newArrayList();
-		list.addAll(this.projects);
-		Collections.sort(list, new Comparator<Project>() {
-
-			@Override
-			public int compare(Project p1, Project p2) {
-				return p1.getCreationDate().compareTo(p2.getCreationDate());
-			}});
-		return list;
-	}
-	
-	public boolean isOwnerOfProject(Long projectId) {
-		for (Project project : this.projects) {
-			if (projectId.equals(project.getId())) {
+	public boolean isOwnerOfProject(String projectId) {
+		for (String project : this.projects) {
+			if (projectId.equals(project)) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public boolean isOwnerOfBatch(Long projectId, Integer batchId) {
-		for (Project project : this.projects) {
-			if (projectId.equals(project.getId())) {
-				for (Batch batch : project.getBatches()) {
+	public boolean isOwnerOfBatch(String projectId, Integer batchId) {
+		for (String project : this.projects) {
+			if (projectId.equals(project)) {
+				/*for (Batch batch : project.getBatches()) {
 					if (batchId.equals(batch.getId())) {
 						return true;
 					}
-				}
+				}*/
+				return true;
 			}
 		}
 		return false;

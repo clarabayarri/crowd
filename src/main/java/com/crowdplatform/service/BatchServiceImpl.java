@@ -53,7 +53,7 @@ public class BatchServiceImpl implements BatchService {
     }
     
     @Transactional
-    public List<Integer> listRunningBatchIds(Long projectId) {
+    public List<Integer> listRunningBatchIds(String projectId) {
     	Project project = projectService.getProject(projectId);
     	List<Integer> result = Lists.newArrayList();
     	if (project != null) {
@@ -67,7 +67,7 @@ public class BatchServiceImpl implements BatchService {
     }
     
     @Transactional
-    public List<Integer> listCompletedBatchIds(Long projectId) {
+    public List<Integer> listCompletedBatchIds(String projectId) {
     	Project project = projectService.getProject(projectId);
     	List<Integer> result = Lists.newArrayList();
     	if (project != null) {

@@ -2,6 +2,8 @@ package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,7 @@ import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskService;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchControllerTest {
@@ -42,7 +45,7 @@ public class BatchControllerTest {
 	
 	private Batch batch = new Batch();
 	private Project project = new Project();
-	private static final Long projectId = new Long(1);
+	private static final String projectId = "1";
 	private static final Integer batchId = 2;
 	
 	@Before
@@ -53,7 +56,9 @@ public class BatchControllerTest {
 	    project.setId(projectId);
 	    batch.setId(batchId);
 	    project.addBatch(batch);
-	    user.addProject(project);
+	    user.setUsername("username");
+	    List<Project> projects = Lists.newArrayList(project);
+	    Mockito.when(projectService.getProjectsForUser("username")).thenReturn(projects);
 	    Mockito.when(userService.getUser("username")).thenReturn(user);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 		Mockito.when(batchService.getBatch(batchId)).thenReturn(batch);

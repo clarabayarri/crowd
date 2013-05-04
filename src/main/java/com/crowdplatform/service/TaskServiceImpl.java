@@ -31,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
 	@Transactional
-	public Task getTask(Long projectId, Integer taskId) {
+	public Task getTask(String projectId, Integer taskId) {
 		Query query = em.createNativeQuery("SELECT count(*) FROM project_batch pb, batch_task bt WHERE pb.project_id=:project AND pb.batches_id=bt.batch_id AND bt.tasks_id=:task");
 		query.setParameter("project", projectId);
 		query.setParameter("task", taskId);

@@ -1,10 +1,16 @@
 package com.crowdplatform.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 import com.crowdplatform.model.Project;
 
+@Service
 public class ProjectServiceMongoImpl implements ProjectService {
 
 	@Autowired
@@ -18,14 +24,20 @@ public class ProjectServiceMongoImpl implements ProjectService {
 		mongoOperation.save(project);
 	}
 	
-	public void removeProject(Long id) {
+	public void removeProject(String id) {
 		Project project = getProject(id);
 		if (project != null) {
 			mongoOperation.remove(project);
 		}
 	}
 	
-	public Project getProject(Long id) {
+	public Project getProject(String id) {
 		return mongoOperation.findById(id, Project.class);
+	}
+	
+	public List<Project> getProjectsForUser(String userId) {
+		Query query = new Query(Criteria.where("ownerId").is(userId));
+		List<Project> projects = mongoOperation.find(query, Project.class);
+		return projects;
 	}
 }

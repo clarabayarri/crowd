@@ -84,20 +84,20 @@ public class PlatformUserServiceImpl implements PlatformUserService {
 	}
 
 	@Transactional
-	public boolean currentUserIsAuthorizedForProject(Long projectId) {
+	public boolean currentUserIsAuthorizedForProject(String projectId) {
 		PlatformUser user = getCurrentUser();
 		if (user != null) {
-			return getCurrentUser().isOwnerOfProject(projectId);
+			return user.isOwnerOfProject(projectId);
 		}
 	    return false;
 	}
 
 	@Transactional
-	public boolean currentUserIsAuthorizedForBatch(Long projectId,
+	public boolean currentUserIsAuthorizedForBatch(String projectId,
 			Integer batchId) {
 		PlatformUser user = getCurrentUser();
 		if (user != null) {
-			return getCurrentUser().isOwnerOfBatch(projectId, batchId);
+			return user.isOwnerOfProject(projectId);
 		}
 	    return false;
 	}

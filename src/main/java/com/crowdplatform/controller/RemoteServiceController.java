@@ -56,7 +56,7 @@ public class RemoteServiceController {
 	private ProjectUserService userService;
 	
 	@RequestMapping(value="/project/{projectId}/uid/{uid}/task", method=RequestMethod.GET)
-	public @ResponseBody TaskInfo[] provideTask(@PathVariable("projectId") Long projectId, 
+	public @ResponseBody TaskInfo[] provideTask(@PathVariable("projectId") String projectId, 
 			@PathVariable("uid") Long uid,
 			@RequestParam(value="count", required=false) Integer count) {
 		if (count == null) {
@@ -79,7 +79,7 @@ public class RemoteServiceController {
 	
 	@RequestMapping(value="/project/{projectId}/uid/{uid}/execution", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public void saveExecution(@PathVariable("projectId") Long projectId, 
+	public void saveExecution(@PathVariable("projectId") String projectId, 
 			@PathVariable("uid") Long uid, @RequestBody ExecutionInfo info) {
 		Project project = projectService.getProject(projectId);
 		if (project.getUid().equals(uid)) {
@@ -87,8 +87,7 @@ public class RemoteServiceController {
 			if (task != null) {
 				Execution execution = new Execution(info.getContents());
 				if (info.getUserId() != null && info.getUserId() > 0) {
-					ProjectUser user = userService.getProjectUser(info.getUserId());
-					execution.setProjectUser(user);
+					execution.setProjectUserId(info.getUserId());
 				}
 				task.getExecutions().add(execution);
 				taskService.saveTask(task);
@@ -97,7 +96,7 @@ public class RemoteServiceController {
 	}
 	
 	@RequestMapping(value="/project/{projectId}/uid/{uid}/user", method=RequestMethod.POST)
-	public @ResponseBody Integer saveUser(@PathVariable("projectId") Long projectId, 
+	public @ResponseBody Integer saveUser(@PathVariable("projectId") String projectId, 
 			@PathVariable("uid") Long uid, @RequestBody ProjectUser user) {
 		Project project = projectService.getProject(projectId);
 		if (project.getUid().equals(uid)) {

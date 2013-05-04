@@ -28,7 +28,7 @@ public class TaskServiceImplTest {
 	private EntityManager em;
 	
 	private Task task = new Task();
-	private static final Long projectId = new Long(1);
+	private static final String projectId = "1";
 	private static final Integer taskId = 1;
 	
 	@Before

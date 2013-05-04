@@ -3,7 +3,6 @@ package com.crowdplatform.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -53,7 +52,7 @@ public class BatchController {
 	private TaskCreator taskCreator;
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
-	public String getBatch(@PathVariable("projectId") Long projectId, 
+	public String getBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId, Model model,
 			@RequestParam(value="created", required=false) Boolean created,
 			@RequestParam(value="export-error", required=false) Boolean exportError) {
@@ -71,7 +70,7 @@ public class BatchController {
 	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/start")
-	public String startBatch(@PathVariable("projectId") Long projectId, 
+	public String startBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.startBatch(batchId);
@@ -80,7 +79,7 @@ public class BatchController {
 	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/pause")
-	public String pauseBatch(@PathVariable("projectId") Long projectId, 
+	public String pauseBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			batchService.pauseBatch(batchId);
@@ -89,7 +88,7 @@ public class BatchController {
 	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/delete")
-	public String deleteBatch(@PathVariable("projectId") Long projectId,
+	public String deleteBatch(@PathVariable("projectId") String projectId,
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
 			Project project = projectService.getProject(projectId);
@@ -101,7 +100,7 @@ public class BatchController {
 	}
 
 	@RequestMapping(value={"/project/{projectId}/batch/create"}, method=RequestMethod.GET)
-	public String newBatch(@PathVariable("projectId") Long projectId, Model model) {
+	public String newBatch(@PathVariable("projectId") String projectId, Model model) {
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
 			Project project = projectService.getProject(projectId);
 			model.addAttribute(project);
@@ -112,7 +111,7 @@ public class BatchController {
 	}
 
 	@RequestMapping(value="/project/{projectId}/batch/create", method = RequestMethod.POST)
-	public String createBatch(@Valid Batch batch, @PathVariable("projectId") Long projectId, 
+	public String createBatch(@Valid Batch batch, @PathVariable("projectId") String projectId, 
 			BindingResult bindingResult, 
 			@RequestParam(value="taskFile", required=false) MultipartFile taskFile) {
 		if (bindingResult.hasErrors()) {
@@ -130,7 +129,7 @@ public class BatchController {
 			project.addBatch(batch);
 			
 			if (taskFile != null && !taskFile.isEmpty()) {
-				Set<Field> fields = project.getInputFields();
+				List<Field> fields = project.getInputFields();
 				FileReader reader = new FileReader();
 				try {
 					List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
@@ -154,13 +153,13 @@ public class BatchController {
 
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}/download")
-	public void downloadBatch(@PathVariable("projectId") Long projectId, 
+	public void downloadBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId, HttpServletResponse response) {
 		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
 		Project project = projectService.getProject(projectId);
 		try {
 			String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getOrderedTasks()), 
-					project.getOrderedInputFields(), project.getOrderedOutputFields(), project.getOrderedUserFields(), true);
+					project.getInputFields(), project.getOutputFields(), project.getUserFields(), true);
 			response.getWriter().write(writer);
 			response.setContentType("text/csv");
 			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batch.getName().trim().replace(" ", "-") + ".csv");
@@ -172,7 +171,7 @@ public class BatchController {
 	}
 	
 	@RequestMapping("/project/{projectId}/batch/{batchId}/export")
-	public String exportBatch(@PathVariable("projectId") Long projectId, 
+	public String exportBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		Project project = projectService.getProject(projectId);
 		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);

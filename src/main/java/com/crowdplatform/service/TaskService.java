@@ -22,6 +22,6 @@ public interface TaskService {
 	 * @param taskId The task id
 	 * @return Task corresponding to id
 	 */
-	public Task getTask(Long projectId, Integer taskId);
+	public Task getTask(String projectId, Integer taskId);
 	
 }

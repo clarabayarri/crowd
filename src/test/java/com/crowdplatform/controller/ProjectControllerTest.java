@@ -3,6 +3,8 @@ package com.crowdplatform.controller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +19,7 @@ import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectControllerTest {
@@ -31,7 +33,7 @@ public class ProjectControllerTest {
 	@Mock
 	private ProjectService projectService;
 	
-	private static final Long projectId = new Long(1);
+	private static final String projectId = "1";
 	private Project project = new Project();
 	private PlatformUser user = new PlatformUser();
 	
@@ -39,9 +41,12 @@ public class ProjectControllerTest {
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
 	    
+	    user.setUsername("username");
 	    Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(true);
 	    project.setId(projectId);
-	    user.setProjects(Sets.newHashSet(project));
+	    List<Project> projects = Lists.newArrayList(project);
+	    user.setProjects(Lists.newArrayList(projectId));
+	    Mockito.when(projectService.getProjectsForUser(user.getUsername())).thenReturn(projects);
 		Mockito.when(userService.getCurrentUser()).thenReturn(user);
 		
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);

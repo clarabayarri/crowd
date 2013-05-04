@@ -74,7 +74,7 @@
                     </div>
                     <div class="tab-pane" id="input">
                         <dl class="dl-horizontal">
-                            <c:forEach items="${project.orderedInputFields}" var="field">
+                            <c:forEach items="${project.inputFields}" var="field">
                                 <dt>${field.name}</dt>
                                 <dd>${field.type}</dd>
                             </c:forEach>
@@ -82,7 +82,7 @@
                     </div>
                     <div class="tab-pane" id="output">
                         <dl class="dl-horizontal">
-                            <c:forEach items="${project.orderedOutputFields}" var="field">
+                            <c:forEach items="${project.outputFields}" var="field">
                                 <dt>${field.name}</dt>
                                 <dd>${field.type}</dd>
                             </c:forEach>
@@ -90,7 +90,7 @@
                     </div>
                     <div class="tab-pane" id="user">
                         <dl class="dl-horizontal">
-                            <c:forEach items="${project.orderedUserFields}" var="field">
+                            <c:forEach items="${project.userFields}" var="field">
                                 <dt>${field.name}</dt>
                                 <dd>${field.type}</dd>
                             </c:forEach>
@@ -125,7 +125,7 @@
             <c:if  test="${!empty project.batches}">
                 <h2>Batches</h2>
 
-                <c:forEach items="${project.orderedBatches}" var="batch">
+                <c:forEach items="${project.batches}" var="batch">
                     <div class="well well-small">
                         <c:choose>
                             <c:when test="${batch.state eq 'RUNNING'}">

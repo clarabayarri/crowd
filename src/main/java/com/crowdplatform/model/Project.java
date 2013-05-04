@@ -1,33 +1,19 @@
 package com.crowdplatform.model;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-@Entity
 @Document
 public class Project {
 
-	@Id
-	@GeneratedValue
-	private Long id;
+	private String id;
 	
 	private Long uid;
 	
@@ -37,30 +23,32 @@ public class Project {
 	
 	private Date creationDate;
 	
-	@OneToMany(fetch=FetchType.EAGER)
-	@Cascade({CascadeType.ALL})
-	private Set<Batch> batches;
+	private List<Batch> batches;
 	
-	@OneToMany(fetch=FetchType.EAGER)
-	@Cascade({CascadeType.ALL})
-	private Set<Field> fields;
+	private List<Field> inputFields;
 	
-	@OneToMany(fetch=FetchType.EAGER)
-	@Cascade({CascadeType.ALL})
-	private Set<ProjectUser> users;
+	private List<Field> outputFields;
+	
+	private List<Field> userFields;
+	
+	private String ownerId;
+	
+	private List<ProjectUser> users;
 	
 	public Project() {
-		batches = Sets.newHashSet();
-		fields = Sets.newHashSet();
-		users = Sets.newHashSet();
+		batches = Lists.newArrayList();
+		inputFields = Lists.newArrayList();
+		outputFields = Lists.newArrayList();
+		userFields = Lists.newArrayList();
+		users = Lists.newArrayList();
 		creationDate = new Date();
 	}
 	
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -80,11 +68,11 @@ public class Project {
 		this.name = name;
 	}
 
-	public Set<Batch> getBatches() {
+	public List<Batch> getBatches() {
 		return batches;
 	}
 
-	public void setBatches(Set<Batch> batches) {
+	public void setBatches(List<Batch> batches) {
 		this.batches = batches;
 	}
 	
@@ -101,58 +89,60 @@ public class Project {
 		}
 	}
 
-	public Set<Field> getFields() {
-		return fields;
+	public String getOwnerId() {
+		return ownerId;
 	}
 
-	public void setFields(Set<Field> inputFields) {
-		this.fields = inputFields;
-	}
-	
-	public void addField(Field field) {
-		this.fields.add(field);
-	}
-	
-	public Set<Field> getInputFields() {
-		Set<Field> result = Sets.newHashSet();
-		for (Field field : fields) {
-			if (field.getFieldType() == Field.FieldType.INPUT) {
-				result.add(field);
-			}
-		}
-		return result;
-	}
-	
-	public Set<Field> getOutputFields() {
-		Set<Field> result = Sets.newHashSet();
-		for (Field field : fields) {
-			if (field.getFieldType() == Field.FieldType.OUTPUT) {
-				result.add(field);
-			}
-		}
-		return result;
-	}
-	
-	public Set<Field> getUserFields() {
-		Set<Field> result = Sets.newHashSet();
-		for (Field field : fields) {
-			if (field.getFieldType() == Field.FieldType.USER) {
-				result.add(field);
-			}
-		}
-		return result;
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
 	}
 
-	public Set<ProjectUser> getUsers() {
+	public List<ProjectUser> getUsers() {
 		return users;
 	}
 
-	public void setUsers(Set<ProjectUser> users) {
+	public void setUsers(List<ProjectUser> users) {
 		this.users = users;
 	}
 	
 	public void addUser(ProjectUser user) {
 		this.users.add(user);
+	}
+
+	public List<Field> getInputFields() {
+		return inputFields;
+	}
+
+	public void setInputFields(List<Field> inputFields) {
+		this.inputFields = inputFields;
+	}
+	
+	public void addInputField(Field field) {
+		this.inputFields.add(field);
+	}
+
+	public List<Field> getOutputFields() {
+		return outputFields;
+	}
+
+	public void setOutputFields(List<Field> outputFields) {
+		this.outputFields = outputFields;
+	}
+	
+	public void addOutputField(Field field) {
+		this.outputFields.add(field);
+	}
+
+	public List<Field> getUserFields() {
+		return userFields;
+	}
+
+	public void setUserFields(List<Field> userFields) {
+		this.userFields = userFields;
+	}
+	
+	public void addUserField(Field field) {
+		this.userFields.add(field);
 	}
 
 	public Date getCreationDate() {
@@ -165,53 +155,5 @@ public class Project {
 
 	public Integer getNumUsers() {
 		return users.size();
-	}
-
-	public List<Field> getOrderedInputFields() {
-		List<Field> list = Lists.newArrayList();
-		list.addAll(getInputFields());
-		Collections.sort(list, new Comparator<Field>() {
-
-			@Override
-			public int compare(Field arg0, Field arg1) {
-				return arg0.getId().compareTo(arg1.getId());
-			}});
-		return list;
-	}
-	
-	public List<Field> getOrderedOutputFields() {
-		List<Field> list = Lists.newArrayList();
-		list.addAll(getOutputFields());
-		Collections.sort(list, new Comparator<Field>() {
-
-			@Override
-			public int compare(Field arg0, Field arg1) {
-				return arg0.getId().compareTo(arg1.getId());
-			}});
-		return list;
-	}
-	
-	public List<Field> getOrderedUserFields() {
-		List<Field> list = Lists.newArrayList();
-		list.addAll(getUserFields());
-		Collections.sort(list, new Comparator<Field>() {
-
-			@Override
-			public int compare(Field arg0, Field arg1) {
-				return arg0.getId().compareTo(arg1.getId());
-			}});
-		return list;
-	}
-	
-	public List<Batch> getOrderedBatches() {
-		List<Batch> list = Lists.newArrayList();
-		list.addAll(this.batches);
-		Collections.sort(list, new Comparator<Batch>() {
-
-			@Override
-			public int compare(Batch b1, Batch b2) {
-				return b1.getCreationDate().compareTo(b2.getCreationDate());
-			}});
-		return list;
 	}
 }

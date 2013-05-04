@@ -61,7 +61,7 @@ public interface PlatformUserService {
 	 * @param projectId The project id
 	 * @return True if the current authorized user is the owner of a project with projectId
 	 */
-	public boolean currentUserIsAuthorizedForProject(Long projectId);
+	public boolean currentUserIsAuthorizedForProject(String projectId);
 	
 	/**
 	 * Check if the current authorized user can access a Batch.
@@ -69,6 +69,6 @@ public interface PlatformUserService {
 	 * @param batchId The Batch id
 	 * @return True if the current authorized user is the owner of a batch with batchId from the project with projectId
 	 */
-	public boolean currentUserIsAuthorizedForBatch(Long projectId, Integer batchId);
+	public boolean currentUserIsAuthorizedForBatch(String projectId, Integer batchId);
 	
 }

@@ -20,6 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,7 +39,7 @@ public class BatchServiceImplTest {
 	private Batch mockBatch;
 	
 	private static final Integer batchId = 1;
-	private static final Long projectId = new Long(2);
+	private static final String projectId = "2";
 	
 	@Before
 	public void setUp() {
@@ -83,7 +84,8 @@ public class BatchServiceImplTest {
 		Batch batch2 = new Batch();
 		batch2.setId(2);
 		Project project = new Project();
-		project.setBatches(Sets.newHashSet(batch, batch2));
+		List<Batch> batches = Lists.newArrayList(batch, batch2);
+		project.setBatches(batches);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 	
 		List<Integer> result = service.listRunningBatchIds(projectId);
@@ -99,8 +101,9 @@ public class BatchServiceImplTest {
 		batch.setState(Batch.State.COMPLETE);
 		Batch batch2 = new Batch();
 		batch2.setId(2);
+		List<Batch> batches = Lists.newArrayList(batch, batch2);
 		Project project = new Project();
-		project.setBatches(Sets.newHashSet(batch, batch2));
+		project.setBatches(batches);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 	
 		List<Integer> result = service.listCompletedBatchIds(projectId);

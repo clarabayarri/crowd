@@ -115,7 +115,7 @@ public class GoogleFusiontablesAdapter {
 		List<Column> columns = Lists.newArrayList();
 		
 		columns.add(new Column().setName("task_id").setType("NUMBER"));
-		for (Field field : project.getOrderedInputFields()) {
+		for (Field field : project.getInputFields()) {
 			if (field.getType().equals(Field.Type.DOUBLE) || field.getType().equals(Field.Type.INTEGER)) {
 				columns.add(new Column().setName(field.getName()).setType("NUMBER"));
 			} else {
@@ -125,7 +125,7 @@ public class GoogleFusiontablesAdapter {
 		columns.add(new Column().setName("execution_id").setType("NUMBER"));
 		columns.add(new Column().setName("date").setType("DATETIME"));
 		columns.add(new Column().setName("userId").setType("NUMBER"));
-		for (Field field : project.getOrderedOutputFields()) {
+		for (Field field : project.getOutputFields()) {
 			if (field.getType().equals(Field.Type.DOUBLE) || field.getType().equals(Field.Type.INTEGER)) {
 				columns.add(new Column().setName(field.getName()).setType("NUMBER"));
 			} else {
@@ -145,7 +145,7 @@ public class GoogleFusiontablesAdapter {
 	
 	private void insertData(Table table, Project project, Batch batch) throws IOException {
 		String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getOrderedTasks()), 
-				project.getOrderedInputFields(), project.getOrderedOutputFields(), project.getOrderedUserFields(), false);
+				project.getInputFields(), project.getOutputFields(), project.getUserFields(), false);
 		ByteArrayContent byteArrayContent = ByteArrayContent.fromString("application/octet-stream", writer);
 		Fusiontables.Table.ImportRows importRows = fusiontables.table().importRows(table.getTableId(), byteArrayContent);
 		importRows.setIsStrict(false);

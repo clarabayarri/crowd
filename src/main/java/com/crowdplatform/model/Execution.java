@@ -19,8 +19,7 @@ public class Execution {
 	
 	private String contents;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	private ProjectUser projectUser;
+	private Integer projectUserId;
 	
 	public Execution() {
 		this.date = new Date();
@@ -55,11 +54,11 @@ public class Execution {
 		this.contents = contents;
 	}
 
-	public ProjectUser getProjectUser() {
-		return projectUser;
+	public Integer getProjectUserId() {
+		return projectUserId;
 	}
 
-	public void setProjectUser(ProjectUser projectUser) {
-		this.projectUser = projectUser;
+	public void setProjectUserId(Integer projectUserId) {
+		this.projectUserId = projectUserId;
 	}
 }

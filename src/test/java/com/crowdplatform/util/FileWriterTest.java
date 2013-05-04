@@ -9,17 +9,28 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
+import com.crowdplatform.service.ProjectUserService;
 import com.google.common.collect.Lists;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FileWriterTest {
 
+	@InjectMocks
 	private FileWriter writer = new FileWriter();
 
+	@Mock
+	private ProjectUserService userService;
+	
 	@Test
 	public void testWriteExecutionsReturnsString() throws IOException {
 		List<Task> tasks = Lists.newArrayList();
@@ -142,8 +153,9 @@ public class FileWriterTest {
 		Execution execution = new Execution();
 		execution.setId(2);
 		execution.setContents("{}");
-		execution.setProjectUser(user);
+		execution.setProjectUserId(user.getId());
 		List<Field> fields = Lists.newArrayList();
+		Mockito.when(userService.getProjectUser(3)).thenReturn(user);
 		
 		String[] result = writer.decodeExecution(execution, fields, fields);
 		
@@ -159,11 +171,12 @@ public class FileWriterTest {
 		Execution execution = new Execution();
 		execution.setId(2);
 		execution.setContents("{\"field\":\"string1\"}");
-		execution.setProjectUser(user);
+		execution.setProjectUserId(user.getId());
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.STRING);
 		List<Field> fields = Lists.newArrayList(field);
+		Mockito.when(userService.getProjectUser(3)).thenReturn(user);
 		
 		String[] result = writer.decodeExecution(execution, fields, fields);
 		
