@@ -2,22 +2,17 @@ package com.crowdplatform.model;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-@Entity
 public class Execution {
 
-	@Id
-    @GeneratedValue
-    private Integer id;
+	private Integer id;
 	
 	private Date date;
 	
 	private String contents;
 	
 	private Integer projectUserId;
+	
+	private Integer taskId;
 	
 	public Execution() {
 		this.date = new Date();
@@ -58,5 +53,13 @@ public class Execution {
 
 	public void setProjectUserId(Integer projectUserId) {
 		this.projectUserId = projectUserId;
+	}
+
+	public Integer getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(Integer taskId) {
+		this.taskId = taskId;
 	}
 }

@@ -33,8 +33,11 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 		if (batches.isEmpty()) {
 			batches = project.getCompletedBatches();
 		}
-		int index = (new Random()).nextInt(batches.size());
-		return batches.get(index);
+		if (!batches.isEmpty()) {
+			int index = (new Random()).nextInt(batches.size());
+			return batches.get(index);
+		}
+		return new Batch();
 	}
 
 	@VisibleForTesting

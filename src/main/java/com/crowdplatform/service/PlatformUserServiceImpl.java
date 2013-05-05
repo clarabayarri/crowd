@@ -34,6 +34,8 @@ public class PlatformUserServiceImpl implements PlatformUserService {
 		PlatformUser user = em.find(PlatformUser.class, username);
 		if (user != null) {
 			em.remove(user);
+		} else {
+			System.out.println("PlatformUserServiceImpl: Could not remove user, user not found.");
 		}
 	}
 

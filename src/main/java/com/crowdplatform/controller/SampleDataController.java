@@ -12,12 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
+import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
@@ -32,6 +34,9 @@ public class SampleDataController {
 	
 	@Autowired
 	private ProjectService projectService;
+	
+	@Autowired
+	private BatchService batchService;
 	
 	@Autowired
 	private PasswordResetRequestService passwordService;
@@ -168,6 +173,10 @@ public class SampleDataController {
 		int stateIndex = random.nextInt(states.length);
 		batch.setState(states[stateIndex]);
 		
+		BatchExecutionCollection collection = new BatchExecutionCollection();
+		batchService.saveExecutions(collection);
+		batch.setExecutionCollectionId(collection.getId());
+		
 		int numTasks = random.nextInt(15) + 1;
 		for (int i = 0; i < numTasks; ++i) {
 			Task task = new Task();
@@ -175,13 +184,15 @@ public class SampleDataController {
 			task.setNumExecutions(numExecutions);
 			int index = random.nextInt(definitions.length);
 			task.setContents(definitions[index]);
+			batch.addTask(task);
 			
 			for (int j = 0; j < numExecutions; ++ j) {
 				Execution execution = new Execution("{\"timeSpent\":300,\"failedAttempts\":1,\"wrongAnswers\":[\"answer\"]}");
-				task.addExecution(execution);
+				execution.setTaskId(task.getId());
+				collection.addExecution(execution);
 			}
-			batch.addTask(task);
 		}
+		batchService.saveExecutions(collection);
 		
 		return batch;
 	}

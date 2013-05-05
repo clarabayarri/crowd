@@ -134,9 +134,19 @@ public class Project {
 	}
 	
 	public void addUser(ProjectUser user) {
+		user.setId(this.users.size() + 1);
 		this.users.add(user);
 	}
 
+	public ProjectUser getUser(Integer id) {
+		for (ProjectUser user : this.users) {
+			if (id.equals(user.getId())) {
+				return user;
+			}
+		}
+		return null;
+	}
+	
 	public List<Field> getInputFields() {
 		return inputFields;
 	}

@@ -43,6 +43,8 @@ public class ProjectController {
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
 			model.addAttribute(project);
+	    } else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + ".");
 	    }
 		return "project";
 	}
@@ -55,6 +57,8 @@ public class ProjectController {
 			SecureRandom random = new SecureRandom();
 			project.setUid(random.nextLong());
 			projectService.saveProject(project);
+	    } else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " reset UID.");
 	    }
 		return "redirect:/project/" + projectId;
 	}
@@ -67,7 +71,9 @@ public class ProjectController {
 			user.removeProject(projectId);
 			userService.saveUser(user);
 			projectService.removeProject(projectId);
-		}
+		} else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " delete project.");
+	    }
 		return "redirect:/projects";
 	}
 }

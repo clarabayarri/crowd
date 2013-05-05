@@ -12,15 +12,16 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
+import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
-import com.crowdplatform.service.TaskService;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -33,24 +34,33 @@ public class RemoteServiceControllerTest {
 	private ProjectService projectService;
 	
 	@Mock
-	private TaskService taskService;
+	private BatchService batchService;
 	
 	@Mock
 	private TaskRetrievalStrategy taskRetrieval;
 	
-	@Mock
-	private ProjectUserService userService;
-	
 	private Project project = new Project();
+	private Batch batch = new Batch();
+	private Task task = new Task();
 	private static final String projectId = "1";
 	private static final Long projectUid = new Long(2);
+	private static final Integer taskId = 3;
+	private static final Integer batchId = 5;
 	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
 	    
+	    project = new Project();
+	    batch = new Batch();
+	    task = new Task();
+	    batch.addTask(task);
+	    project.addBatch(batch);
+	    task.setId(taskId);
+	    batch.setId(batchId);
 	    project.setUid(projectUid);
 	    Mockito.when(projectService.getProject(projectId)).thenReturn(project);
+	    Mockito.when(batchService.getExecutions(Mockito.anyString())).thenReturn(new BatchExecutionCollection());
 	}
 	
 	@Test
@@ -95,33 +105,21 @@ public class RemoteServiceControllerTest {
 	}
 	
 	@Test
-	public void testSaveExecutionRetrievesAssociatedTask() {
-		ExecutionInfo info = new ExecutionInfo();
-		info.setTaskId(3);
-		Mockito.when(taskService.getTask(projectId,3)).thenReturn(new Task());
-		
-		controller.saveExecution(projectId, projectUid, info);
-		
-		Mockito.verify(taskService).getTask(projectId,3);
-	}
-	
-	@Test
 	public void testSaveExecutionCallsServiceToSave() {
 		ExecutionInfo info = new ExecutionInfo();
-		info.setTaskId(3);
-		Task task = new Task();
-		Mockito.when(taskService.getTask(projectId,3)).thenReturn(task);
+		info.setBatchId(batchId);
+		info.setTaskId(taskId);
 		
 		controller.saveExecution(projectId, projectUid, info);
 		
-		Mockito.verify(taskService).saveTask(task);
+		Mockito.verify(batchService).saveExecutions(Mockito.any(BatchExecutionCollection.class));
 	}
 	
 	@Test
 	public void testSaveExecutionDoesNothingIfWrongCredentials() {
 		controller.saveExecution(projectId, new Long(3), null);
 		
-		Mockito.verifyZeroInteractions(taskService);
+		Mockito.verifyZeroInteractions(batchService);
 	}
 	
 	@Test
@@ -145,17 +143,16 @@ public class RemoteServiceControllerTest {
 	@Test
 	public void testSaveUserReturnsUserIdIfCorrect() {
 		ProjectUser user = new ProjectUser();
-		user.setId(30);
 		
 		int result = controller.saveUser(projectId, projectUid, user);
 		
-		assertEquals(30, result);
+		assertEquals(1, result);
 	}
 	
 	@Test
 	public void testSaveUserDoesNothingIfWrongCredentials() {
 		controller.saveUser(projectId, new Long(3), null);
 		
-		Mockito.verifyZeroInteractions(userService);
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
 	}
 }

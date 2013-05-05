@@ -4,22 +4,25 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.service.ProjectUserService;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
 
 @Service
@@ -30,21 +33,25 @@ public class FileWriter {
 	@VisibleForTesting
 	public static final int NUM_STATIC_EXECUTION_FIELDS = 3;
 	
-	@Autowired
-	private ProjectUserService userService;
-	
-	public String writeTasksExecutions(List<Task> tasks, List<Field> taskFields, List<Field> executionFields, 
-			List<Field> userFields, Boolean header) throws IOException {
+	public String writeTasksExecutions(Project project, Batch batch, BatchExecutionCollection collection, Boolean header) throws IOException {
 		StringWriter writer = new StringWriter();
 		CSVWriter csvWriter = new CSVWriter(writer);
 		
 		if (header) {
-			String[] headers = writeHeaders(taskFields, executionFields, userFields);
+			String[] headers = writeHeaders(project.getInputFields(), project.getOutputFields(), project.getUserFields());
 			csvWriter.writeNext(headers);
 		}
 		
-		for (Task task : tasks) {
-			writeTaskExecutions(csvWriter, task, taskFields, executionFields, userFields);
+		Map<Integer, String[]> taskValues = Maps.newHashMap();
+		for (Task task : batch.getTasks()) {
+			taskValues.put(task.getId(), decodeTask(task, project.getInputFields()));
+		}
+		
+		for (Execution execution : collection.getExecutions()) {
+			ProjectUser user = null;
+			if (execution.getProjectUserId() != null)
+				user = project.getUser(execution.getProjectUserId());
+			writeExecution(csvWriter, taskValues.get(execution.getTaskId()), execution, user, project.getOutputFields(), project.getUserFields());
 		}
 
 		String result = writer.toString();
@@ -76,13 +83,10 @@ public class FileWriter {
 		return ObjectArrays.concat(taskHeaders, executionHeaders, String.class);
 	}
 	
-	private void writeTaskExecutions(CSVWriter csvWriter, Task task, List<Field> taskFields, List<Field> executionFields, 
-			List<Field> userFields) throws IOException {
-		String[] taskValues = decodeTask(task, taskFields);
-		for (Execution execution : task.getExecutions()) {
-			String[] executionValues = decodeExecution(execution, executionFields, userFields);
-			csvWriter.writeNext(ObjectArrays.concat(taskValues, executionValues, String.class));
-		}
+	private void writeExecution(CSVWriter csvWriter, String[] taskValues, Execution execution, ProjectUser user, List<Field> executionFields, 
+			List<Field> userFields) {
+		String[] executionValues = decodeExecution(execution, user, executionFields, userFields);
+		csvWriter.writeNext(ObjectArrays.concat(taskValues, executionValues, String.class));
 	}
 	
 	@VisibleForTesting
@@ -96,7 +100,7 @@ public class FileWriter {
 	}
 	
 	@VisibleForTesting
-	public String[] decodeExecution(Execution execution, List<Field> fields, List<Field> userFields) {
+	public String[] decodeExecution(Execution execution, ProjectUser user, List<Field> fields, List<Field> userFields) {
 		String[] values = new String[NUM_STATIC_EXECUTION_FIELDS];
 		values[0] = String.valueOf(execution.getId());
 		values[1] = execution.getDate().toString();
@@ -104,7 +108,6 @@ public class FileWriter {
 		String[] executionValues = decode(execution.getContents(), fields);
 		values = ObjectArrays.concat(values, executionValues, String.class);
 		
-		ProjectUser user = userService.getProjectUser(execution.getProjectUserId());
 		if (user != null && user.getContents() != null && !user.getContents().isEmpty()) {
 			values[2] = String.valueOf(execution.getProjectUserId());
 			String[] userValues = decode(user.getContents(), userFields);

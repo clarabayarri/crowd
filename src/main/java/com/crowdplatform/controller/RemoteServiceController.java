@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
+import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 
@@ -36,6 +38,9 @@ public class RemoteServiceController {
 
 	@Autowired
 	private ProjectService projectService;
+	
+	@Autowired
+	private BatchService batchService;
 	
 	@Autowired
 	private TaskRetrievalStrategy taskRetrieval;
@@ -56,6 +61,8 @@ public class RemoteServiceController {
 				data[i] = new TaskInfo(tasks.get(i));
 			}
 			return data;
+		} else {
+			System.out.println("RemoteServiceController: Provide task attempted with wrong uid for project " + projectId + ".");
 		}
 		
 		return null;
@@ -74,10 +81,22 @@ public class RemoteServiceController {
 				if (task != null) {
 					Execution execution = new Execution(info.getContents());
 					execution.setProjectUserId(info.getUserId());
-					task.getExecutions().add(execution);
+					execution.setTaskId(task.getId());
+					BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
+					collection.addExecution(execution);
+					batchService.saveExecutions(collection);
+					task.setNumExecutions(task.getNumExecutions() + 1);
 					projectService.saveProject(project);
+				} else {
+					System.out.println("RemoteServiceController: Save execution attempted with unexisting task " + 
+							projectId + " - " + info.getBatchId() + " - " + info.getTaskId() + ".");
 				}
+			} else {
+				System.out.println("RemoteServiceController: Save execution attempted with unexisting batch " + 
+						projectId + " - " + info.getBatchId() + ".");
 			}
+		} else {
+			System.out.println("RemoteServiceController: Save execution attempted with wrong uid for project " + projectId + ".");
 		}
 	}
 	
@@ -89,6 +108,8 @@ public class RemoteServiceController {
 			project.addUser(user);
 			projectService.saveProject(project);
 			return user.getId();
+		} else {
+			System.out.println("RemoteServiceController: Save user attempted with wrong uid for project " + projectId + ".");
 		}
 		return 0;
 	}

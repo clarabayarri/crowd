@@ -169,6 +169,6 @@ public class ProjectControllerTest {
 		controller.deleteProject(projectId);
 		
 		assertEquals(1, user.getProjects().size());
-		Mockito.verifyZeroInteractions(projectService);
+		Mockito.verify(projectService, Mockito.never()).removeProject(projectId);
 	}
 }

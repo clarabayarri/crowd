@@ -11,15 +11,15 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.service.ProjectUserService;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,16 +27,20 @@ public class FileWriterTest {
 
 	@InjectMocks
 	private FileWriter writer = new FileWriter();
-
-	@Mock
-	private ProjectUserService userService;
 	
 	@Test
 	public void testWriteExecutionsReturnsString() throws IOException {
 		List<Task> tasks = Lists.newArrayList();
 		List<Field> fields = Lists.newArrayList();
+		Project project = new Project();
+		project.setInputFields(fields);
+		project.setOutputFields(fields);
+		project.setUserFields(fields);
+		Batch batch = new Batch();
+		batch.setTasks(tasks);
+		BatchExecutionCollection collection = new BatchExecutionCollection();
 		
-		String result = writer.writeTasksExecutions(tasks, fields, fields, fields, true);
+		String result = writer.writeTasksExecutions(project, batch, collection, true);
 		
 		assertNotNull(result);
 	}
@@ -45,8 +49,15 @@ public class FileWriterTest {
 	public void testWriteExecutionsReturnsHeaderRow() throws IOException {
 		List<Task> tasks = Lists.newArrayList();
 		List<Field> fields = Lists.newArrayList();
+		Project project = new Project();
+		project.setInputFields(fields);
+		project.setOutputFields(fields);
+		project.setUserFields(fields);
+		Batch batch = new Batch();
+		batch.setTasks(tasks);
+		BatchExecutionCollection collection = new BatchExecutionCollection();
 		
-		String result = writer.writeTasksExecutions(tasks, fields, fields, fields, true);
+		String result = writer.writeTasksExecutions(project, batch, collection, true);
 		
 		String expected = "\"task_id\",\"execution_id\",\"date\",\"userId\"\n";
 		assertEquals(expected, result);
@@ -62,8 +73,15 @@ public class FileWriterTest {
 		field2.setName("field2");
 		List<Field> fields2 = Lists.newArrayList(field2);
 		List<Field> fields3 = Lists.newArrayList();
+		Project project = new Project();
+		project.setInputFields(fields);
+		project.setOutputFields(fields2);
+		project.setUserFields(fields3);
+		Batch batch = new Batch();
+		batch.setTasks(tasks);
+		BatchExecutionCollection collection = new BatchExecutionCollection();
 		
-		String result = writer.writeTasksExecutions(tasks, fields, fields2, fields3, true);
+		String result = writer.writeTasksExecutions(project, batch, collection, true);
 		
 		String expected = "\"task_id\",\"field\",\"execution_id\",\"date\",\"userId\",\"field2\"\n";
 		assertEquals(expected, result);
@@ -121,7 +139,7 @@ public class FileWriterTest {
 		execution.setContents("{}");
 		List<Field> fields = Lists.newArrayList();
 		
-		String[] result = writer.decodeExecution(execution, fields, fields);
+		String[] result = writer.decodeExecution(execution, null, fields, fields);
 		
 		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
 		assertEquals("2", result[0]);
@@ -138,7 +156,7 @@ public class FileWriterTest {
 		Field field = new Field();
 		List<Field> fields2 = Lists.newArrayList(field);
 		
-		String[] result = writer.decodeExecution(execution, fields, fields2);
+		String[] result = writer.decodeExecution(execution, null, fields, fields2);
 		
 		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields2.size(), result.length);
 		assertNull(result[2]);
@@ -155,9 +173,8 @@ public class FileWriterTest {
 		execution.setContents("{}");
 		execution.setProjectUserId(user.getId());
 		List<Field> fields = Lists.newArrayList();
-		Mockito.when(userService.getProjectUser(3)).thenReturn(user);
 		
-		String[] result = writer.decodeExecution(execution, fields, fields);
+		String[] result = writer.decodeExecution(execution, user, fields, fields);
 		
 		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
 		assertEquals("3", result[2]);
@@ -176,9 +193,8 @@ public class FileWriterTest {
 		field.setName("field");
 		field.setType(Field.Type.STRING);
 		List<Field> fields = Lists.newArrayList(field);
-		Mockito.when(userService.getProjectUser(3)).thenReturn(user);
 		
-		String[] result = writer.decodeExecution(execution, fields, fields);
+		String[] result = writer.decodeExecution(execution, user, fields, fields);
 		
 		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size() + fields.size(), 
 				result.length);

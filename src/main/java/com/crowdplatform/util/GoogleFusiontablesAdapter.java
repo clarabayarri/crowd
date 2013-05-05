@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
 import com.google.api.client.auth.oauth2.Credential;
@@ -40,7 +41,7 @@ public class GoogleFusiontablesAdapter {
 
 	private Fusiontables fusiontables;
 
-	public String exportDataURL(Project project, Batch batch) {
+	public String exportDataURL(Project project, Batch batch, BatchExecutionCollection collection) {
 		try {
 			try {
 				HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -54,7 +55,7 @@ public class GoogleFusiontablesAdapter {
 				Table table = retrieveTable(project, batch);
 
 				// Inserts
-				insertData(table, project, batch);
+				insertData(table, project, batch, collection);
 				
 				return FUSIONTABLES_URL + table.getTableId();
 				
@@ -143,9 +144,8 @@ public class GoogleFusiontablesAdapter {
 		return result;
 	}
 	
-	private void insertData(Table table, Project project, Batch batch) throws IOException {
-		String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getTasks()), 
-				project.getInputFields(), project.getOutputFields(), project.getUserFields(), false);
+	private void insertData(Table table, Project project, Batch batch, BatchExecutionCollection collection) throws IOException {
+		String writer = (new FileWriter()).writeTasksExecutions(project, batch, collection, false);
 		ByteArrayContent byteArrayContent = ByteArrayContent.fromString("application/octet-stream", writer);
 		Fusiontables.Table.ImportRows importRows = fusiontables.table().importRows(table.getTableId(), byteArrayContent);
 		importRows.setIsStrict(false);

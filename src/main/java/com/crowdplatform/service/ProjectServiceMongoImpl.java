@@ -31,6 +31,8 @@ public class ProjectServiceMongoImpl implements ProjectService {
 		Project project = getProject(id);
 		if (project != null) {
 			mongoOperation.remove(project);
+		} else {
+			System.out.println("ProjectServiceMongoImpl: Could not remove project, project not found.");
 		}
 	}
 	

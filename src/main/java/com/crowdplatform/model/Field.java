@@ -2,24 +2,15 @@ package com.crowdplatform.model;
 
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-@Entity
 public class Field {
 
-	@Id
-    @GeneratedValue
     private Integer id;
 	
 	@NotNull
 	private String name;
 	
-	@ElementCollection(fetch=FetchType.EAGER)
 	private Set<String> columnNames;
 	
 	public enum Type {

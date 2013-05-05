@@ -22,7 +22,6 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.TaskService;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,9 +38,6 @@ public class BatchControllerTest {
 	
 	@Mock
 	private PlatformUserService userService;
-	
-	@Mock
-	private TaskService taskService;
 	
 	private Batch batch = new Batch();
 	private Project project = new Project();

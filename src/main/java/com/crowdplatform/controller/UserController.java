@@ -36,39 +36,34 @@ import com.crowdplatform.util.RegistrationValidator;
 public class UserController {
 
 	@Autowired
-    private RegistrationValidator registrationValidation;
-	
+	private RegistrationValidator registrationValidation;
+
 	@Autowired
 	private PasswordResetDataValidator passwordResetValidator;
-	
+
 	@Autowired @Qualifier("org.springframework.security.authenticationManager")
-    protected AuthenticationManager authenticationManager;
-	
+	protected AuthenticationManager authenticationManager;
+
 	@Autowired
 	private PlatformUserService userService;
-	
+
 	@Autowired
 	private PasswordResetRequestService passwordService;
 
-    public void setRegistrationValidation(
-    		RegistrationValidator registrationValidation) {
-            this.registrationValidation = registrationValidation;
-    }
-    
-    private MailSender mailSender;
-    
-    public void setMailSender(MailSender mailSender) {
-    	this.mailSender = mailSender;
-    }
-    
-    public MailSender getMailSender() {
-    	if (this.mailSender == null) {
-    		ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
-    		this.mailSender = (MailSender) context.getBean("mailMail");
-    	}
-    	return this.mailSender;
-    }
-    
+	private MailSender mailSender;
+
+	public void setMailSender(MailSender mailSender) {
+		this.mailSender = mailSender;
+	}
+
+	public MailSender getMailSender() {
+		if (this.mailSender == null) {
+			ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
+			this.mailSender = (MailSender) context.getBean("mailMail");
+		}
+		return this.mailSender;
+	}
+
 	@RequestMapping("/login")
 	public String loadLogin(Model model, @RequestParam(value="error", required=false) Boolean error) {
 		if (error != null) {
@@ -76,13 +71,13 @@ public class UserController {
 		}
 		return "login";
 	}
-	
+
 	@RequestMapping(value={"/register"}, method=RequestMethod.GET)
 	public String showRegistration(Model model) {
 		model.addAttribute(new Registration());
 		return "register";
 	}
-	
+
 	@RequestMapping(value={"/register"}, method=RequestMethod.POST)
 	public String processRegistration(@Valid Registration registration, 
 			BindingResult bindingResult, HttpServletRequest request) {
@@ -99,7 +94,7 @@ public class UserController {
 		bindingResult.reject("registration.error");
 		return "register";
 	}
-	
+
 	@RequestMapping(value={"/forgot"}, method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public void forgotPassword(String username) {
@@ -107,13 +102,15 @@ public class UserController {
 		if (user != null) {
 			PasswordResetRequest request = new PasswordResetRequest();
 			request.setUser(user);
-			
+
 			passwordService.addRequest(request);
-			
+
 			getMailSender().sendPasswordResetMail(user, request.getId());
+		} else {
+			System.out.println("UserController: Forgot password attempted with unexisting user '" + username + "'");
 		}
 	}
-	
+
 	@RequestMapping("/forgot/{uid}")
 	public String loadPasswordReset(@PathVariable("uid") Long uid, Model model) {
 		PasswordResetData data = new PasswordResetData();
@@ -121,39 +118,41 @@ public class UserController {
 		model.addAttribute("uid", uid);
 		return "password-reset";
 	}
-	
+
 	@RequestMapping("/reset")
 	public String resetPassword(@Valid PasswordResetData data, BindingResult bindingResult) {
 		passwordResetValidator.validate(data, bindingResult);
-		
+
 		PasswordResetRequest request = passwordService.getRequest(data.getUid());
 		if (request == null) {
 			bindingResult.reject("password.change.error");
+		} else {
+			System.out.println("UserController: Password reset attempted with unexisting request '" + data.getUid() + "'");
 		}
-		
+
 		if (!bindingResult.hasErrors()) {
 			PlatformUser user = request.getUser();
 			user.setPassword(data.getPassword());
 			userService.saveUser(user);
 			passwordService.removeRequest(request);
-			
+
 			// TODO: send email alerting the password was changed
-			
+
 			return "redirect:/login";
 		}
-		
+
 		return "password-reset";
 	}
-	
+
 	private void authenticateUserAndSetSession(PlatformUser user, HttpServletRequest request) {
 		UsernamePasswordAuthenticationToken token = 
 				new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 
-	    request.getSession();
+		request.getSession();
 
-	    token.setDetails(new WebAuthenticationDetails(request));
-	    Authentication authenticatedUser = authenticationManager.authenticate(token);
+		token.setDetails(new WebAuthenticationDetails(request));
+		Authentication authenticatedUser = authenticationManager.authenticate(token);
 
-	    SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
+		SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
 	}
 }

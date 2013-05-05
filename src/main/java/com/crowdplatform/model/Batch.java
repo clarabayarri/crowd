@@ -3,26 +3,15 @@ package com.crowdplatform.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 import com.google.common.collect.Lists;
 
-
-@Entity
 public class Batch {
 
-	@Id
-    private Integer id;
+	private Integer id;
 	
 	@NotNull
 	@Size(min=3)
@@ -38,15 +27,14 @@ public class Batch {
 	
 	private String fusiontableId;
 	
+	private String executionCollectionId;
+	
 	public enum State {
 		RUNNING, PAUSED, COMPLETE
 	}
 	
-	@Enumerated(EnumType.STRING)
 	private State state;
 	
-	@OneToMany
-	@Cascade({CascadeType.ALL})
 	private List<Task> tasks;
 
 	public Batch() {
@@ -86,7 +74,6 @@ public class Batch {
 
 	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
-		updatePercentageComplete();
 	}
 	
 	public void addTask(Task task) {
@@ -103,10 +90,6 @@ public class Batch {
 	}
 
 	public double getPercentageComplete() {
-		return percentageComplete;
-	}
-	
-	public void updatePercentageComplete() {
 		if (tasks != null) {
 			int total = 0;
 			for(Task task : tasks) {
@@ -116,6 +99,7 @@ public class Batch {
 				this.percentageComplete = ((double) total * 100) / (executionsPerTask * tasks.size());
 			}
 		}
+		return percentageComplete;
 	}
 
 	public Integer getNumTasks() {
@@ -144,5 +128,13 @@ public class Batch {
 
 	public void setFusiontableId(String fusiontableId) {
 		this.fusiontableId = fusiontableId;
+	}
+
+	public String getExecutionCollectionId() {
+		return executionCollectionId;
+	}
+
+	public void setExecutionCollectionId(String executionCollectionId) {
+		this.executionCollectionId = executionCollectionId;
 	}
 }

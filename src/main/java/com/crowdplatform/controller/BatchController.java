@@ -18,18 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.TaskService;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
 import com.crowdplatform.util.GoogleFusiontablesAdapter;
 import com.crowdplatform.util.TaskCreator;
-import com.google.common.collect.Lists;
 
 @Controller
 public class BatchController {
@@ -42,9 +41,6 @@ public class BatchController {
 	
 	@Autowired
 	private PlatformUserService userService;
-
-	@Autowired
-	private TaskService taskService;
 	
 	@Autowired
 	private GoogleFusiontablesAdapter dataExporter;
@@ -62,7 +58,9 @@ public class BatchController {
 		if (project.getOwnerId().equals(user.getUsername())) {
 			model.addAttribute(project);
 			model.addAttribute(project.getBatch(batchId));
-		}
+		} else {
+	    	System.out.println("BatchController: Access denied to user " + user.getUsername() + " for project " + projectId + ".");
+	    }
 		if (created != null) {
 			model.addAttribute("created", created);
 		}
@@ -83,7 +81,9 @@ public class BatchController {
 				batch.setState(Batch.State.RUNNING);
 				projectService.saveProject(project);
 			}
-		}
+		} else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " start batch.");
+	    }
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
 
@@ -98,7 +98,9 @@ public class BatchController {
 				batch.setState(Batch.State.PAUSED);
 				projectService.saveProject(project);
 			}
-		}
+		} else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " pause batch.");
+	    }
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
 
@@ -110,7 +112,9 @@ public class BatchController {
 		if (project.getOwnerId().equals(user.getUsername())) {
 			project.removeBatch(batchId);
 			projectService.saveProject(project);
-		}
+		} else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " delete batch.");
+	    }
 		return "redirect:/project/" + projectId;
 	}
 
@@ -120,6 +124,8 @@ public class BatchController {
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
 			model.addAttribute(project);
+	    } else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " new batch.");
 	    }
 		Batch batch = new Batch();
 		model.addAttribute(batch);
@@ -156,7 +162,9 @@ public class BatchController {
 				}
 			}
 			projectService.saveProject(project);
-		}
+		} else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " create batch.");
+	    }
 
 		return "redirect:/project/" + projectId + "/batch/" + batch.getId() + "?created=true";
 	}
@@ -166,18 +174,16 @@ public class BatchController {
 		return true;
 	}
 
-
-
 	@RequestMapping("/project/{projectId}/batch/{batchId}/download")
 	public void downloadBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId, HttpServletResponse response) {
 		Project project = projectService.getProject(projectId);
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
-			Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
+			Batch batch = project.getBatch(batchId);
+			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
 			try {
-				String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getTasks()), 
-						project.getInputFields(), project.getOutputFields(), project.getUserFields(), true);
+				String writer = (new FileWriter()).writeTasksExecutions(project, batch, collection, true);
 				response.getWriter().write(writer);
 				response.setContentType("text/csv");
 				response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batch.getName().trim().replace(" ", "-") + ".csv");
@@ -185,19 +191,27 @@ public class BatchController {
 			} catch (IOException ex) {
 				throw new RuntimeException("IOError writing file to output stream");
 			}
-		}
+		} else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " download batch.");
+	    }
 	}
 	
 	@RequestMapping("/project/{projectId}/batch/{batchId}/export")
 	public String exportBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		Project project = projectService.getProject(projectId);
-		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
-		String url = dataExporter.exportDataURL(project, batch);
-		projectService.saveProject(project);
-		if (url != null) {
-			return "redirect:" + url;
-		}
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
+			Batch batch = project.getBatch(batchId);
+			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
+			String url = dataExporter.exportDataURL(project, batch, collection);
+			projectService.saveProject(project);
+			if (url != null) {
+				return "redirect:" + url;
+			}
+		} else {
+	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " export batch.");
+	    }
 		return "redirect:/project/" + projectId + "/batch/" + batchId + "?export-error=true";
 	}
 }
