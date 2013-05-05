@@ -22,7 +22,7 @@ import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
-import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.util.FileReader;
@@ -37,7 +37,7 @@ public class BatchController {
 	private ProjectService projectService;
 	
 	@Autowired
-	private BatchService batchService;
+	private BatchExecutionService batchService;
 	
 	@Autowired
 	private PlatformUserService userService;
@@ -47,6 +47,12 @@ public class BatchController {
 	
 	@Autowired
 	private TaskCreator taskCreator;
+	
+	private FileReader reader = new FileReader();
+	
+	public void setFileReader(FileReader fileReader) {
+		this.reader = fileReader;
+	}
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
 	public String getBatch(@PathVariable("projectId") String projectId, 
@@ -152,7 +158,6 @@ public class BatchController {
 			
 			if (taskFile != null && !taskFile.isEmpty()) {
 				List<Field> fields = project.getInputFields();
-				FileReader reader = new FileReader();
 				try {
 					List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
 					taskCreator.createTasks(batch, fields, fileContents);

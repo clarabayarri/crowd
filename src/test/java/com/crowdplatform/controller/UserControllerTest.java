@@ -2,6 +2,10 @@ package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
@@ -16,10 +20,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import com.crowdplatform.model.PasswordResetData;
+import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Registration;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.MailSender;
+import com.crowdplatform.util.PasswordResetDataValidator;
 import com.crowdplatform.util.RegistrationValidator;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,10 +42,15 @@ public class UserControllerTest {
 	private RegistrationValidator validator;
 	
 	@Mock
+	private PasswordResetDataValidator passwordResetValidator;
+	
+	@Mock
 	private PlatformUserService userService;
 	
 	@Mock
 	private MailSender mailSender;
+	
+	private static final Long uid = new Long(2);
 	
 	@Before
 	public void setUp() {
@@ -152,6 +164,81 @@ public class UserControllerTest {
 		controller.forgotPassword("username");
 		
 		Mockito.verify(userService, Mockito.never()).saveUser(Mockito.any(PlatformUser.class));
+	}
+	
+	@Test
+	public void testLoadPasswordResetHandleRequestView() {
+		Model model = Mockito.mock(Model.class);
+		
+		String result = controller.loadPasswordReset(new Long(2), model);
+		
+		assertEquals("password-reset", result);
+	}
+	
+	@Test
+	public void testResetPasswordHandleRequestViewWithErrors() {
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		PasswordResetData data = new PasswordResetData();
+		data.setUid(uid);
+		Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+		
+		String result = controller.resetPassword(data, bindingResult);
+		
+		assertEquals("password-reset", result);
+	}
+	
+	@Test
+	public void testResetPasswordHandleRequestViewWithoutErrors() {
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		PasswordResetData data = new PasswordResetData();
+		data.setUid(uid);
+		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		PlatformUser user = new PlatformUser();
+		user.setPasswordResetRequest(new PasswordResetRequest());
+		Mockito.when(userService.userWithPasswordResetRequest(uid)).thenReturn(user);
+		
+		String result = controller.resetPassword(data, bindingResult);
+		
+		assertEquals("redirect:/login", result);
+	}
+	
+	@Test
+	public void testResetPasswordSavesNewPassword() {
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		PasswordResetData data = new PasswordResetData();
+		data.setUid(uid);
+		data.setPassword("password");
+		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		PlatformUser user = new PlatformUser();
+		user.setPasswordResetRequest(new PasswordResetRequest());
+		Mockito.when(userService.userWithPasswordResetRequest(uid)).thenReturn(user);
+		
+		controller.resetPassword(data, bindingResult);
+		
+		assertEquals("password", user.getPassword());
+		Mockito.verify(userService).saveUser(user);
+	}
+	
+	@Test
+	public void testResetPasswordRejectsOldRequests() {
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		PasswordResetData data = new PasswordResetData();
+		data.setUid(uid);
+		data.setPassword("password");
+		Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+		PlatformUser user = new PlatformUser();
+		PasswordResetRequest request = new PasswordResetRequest();
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_MONTH, -30);
+		request.setGenerationDate(calendar.getTime());
+		user.setPasswordResetRequest(request);
+		Mockito.when(userService.userWithPasswordResetRequest(uid)).thenReturn(user);
+		
+		String result = controller.resetPassword(data, bindingResult);
+		
+		Mockito.verify(userService, Mockito.never()).saveUser(user);
+		assertEquals("password-reset", result);
 	}
 	
 }

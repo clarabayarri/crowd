@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.crowdplatform.model.BatchExecutionCollection;
 
-public interface BatchService {
+public interface BatchExecutionService {
     
     public BatchExecutionCollection getExecutions(String collectionId);
     

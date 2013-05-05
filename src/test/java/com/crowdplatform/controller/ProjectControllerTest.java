@@ -46,7 +46,6 @@ public class ProjectControllerTest {
 	    user.setUsername(username);
 	    project.setId(projectId);
 	    List<Project> projects = Lists.newArrayList(project);
-	    user.setProjects(Lists.newArrayList(projectId));
 	    Mockito.when(projectService.getProjectsForUser(user.getUsername())).thenReturn(projects);
 		Mockito.when(userService.getCurrentUser()).thenReturn(user);
 		
@@ -157,8 +156,6 @@ public class ProjectControllerTest {
 	public void testDeleteProject() {
 		controller.deleteProject(projectId);
 		
-		assertEquals(0, user.getProjects().size());
-		Mockito.verify(userService).saveUser(user);
 		Mockito.verify(projectService).removeProject(projectId);
 	}
 	
@@ -168,7 +165,6 @@ public class ProjectControllerTest {
 		
 		controller.deleteProject(projectId);
 		
-		assertEquals(1, user.getProjects().size());
 		Mockito.verify(projectService, Mockito.never()).removeProject(projectId);
 	}
 }

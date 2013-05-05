@@ -1,11 +1,7 @@
 package com.crowdplatform.model;
 
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.google.common.collect.Lists;
 
 @Document
 public class PlatformUser {
@@ -17,12 +13,10 @@ public class PlatformUser {
 	
 	private String email;
 	
-	private List<String> projects;
-	
 	private PasswordResetRequest passwordResetRequest;
 
 	public PlatformUser() {
-		this.projects = Lists.newArrayList();
+		
 	}
 	
 	public PlatformUser(Registration registration) {
@@ -53,36 +47,6 @@ public class PlatformUser {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public List<String> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<String> projects) {
-		this.projects = projects;
-	}
-	
-	public void addProject(String project) {
-		this.projects.add(project);
-	}
-	
-	public void removeProject(String projectId) {
-		for (String project : this.projects) {
-			if (project.equals(projectId)) {
-				this.projects.remove(project);
-				break;
-			}
-		}
-	}
-	
-	public boolean isOwnerOfProject(String projectId) {
-		for (String project : this.projects) {
-			if (projectId.equals(project)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public PasswordResetRequest getPasswordResetRequest() {

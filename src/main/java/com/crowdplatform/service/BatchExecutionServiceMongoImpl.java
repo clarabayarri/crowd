@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.crowdplatform.model.BatchExecutionCollection;
 
 @Service
-public class BatchServiceMongoImpl implements BatchService {
+public class BatchExecutionServiceMongoImpl implements BatchExecutionService {
 
 	@Autowired
 	private MongoOperations mongoOperation;

@@ -19,7 +19,7 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
-import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 import com.google.common.collect.Lists;
@@ -34,7 +34,7 @@ public class RemoteServiceControllerTest {
 	private ProjectService projectService;
 	
 	@Mock
-	private BatchService batchService;
+	private BatchExecutionService batchService;
 	
 	@Mock
 	private TaskRetrievalStrategy taskRetrieval;
@@ -120,6 +120,31 @@ public class RemoteServiceControllerTest {
 		controller.saveExecution(projectId, new Long(3), null);
 		
 		Mockito.verifyZeroInteractions(batchService);
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
+	}
+	
+	@Test
+	public void testSaveExecutionDoesNothingIfWrongBatch() {
+		ExecutionInfo info = new ExecutionInfo();
+		info.setBatchId(8);
+		info.setTaskId(taskId);
+		
+		controller.saveExecution(projectId, projectUid, info);
+		
+		Mockito.verifyZeroInteractions(batchService);
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
+	}
+	
+	@Test
+	public void testSaveExecutionDoesNothingIfWrongTask() {
+		ExecutionInfo info = new ExecutionInfo();
+		info.setBatchId(batchId);
+		info.setTaskId(8);
+		
+		controller.saveExecution(projectId, projectUid, info);
+		
+		Mockito.verifyZeroInteractions(batchService);
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
 	}
 	
 	@Test

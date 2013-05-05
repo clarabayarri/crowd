@@ -28,7 +28,7 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
-import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
 
@@ -40,7 +40,7 @@ public class RemoteServiceController {
 	private ProjectService projectService;
 	
 	@Autowired
-	private BatchService batchService;
+	private BatchExecutionService batchService;
 	
 	@Autowired
 	private TaskRetrievalStrategy taskRetrieval;

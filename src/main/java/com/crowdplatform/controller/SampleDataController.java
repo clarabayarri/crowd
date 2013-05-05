@@ -18,7 +18,7 @@ import com.crowdplatform.model.Field;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
 import com.google.common.collect.Sets;
@@ -34,7 +34,7 @@ public class SampleDataController {
 	private ProjectService projectService;
 	
 	@Autowired
-	private BatchService batchService;
+	private BatchExecutionService batchService;
 	
 	private Random random = new Random();
 	
@@ -92,7 +92,6 @@ public class SampleDataController {
 	    if (auth != null) {
 	    	String username = auth.getName();
 		    PlatformUser user = userService.getUser(username);
-		    user.addProject(project.getId());
 		    project.setOwnerId(user.getUsername());
 		    userService.saveUser(user);
 	    }

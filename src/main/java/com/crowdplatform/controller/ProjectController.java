@@ -68,8 +68,6 @@ public class ProjectController {
 		Project project = projectService.getProject(projectId);
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
-			user.removeProject(projectId);
-			userService.saveUser(user);
 			projectService.removeProject(projectId);
 		} else {
 	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " delete project.");

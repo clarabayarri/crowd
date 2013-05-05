@@ -16,7 +16,7 @@ import com.crowdplatform.model.BatchExecutionCollection;
 public class BatchServiceImplTest {
 
 	@InjectMocks
-	private BatchServiceMongoImpl service = new BatchServiceMongoImpl();
+	private BatchExecutionServiceMongoImpl service = new BatchExecutionServiceMongoImpl();
 	
 	@Mock
 	private MongoOperations mongoOperation;

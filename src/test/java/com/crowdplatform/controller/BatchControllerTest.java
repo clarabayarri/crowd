@@ -19,9 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
-import com.crowdplatform.service.BatchService;
+import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
+import com.crowdplatform.util.FileReader;
+import com.crowdplatform.util.GoogleFusiontablesAdapter;
+import com.crowdplatform.util.TaskCreator;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,10 +37,16 @@ public class BatchControllerTest {
 	private ProjectService projectService;
 	
 	@Mock
-	private BatchService batchService;
+	private BatchExecutionService batchService;
 	
 	@Mock
 	private PlatformUserService userService;
+	
+	@Mock
+	private GoogleFusiontablesAdapter dataExporter;
+	
+	@Mock
+	private TaskCreator taskCreator;
 	
 	private Batch batch = new Batch();
 	private Project project = new Project();
@@ -76,8 +85,8 @@ public class BatchControllerTest {
 		
 		controller.getBatch(projectId, batch.getId(), model, null, null);
 		
+		Mockito.verify(model).addAttribute(project);
 		Mockito.verify(model).addAttribute(batch);
-		Mockito.verify(projectService).getProject(projectId);
 	}
 	
 	@Test
@@ -87,7 +96,8 @@ public class BatchControllerTest {
 		
 		controller.getBatch(projectId, batch.getId(), model, null, null);
 		
-		Mockito.verifyZeroInteractions(model);
+		Mockito.verify(model, Mockito.never()).addAttribute(project);
+		Mockito.verify(model, Mockito.never()).addAttribute(batch);
 	}
 	
 	@Test
@@ -134,6 +144,7 @@ public class BatchControllerTest {
 		controller.startBatch(projectId, batch.getId());
 		
 		assertEquals(Batch.State.PAUSED, batch.getState());
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
 	}
 	
 	@Test
@@ -162,6 +173,7 @@ public class BatchControllerTest {
 		controller.pauseBatch(projectId, batch.getId());
 		
 		assertEquals(Batch.State.RUNNING, batch.getState());
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
 	}
 	
 	@Test
@@ -205,6 +217,7 @@ public class BatchControllerTest {
 		
 		controller.newBatch(projectId, model);
 		
+		Mockito.verify(model).addAttribute(project);
 		Mockito.verify(model, Mockito.times(2)).addAttribute(Mockito.any());
 	}
 	
@@ -215,7 +228,8 @@ public class BatchControllerTest {
 		
 		controller.newBatch(projectId, model);
 		
-		Mockito.verify(model, Mockito.times(1)).addAttribute(Mockito.any());
+		Mockito.verify(model, Mockito.never()).addAttribute(project);
+		Mockito.verify(model).addAttribute(Mockito.any(Batch.class));
 	}
 	
 	@Test
@@ -226,6 +240,17 @@ public class BatchControllerTest {
 		String result = controller.createBatch(batch, projectId, bindingResult, null);
 		
 		assertEquals("create", result);
+	}
+	
+	@Test
+	public void testCreateBatchDoesntModifyProjectIfNotAuthorized() {
+		project.setOwnerId("other user");
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		
+		controller.createBatch(batch, projectId, bindingResult, null);
+		
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
 	}
 	
 	@Test
@@ -242,12 +267,27 @@ public class BatchControllerTest {
 	}
 	
 	@Test
+	public void testCreateBatchAcceptsCSVFiles() {
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		MultipartFile file = Mockito.mock(MultipartFile.class);
+		Mockito.when(file.getContentType()).thenReturn("text/csv");
+		FileReader reader = Mockito.mock(FileReader.class);
+		controller.setFileReader(reader);
+		
+		controller.createBatch(batch, projectId, bindingResult, file);
+		
+		Mockito.verify(bindingResult, Mockito.never()).reject("error.file.format");
+	}
+	
+	@Test
 	public void testCreateBatchCallsService() {
 		Project project = Mockito.mock(Project.class);
 		Mockito.when(project.getOwnerId()).thenReturn(username);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		
 		
 		controller.createBatch(batch, projectId, bindingResult, null);
 		
