@@ -39,8 +39,9 @@ public class ProjectController {
 	
 	@RequestMapping("/project/{projectId}")
 	public String getProject(@PathVariable("projectId") String projectId, Model model) {
-		if (userService.currentUserIsAuthorizedForProject(projectId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			model.addAttribute(project);
 	    }
 		return "project";
@@ -48,8 +49,9 @@ public class ProjectController {
 	
 	@RequestMapping("/project/{projectId}/resetUID")
 	public String resetProjectUID(@PathVariable("projectId") String projectId) {
-		if (userService.currentUserIsAuthorizedForProject(projectId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			SecureRandom random = new SecureRandom();
 			project.setUid(random.nextLong());
 			projectService.saveProject(project);
@@ -59,8 +61,9 @@ public class ProjectController {
 	
 	@RequestMapping("/project/{projectId}/delete")
 	public String deleteProject(@PathVariable String projectId) {
-		if (userService.currentUserIsAuthorizedForProject(projectId)) {
-			PlatformUser user = userService.getCurrentUser();
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			user.removeProject(projectId);
 			userService.saveUser(user);
 			projectService.removeProject(projectId);

@@ -56,19 +56,4 @@ public interface PlatformUserService {
 	 */
 	public boolean usernameExists(String username);
 	
-	/**
-	 * Check if the current authorized user can access a Project.
-	 * @param projectId The project id
-	 * @return True if the current authorized user is the owner of a project with projectId
-	 */
-	public boolean currentUserIsAuthorizedForProject(String projectId);
-	
-	/**
-	 * Check if the current authorized user can access a Batch.
-	 * @param projectId The Project id
-	 * @param batchId The Batch id
-	 * @return True if the current authorized user is the owner of a batch with batchId from the project with projectId
-	 */
-	public boolean currentUserIsAuthorizedForBatch(String projectId, Integer batchId);
-	
 }

@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Field;
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchService;
 import com.crowdplatform.service.PlatformUserService;
@@ -56,8 +57,9 @@ public class BatchController {
 			@PathVariable("batchId") Integer batchId, Model model,
 			@RequestParam(value="created", required=false) Boolean created,
 			@RequestParam(value="export-error", required=false) Boolean exportError) {
-		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			model.addAttribute(project);
 			model.addAttribute(project.getBatch(batchId));
 		}
@@ -73,11 +75,14 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/start")
 	public String startBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			Batch batch = project.getBatch(batchId);
-			batch.setState(Batch.State.RUNNING);
-			projectService.saveProject(project);
+			if (batch != null) {
+				batch.setState(Batch.State.RUNNING);
+				projectService.saveProject(project);
+			}
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
@@ -85,11 +90,14 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/pause")
 	public String pauseBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
-		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			Batch batch = project.getBatch(batchId);
-			batch.setState(Batch.State.PAUSED);
-			projectService.saveProject(project);
+			if (batch != null) {
+				batch.setState(Batch.State.PAUSED);
+				projectService.saveProject(project);
+			}
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
@@ -97,8 +105,9 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/delete")
 	public String deleteBatch(@PathVariable("projectId") String projectId,
 			@PathVariable("batchId") Integer batchId) {
-		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			project.removeBatch(batchId);
 			projectService.saveProject(project);
 		}
@@ -107,8 +116,9 @@ public class BatchController {
 
 	@RequestMapping(value={"/project/{projectId}/batch/create"}, method=RequestMethod.GET)
 	public String newBatch(@PathVariable("projectId") String projectId, Model model) {
-		if (userService.currentUserIsAuthorizedForProject(projectId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			model.addAttribute(project);
 	    }
 		Batch batch = new Batch();
@@ -129,8 +139,9 @@ public class BatchController {
 			return "create";
 		}
 
-		if (userService.currentUserIsAuthorizedForProject(projectId)) {
-			Project project = projectService.getProject(projectId);
+		Project project = projectService.getProject(projectId);
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
 			project.addBatch(batch);
 			
 			if (taskFile != null && !taskFile.isEmpty()) {
@@ -160,19 +171,21 @@ public class BatchController {
 	@RequestMapping("/project/{projectId}/batch/{batchId}/download")
 	public void downloadBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId, HttpServletResponse response) {
-		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
 		Project project = projectService.getProject(projectId);
-		try {
-			String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getTasks()), 
-					project.getInputFields(), project.getOutputFields(), project.getUserFields(), true);
-			response.getWriter().write(writer);
-			response.setContentType("text/csv");
-			response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batch.getName().trim().replace(" ", "-") + ".csv");
-			response.flushBuffer();
-		} catch (IOException ex) {
-			throw new RuntimeException("IOError writing file to output stream");
+		PlatformUser user = userService.getCurrentUser();
+		if (project.getOwnerId().equals(user.getUsername())) {
+			Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
+			try {
+				String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getTasks()), 
+						project.getInputFields(), project.getOutputFields(), project.getUserFields(), true);
+				response.getWriter().write(writer);
+				response.setContentType("text/csv");
+				response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batch.getName().trim().replace(" ", "-") + ".csv");
+				response.flushBuffer();
+			} catch (IOException ex) {
+				throw new RuntimeException("IOError writing file to output stream");
+			}
 		}
-
 	}
 	
 	@RequestMapping("/project/{projectId}/batch/{batchId}/export")

@@ -36,13 +36,14 @@ public class ProjectControllerTest {
 	private static final String projectId = "1";
 	private Project project = new Project();
 	private PlatformUser user = new PlatformUser();
+	private static final String username = "username";
 	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
 	    
-	    user.setUsername("username");
-	    Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(true);
+	    project.setOwnerId(username);
+	    user.setUsername(username);
 	    project.setId(projectId);
 	    List<Project> projects = Lists.newArrayList(project);
 	    user.setProjects(Lists.newArrayList(projectId));
@@ -111,7 +112,7 @@ public class ProjectControllerTest {
 	
 	@Test
 	public void testGetProjectDoesntRetrievesProjectToModelWhenNotOwnedByUser() {
-		Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(false);
+		project.setOwnerId("other username");
 		Model model = Mockito.mock(Model.class);
 		
 		controller.getProject(projectId, model);
@@ -137,7 +138,7 @@ public class ProjectControllerTest {
 	
 	@Test
 	public void testResetProjectUIDDoesntChangeUIDIfNotAuthorized() {
-		Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(false);
+		project.setOwnerId("other username");
 		project.setUid(new Long(1));
 		
 		controller.resetProjectUID(projectId);
@@ -163,7 +164,7 @@ public class ProjectControllerTest {
 	
 	@Test
 	public void testDeleteProjectDoesNothingIfNotAuthorized() {
-		Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(false);
+		project.setOwnerId("other username");
 		
 		controller.deleteProject(projectId);
 		

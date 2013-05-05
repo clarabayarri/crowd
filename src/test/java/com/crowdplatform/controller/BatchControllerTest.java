@@ -45,23 +45,24 @@ public class BatchControllerTest {
 	
 	private Batch batch = new Batch();
 	private Project project = new Project();
+	private PlatformUser user = new PlatformUser();
 	private static final String projectId = "1";
+	private static String username = "username";
 	
 	@Before
 	public void setUp() {
 	    MockitoAnnotations.initMocks(this);
 	    
-	    PlatformUser user = new PlatformUser();
+	    user = new PlatformUser();
+	    project = new Project();
 	    project.setId(projectId);
 	    project.addBatch(batch);
-	    user.setUsername("username");
+	    project.setOwnerId(username);
+	    user.setUsername(username);
 	    List<Project> projects = Lists.newArrayList(project);
-	    Mockito.when(projectService.getProjectsForUser("username")).thenReturn(projects);
-	    Mockito.when(userService.getUser("username")).thenReturn(user);
+	    Mockito.when(projectService.getProjectsForUser(username)).thenReturn(projects);
+	    Mockito.when(userService.getCurrentUser()).thenReturn(user);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
-		
-		Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(true);
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(true);
 	}
 	
 	@Test
@@ -86,13 +87,11 @@ public class BatchControllerTest {
 	@Test
 	public void testGetBatchDoesntRetrievesBatchToModelIfNotAuthorized() {
 		Model model = Mockito.mock(Model.class);
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
+		project.setOwnerId("other username");
 		
 		controller.getBatch(projectId, batch.getId(), model, null, null);
 		
 		Mockito.verifyZeroInteractions(model);
-		Mockito.verifyZeroInteractions(batchService);
-		Mockito.verifyZeroInteractions(projectService);
 	}
 	
 	@Test
@@ -102,6 +101,15 @@ public class BatchControllerTest {
 		controller.getBatch(projectId, batch.getId(), model, true, null);
 		
 		Mockito.verify(model).addAttribute("created", true);
+	}
+	
+	@Test
+	public void testGetBatchAddsExportErrorParameterIfProvided() {
+		Model model = Mockito.mock(Model.class);
+		
+		controller.getBatch(projectId, batch.getId(), model, null, true);
+		
+		Mockito.verify(model).addAttribute("export-error", true);
 	}
 	
 	@Test
@@ -125,7 +133,7 @@ public class BatchControllerTest {
 	@Test
 	public void testStartBatchDoesntChangeStateIfNotAuthorized() {
 		batch.setState(Batch.State.PAUSED);
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
+		project.setOwnerId("other username");
 		
 		controller.startBatch(projectId, batch.getId());
 		
@@ -153,7 +161,7 @@ public class BatchControllerTest {
 	@Test
 	public void testPauseBatchDoesntCallServiceIfNotAuthorized() {
 		batch.setState(Batch.State.RUNNING);
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
+		project.setOwnerId("other username");
 		
 		controller.pauseBatch(projectId, batch.getId());
 		
@@ -178,7 +186,7 @@ public class BatchControllerTest {
 	
 	@Test
 	public void testDeleteBatchDoesntCallServiceIfNotAuthorized() {
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
+		project.setOwnerId("other username");
 		
 		controller.deleteBatch(projectId, batch.getId());
 		
@@ -207,7 +215,7 @@ public class BatchControllerTest {
 	@Test
 	public void testNewBatchDoesntAddProjectToModelIfNotAuthorized() {
 		Model model = Mockito.mock(Model.class);
-		Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(false);
+		project.setOwnerId("other username");
 		
 		controller.newBatch(projectId, model);
 		
@@ -240,6 +248,7 @@ public class BatchControllerTest {
 	@Test
 	public void testCreateBatchCallsService() {
 		Project project = Mockito.mock(Project.class);
+		Mockito.when(project.getOwnerId()).thenReturn(username);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);

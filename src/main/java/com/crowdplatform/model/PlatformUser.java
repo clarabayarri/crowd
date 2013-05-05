@@ -1,22 +1,14 @@
 package com.crowdplatform.model;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @Entity
 public class PlatformUser {
@@ -92,20 +84,6 @@ public class PlatformUser {
 	public boolean isOwnerOfProject(String projectId) {
 		for (String project : this.projects) {
 			if (projectId.equals(project)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean isOwnerOfBatch(String projectId, Integer batchId) {
-		for (String project : this.projects) {
-			if (projectId.equals(project)) {
-				/*for (Batch batch : project.getBatches()) {
-					if (batchId.equals(batch.getId())) {
-						return true;
-					}
-				}*/
 				return true;
 			}
 		}
