@@ -75,6 +75,6 @@ public class ProjectServiceMongoImplTest {
 	public void testGetProjectsForUser() {
 		service.getProjectsForUser("user");
 		
-		Mockito.verify(mongoOperation).findOne(Mockito.any(Query.class), Mockito.eq(Project.class));
+		Mockito.verify(mongoOperation).find(Mockito.any(Query.class), Mockito.eq(Project.class));
 	}
 }
