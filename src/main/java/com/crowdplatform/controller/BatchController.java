@@ -35,7 +35,7 @@ public class BatchController {
 
 	@Autowired
 	private ProjectService projectService;
-
+	
 	@Autowired
 	private BatchService batchService;
 	
@@ -57,8 +57,9 @@ public class BatchController {
 			@RequestParam(value="created", required=false) Boolean created,
 			@RequestParam(value="export-error", required=false) Boolean exportError) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
-			model.addAttribute(projectService.getProject(projectId));
-			model.addAttribute(batchService.getBatch(batchId));
+			Project project = projectService.getProject(projectId);
+			model.addAttribute(project);
+			model.addAttribute(project.getBatch(batchId));
 		}
 		if (created != null) {
 			model.addAttribute("created", created);
@@ -73,7 +74,10 @@ public class BatchController {
 	public String startBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
-			batchService.startBatch(batchId);
+			Project project = projectService.getProject(projectId);
+			Batch batch = project.getBatch(batchId);
+			batch.setState(Batch.State.RUNNING);
+			projectService.saveProject(project);
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
@@ -82,7 +86,10 @@ public class BatchController {
 	public String pauseBatch(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		if (userService.currentUserIsAuthorizedForBatch(projectId, batchId)) {
-			batchService.pauseBatch(batchId);
+			Project project = projectService.getProject(projectId);
+			Batch batch = project.getBatch(batchId);
+			batch.setState(Batch.State.PAUSED);
+			projectService.saveProject(project);
 		}
 		return "redirect:/project/" + projectId + "/batch/" + batchId;
 	}
@@ -94,7 +101,6 @@ public class BatchController {
 			Project project = projectService.getProject(projectId);
 			project.removeBatch(batchId);
 			projectService.saveProject(project);
-			batchService.removeBatch(batchId);
 		}
 		return "redirect:/project/" + projectId;
 	}
@@ -124,7 +130,6 @@ public class BatchController {
 		}
 
 		if (userService.currentUserIsAuthorizedForProject(projectId)) {
-			batchService.addBatch(batch);
 			Project project = projectService.getProject(projectId);
 			project.addBatch(batch);
 			
@@ -158,7 +163,7 @@ public class BatchController {
 		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
 		Project project = projectService.getProject(projectId);
 		try {
-			String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getOrderedTasks()), 
+			String writer = (new FileWriter()).writeTasksExecutions(Lists.newArrayList(batch.getTasks()), 
 					project.getInputFields(), project.getOutputFields(), project.getUserFields(), true);
 			response.getWriter().write(writer);
 			response.setContentType("text/csv");
@@ -176,7 +181,7 @@ public class BatchController {
 		Project project = projectService.getProject(projectId);
 		Batch batch = batchService.getBatchWithTasksWithExecutions(batchId);
 		String url = dataExporter.exportDataURL(project, batch);
-		batchService.saveBatch(batch);
+		projectService.saveProject(project);
 		if (url != null) {
 			return "redirect:" + url;
 		}

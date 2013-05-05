@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.Project;
@@ -27,33 +28,17 @@ import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.service.ProjectUserService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
-import com.crowdplatform.service.TaskService;
 
 @Controller
 @RequestMapping("/API")
 public class RemoteServiceController {
-	
-	public static final String uid = "-3596985136239043284";
-	
-	public static final String TASK_GET_URL = "http://gentle-gorge-9660.herokuapp.com/API/project/1/uid/" + uid + "/task?count=10";
-	
-	public static final String EXECUTION_POST_URL = "http://gentle-gorge-9660.herokuapp.com/API/project/1/uid/" + uid + "/execution";
-	
-	public static final String CREATE_USER_POST_URL = "http://gentle-gorge-9660.herokuapp.com/API/project/1/uid/" + uid + "/user";
 
 	@Autowired
 	private ProjectService projectService;
 	
 	@Autowired
-	private TaskService taskService;
-	
-	@Autowired
 	private TaskRetrievalStrategy taskRetrieval;
-	
-	@Autowired
-	private ProjectUserService userService;
 	
 	@RequestMapping(value="/project/{projectId}/uid/{uid}/task", method=RequestMethod.GET)
 	public @ResponseBody TaskInfo[] provideTask(@PathVariable("projectId") String projectId, 
@@ -83,14 +68,15 @@ public class RemoteServiceController {
 			@PathVariable("uid") Long uid, @RequestBody ExecutionInfo info) {
 		Project project = projectService.getProject(projectId);
 		if (project.getUid().equals(uid)) {
-			Task task = taskService.getTask(projectId, info.getTaskId());
-			if (task != null) {
-				Execution execution = new Execution(info.getContents());
-				if (info.getUserId() != null && info.getUserId() > 0) {
+			Batch batch = project.getBatch(info.getBatchId());
+			if (batch != null) {
+				Task task = batch.getTask(info.getTaskId());
+				if (task != null) {
+					Execution execution = new Execution(info.getContents());
 					execution.setProjectUserId(info.getUserId());
+					task.getExecutions().add(execution);
+					projectService.saveProject(project);
 				}
-				task.getExecutions().add(execution);
-				taskService.saveTask(task);
 			}
 		}
 	}
@@ -100,7 +86,6 @@ public class RemoteServiceController {
 			@PathVariable("uid") Long uid, @RequestBody ProjectUser user) {
 		Project project = projectService.getProject(projectId);
 		if (project.getUid().equals(uid)) {
-			userService.addProjectUser(user);
 			project.addUser(user);
 			projectService.saveProject(project);
 			return user.getId();

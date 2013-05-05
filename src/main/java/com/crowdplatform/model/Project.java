@@ -77,7 +77,17 @@ public class Project {
 	}
 	
 	public void addBatch(Batch batch) {
+		batch.setId(this.batches.size() + 1);
 		this.batches.add(batch);
+	}
+	
+	public Batch getBatch(Integer batchId) {
+		for (Batch batch : this.batches) {
+			if (batchId.equals(batch.getId())) {
+				return batch;
+			}
+		}
+		return null;
 	}
 	
 	public void removeBatch(Integer batchId) {
@@ -87,6 +97,24 @@ public class Project {
 				return;
 			}
 		}
+	}
+	
+	public List<Batch> getRunningBatches() {
+		List<Batch> batches = Lists.newArrayList();
+		for (Batch batch : this.batches) {
+			if (batch.getState() == Batch.State.RUNNING)
+				batches.add(batch);
+		}
+		return batches;
+	}
+	
+	public List<Batch> getCompletedBatches() {
+		List<Batch> batches = Lists.newArrayList();
+		for (Batch batch : this.batches) {
+			if (batch.getState() == Batch.State.COMPLETE)
+				batches.add(batch);
+		}
+		return batches;
 	}
 
 	public String getOwnerId() {

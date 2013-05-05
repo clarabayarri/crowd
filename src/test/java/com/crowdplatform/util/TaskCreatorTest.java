@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -33,7 +32,7 @@ public class TaskCreatorTest {
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
 	
-		Set<Task> tasks = batch.getTasks();
+		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
 			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
@@ -51,7 +50,7 @@ public class TaskCreatorTest {
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
 	
-		Set<Task> tasks = batch.getTasks();
+		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
 			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
@@ -69,7 +68,7 @@ public class TaskCreatorTest {
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
 	
-		Set<Task> tasks = batch.getTasks();
+		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
 			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
@@ -87,7 +86,7 @@ public class TaskCreatorTest {
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
 	
-		Set<Task> tasks = batch.getTasks();
+		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
 			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
@@ -104,7 +103,7 @@ public class TaskCreatorTest {
 		
 		service.createTasks(batch, fields, Lists.newArrayList(data));
 	
-		Set<Task> tasks = batch.getTasks();
+		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
 			JsonNode node = (new ObjectMapper()).readTree(task.getContents());

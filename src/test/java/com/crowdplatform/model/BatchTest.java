@@ -2,7 +2,7 @@ package com.crowdplatform.model;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 
 
@@ -38,7 +38,7 @@ public class BatchTest {
 	
 	@Test
 	public void testPercentageCompleteWhenEmpty() {
-		Set<Task> tasks = Sets.newHashSet();
+		List<Task> tasks = Lists.newArrayList();
 		batch.setTasks(tasks);
 		
 		double result = batch.getPercentageComplete();
@@ -48,8 +48,7 @@ public class BatchTest {
 	
 	@Test
 	public void testPercentageCompleteWhenNoExecutions() {
-		Set<Task> tasks = Sets.newHashSet();
-		tasks.add(zeroExecutionsTask);
+		List<Task> tasks = Lists.newArrayList(zeroExecutionsTask);
 		batch.setTasks(tasks);
 		
 		double result = batch.getPercentageComplete();
@@ -59,8 +58,7 @@ public class BatchTest {
 	
 	@Test
 	public void testPercentageCompleteWhenPartialExecutions() {
-		Set<Task> tasks = Sets.newHashSet();
-		tasks.add(oneExecutionTask);
+		List<Task> tasks = Lists.newArrayList(oneExecutionTask);
 		batch.setTasks(tasks);
 		
 		double result = batch.getPercentageComplete();
@@ -70,9 +68,7 @@ public class BatchTest {
 	
 	@Test
 	public void testPercentageCompleteWhenPartialExecutions2() {
-		Set<Task> tasks = Sets.newHashSet();
-		tasks.add(oneExecutionTask);
-		tasks.add(twoExecutionsTask);
+		List<Task> tasks = Lists.newArrayList(oneExecutionTask, twoExecutionsTask);
 		batch.setTasks(tasks);
 		
 		double result = batch.getPercentageComplete();

@@ -9,14 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
 @Service
 public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetrievalStrategy {
 
 	@Autowired
-	private BatchService batchService;
+	private ProjectService projectService;
 	
 	@Override
 	public List<Task> retrieveTasksForExecution(String projectId, Integer number) {
@@ -24,17 +26,19 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 		return getLessExecutedTasksForBatch(batch, number);
 	}
 	
-	private Batch getRandomBatch(String projectId) {
-		List<Integer> batches = batchService.listRunningBatchIds(projectId);
+	@VisibleForTesting
+	public Batch getRandomBatch(String projectId) {
+		Project project = projectService.getProject(projectId);
+		List<Batch> batches = project.getRunningBatches();
 		if (batches.isEmpty()) {
-			batches = batchService.listCompletedBatchIds(projectId);
+			batches = project.getCompletedBatches();
 		}
-		int total = batches.size();
-		int index = (new Random()).nextInt(total);
-		return batchService.getBatch(batches.get(index));
+		int index = (new Random()).nextInt(batches.size());
+		return batches.get(index);
 	}
 
-	private List<Task> getLessExecutedTasksForBatch(Batch batch, Integer number) {
+	@VisibleForTesting
+	public List<Task> getLessExecutedTasksForBatch(Batch batch, Integer number) {
 		List<Task> tasks = Lists.newArrayList();
 		tasks.addAll(batch.getTasks());
 		Collections.sort(tasks, new Comparator<Task>() {

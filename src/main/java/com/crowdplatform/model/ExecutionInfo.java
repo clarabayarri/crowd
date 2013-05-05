@@ -3,6 +3,8 @@ package com.crowdplatform.model;
 
 public class ExecutionInfo {
 
+	private Integer batchId;
+	
 	private Integer taskId;
 	
 	private String contents;
@@ -11,6 +13,14 @@ public class ExecutionInfo {
 	
 	public ExecutionInfo() {
 		
+	}
+
+	public Integer getBatchId() {
+		return batchId;
+	}
+
+	public void setBatchId(Integer batchId) {
+		this.batchId = batchId;
 	}
 
 	public Integer getTaskId() {

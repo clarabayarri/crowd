@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 
@@ -21,7 +20,6 @@ import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchServiceImplTest {
@@ -66,7 +64,7 @@ public class BatchServiceImplTest {
 	public void testGetBatchEagerlyLoadsRelations() {
 		mockBatch = Mockito.mock(Batch.class);
 	    mockBatch.setId(batchId);
-		Set<Task> tasks = Sets.newHashSet();
+		List<Task> tasks = Lists.newArrayList();
 		Mockito.when(mockBatch.getTasks()).thenReturn(tasks);
 		Mockito.when(em.find(Batch.class, batchId)).thenReturn(mockBatch);
 		
@@ -135,7 +133,7 @@ public class BatchServiceImplTest {
 	@Test
 	public void testListExecutions() {
 		Task task = Mockito.mock(Task.class);
-		Set<Task> tasks = Sets.newHashSet(task);
+		List<Task> tasks = Lists.newArrayList(task);
 		batch.setTasks(tasks);
 		
 		service.getBatchWithTasksWithExecutions(batchId);

@@ -46,7 +46,6 @@ public class BatchControllerTest {
 	private Batch batch = new Batch();
 	private Project project = new Project();
 	private static final String projectId = "1";
-	private static final Integer batchId = 2;
 	
 	@Before
 	public void setUp() {
@@ -54,24 +53,22 @@ public class BatchControllerTest {
 	    
 	    PlatformUser user = new PlatformUser();
 	    project.setId(projectId);
-	    batch.setId(batchId);
 	    project.addBatch(batch);
 	    user.setUsername("username");
 	    List<Project> projects = Lists.newArrayList(project);
 	    Mockito.when(projectService.getProjectsForUser("username")).thenReturn(projects);
 	    Mockito.when(userService.getUser("username")).thenReturn(user);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
-		Mockito.when(batchService.getBatch(batchId)).thenReturn(batch);
 		
 		Mockito.when(userService.currentUserIsAuthorizedForProject(projectId)).thenReturn(true);
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batchId)).thenReturn(true);
+		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(true);
 	}
 	
 	@Test
 	public void testGetBatchHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
 		
-		String result = controller.getBatch(projectId, batchId, model, null, null);
+		String result = controller.getBatch(projectId, batch.getId(), model, null, null);
 		
 		assertEquals("batch", result);
 	}
@@ -80,19 +77,18 @@ public class BatchControllerTest {
 	public void testGetBatchRetrievesBatchToModelIfAuthorized() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(projectId, batchId, model, null, null);
+		controller.getBatch(projectId, batch.getId(), model, null, null);
 		
 		Mockito.verify(model).addAttribute(batch);
 		Mockito.verify(projectService).getProject(projectId);
-		Mockito.verify(batchService).getBatch(batchId);
 	}
 	
 	@Test
 	public void testGetBatchDoesntRetrievesBatchToModelIfNotAuthorized() {
 		Model model = Mockito.mock(Model.class);
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batchId)).thenReturn(false);
+		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
 		
-		controller.getBatch(projectId, batchId, model, null, null);
+		controller.getBatch(projectId, batch.getId(), model, null, null);
 		
 		Mockito.verifyZeroInteractions(model);
 		Mockito.verifyZeroInteractions(batchService);
@@ -103,81 +99,91 @@ public class BatchControllerTest {
 	public void testGetBatchAddsCreatedParameterIfProvided() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.getBatch(projectId, batchId, model, true, null);
+		controller.getBatch(projectId, batch.getId(), model, true, null);
 		
 		Mockito.verify(model).addAttribute("created", true);
 	}
 	
 	@Test
 	public void testStartBatchHandleRequestView() {
-		String result = controller.startBatch(projectId, batchId);
+		String result = controller.startBatch(projectId, batch.getId());
 		
-		String expected = "redirect:/project/" + projectId + "/batch/" + batchId;
+		String expected = "redirect:/project/" + projectId + "/batch/" + batch.getId();
 		assertEquals(expected, result);
 	}
 	
 	@Test
-	public void testStartBatchCallsService() {
-		controller.startBatch(projectId, batchId);
+	public void testStartBatchChangesStateAndSaves() {
+		batch.setState(Batch.State.PAUSED);
 		
-		Mockito.verify(batchService).startBatch(batchId);
+		controller.startBatch(projectId, batch.getId());
+		
+		assertEquals(Batch.State.RUNNING, batch.getState());
+		Mockito.verify(projectService).saveProject(project);
 	}
 	
 	@Test
-	public void testStartBatchDoesntCallServiceIfNotAuthorized() {
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batchId)).thenReturn(false);
+	public void testStartBatchDoesntChangeStateIfNotAuthorized() {
+		batch.setState(Batch.State.PAUSED);
+		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
 		
-		controller.startBatch(projectId, batchId);
+		controller.startBatch(projectId, batch.getId());
 		
-		Mockito.verifyZeroInteractions(batchService);
+		assertEquals(Batch.State.PAUSED, batch.getState());
 	}
 	
 	@Test
 	public void testPauseBatchHandleRequestView() {
-		String result = controller.pauseBatch(projectId, batchId);
+		String result = controller.pauseBatch(projectId, batch.getId());
 		
-		String expected = "redirect:/project/" + projectId + "/batch/" + batchId;
+		String expected = "redirect:/project/" + projectId + "/batch/" + batch.getId();
 		assertEquals(expected, result);
 	}
 	
 	@Test
 	public void testPauseBatchCallsService() {
-		controller.pauseBatch(projectId, batchId);
+		batch.setState(Batch.State.RUNNING);
 		
-		Mockito.verify(batchService).pauseBatch(batchId);
+		controller.pauseBatch(projectId, batch.getId());
+		
+		assertEquals(Batch.State.PAUSED, batch.getState());
+		Mockito.verify(projectService).saveProject(project);
 	}
 	
 	@Test
 	public void testPauseBatchDoesntCallServiceIfNotAuthorized() {
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batchId)).thenReturn(false);
+		batch.setState(Batch.State.RUNNING);
+		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
 		
-		controller.pauseBatch(projectId, batchId);
+		controller.pauseBatch(projectId, batch.getId());
 		
-		Mockito.verifyZeroInteractions(batchService);
+		assertEquals(Batch.State.RUNNING, batch.getState());
 	}
 	
 	@Test
 	public void testDeleteBatchHandleRequestView() {
-		String result = controller.deleteBatch(projectId, batchId);
+		String result = controller.deleteBatch(projectId, batch.getId());
 		
 		String expected = "redirect:/project/" + projectId;
 		assertEquals(expected, result);
 	}
 	
 	@Test
-	public void testDeleteBatchCallsService() {
-		controller.deleteBatch(projectId, batchId);
+	public void testDeleteBatchSavesProject() {
+		controller.deleteBatch(projectId, batch.getId());
 		
-		Mockito.verify(batchService).removeBatch(batchId);
+		Mockito.verify(projectService).saveProject(project);
+		assertEquals(0, project.getBatches().size());
 	}
 	
 	@Test
 	public void testDeleteBatchDoesntCallServiceIfNotAuthorized() {
-		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batchId)).thenReturn(false);
+		Mockito.when(userService.currentUserIsAuthorizedForBatch(projectId, batch.getId())).thenReturn(false);
 		
-		controller.deleteBatch(projectId, batchId);
+		controller.deleteBatch(projectId, batch.getId());
 		
-		Mockito.verifyZeroInteractions(batchService);
+		Mockito.verify(projectService, Mockito.never()).saveProject(project);
+		assertEquals(1, project.getBatches().size());
 	}
 	
 	@Test

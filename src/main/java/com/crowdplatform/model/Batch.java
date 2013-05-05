@@ -1,15 +1,11 @@
 package com.crowdplatform.model;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
@@ -18,17 +14,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Formula;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 
 @Entity
 public class Batch {
 
 	@Id
-    @GeneratedValue
     private Integer id;
 	
 	@NotNull
@@ -54,14 +47,11 @@ public class Batch {
 	
 	@OneToMany
 	@Cascade({CascadeType.ALL})
-	private Set<Task> tasks;
-	
-	@Formula("(select count(*) from batch_task t where t.batch_id=id)")
-	private Integer numTasks;
+	private List<Task> tasks;
 
 	public Batch() {
 		creationDate = new Date();
-		tasks = Sets.newHashSet();
+		tasks = Lists.newArrayList();
 		executionsPerTask = 1;
 		state = State.PAUSED;
 	}
@@ -90,17 +80,26 @@ public class Batch {
 		this.executionsPerTask = executionsPerTask;
 	}
 
-	public Set<Task> getTasks() {
+	public List<Task> getTasks() {
 		return tasks;
 	}
 
-	public void setTasks(Set<Task> tasks) {
+	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
 		updatePercentageComplete();
 	}
 	
 	public void addTask(Task task) {
+		task.setId(this.tasks.size() + 1);
 		this.tasks.add(task);
+	}
+	
+	public Task getTask(Integer taskId) {
+		for (Task task : this.tasks) {
+			if (taskId.equals(task.getId()))
+				return task;
+		}
+		return null;
 	}
 
 	public double getPercentageComplete() {
@@ -120,11 +119,7 @@ public class Batch {
 	}
 
 	public Integer getNumTasks() {
-		return numTasks;
-	}
-
-	public void setNumTasks(Integer numTasks) {
-		this.numTasks = numTasks;
+		return tasks.size();
 	}
 
 	public State getState() {
@@ -141,18 +136,6 @@ public class Batch {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
-	}
-	
-	public List<Task> getOrderedTasks() {
-		List<Task> list = Lists.newArrayList();
-		list.addAll(this.tasks);
-		Collections.sort(list, new Comparator<Task>() {
-
-			@Override
-			public int compare(Task o1, Task o2) {
-				return o1.getId().compareTo(o2.getId());
-			}});
-		return list;
 	}
 
 	public String getFusiontableId() {

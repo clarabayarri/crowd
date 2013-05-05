@@ -78,8 +78,11 @@ public class SampleDataController {
 		createUserFields(project);
 		projectService.addProject(project);
 		
-		for (int i = 0; i < 1; ++i)
-			project.addBatch(createSampleBatch());
+		for (int i = 0; i < 1; ++i) {
+			Batch batch = createSampleBatch();
+			batch.setId(i + 1);
+			project.addBatch(batch);
+		}
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null) {
@@ -159,7 +162,6 @@ public class SampleDataController {
 	
 	private Batch createSampleBatch() {
 		Batch batch = new Batch();
-		
 		batch.setName("Wonderful" + random.nextInt(99));
 		int exPerTask = random.nextInt(10) + 1;
 		batch.setExecutionsPerTask(exPerTask);

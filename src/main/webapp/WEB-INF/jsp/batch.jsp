@@ -124,7 +124,7 @@
 
             <h3>Tasks</h3>
 
-            <c:forEach items="${batch.orderedTasks}" var="task">
+            <c:forEach items="${batch.tasks}" var="task">
                 <div class="well well-small">
                     <div class="extra-info">
                         <p><strong>Id: </strong>${task.id}</p>

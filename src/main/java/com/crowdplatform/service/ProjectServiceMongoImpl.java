@@ -3,8 +3,11 @@ package com.crowdplatform.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.DefaultIndexOperations;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +39,14 @@ public class ProjectServiceMongoImpl implements ProjectService {
 	}
 	
 	public List<Project> getProjectsForUser(String userId) {
+		checkForOwnerIndex();
 		Query query = new Query(Criteria.where("ownerId").is(userId));
 		List<Project> projects = mongoOperation.find(query, Project.class);
 		return projects;
+	}
+	
+	private void checkForOwnerIndex() {
+		DefaultIndexOperations indexOperations = new DefaultIndexOperations(mongoOperation, "project");
+		indexOperations.ensureIndex(new Index().on("ownerId", Order.ASCENDING));
 	}
 }
