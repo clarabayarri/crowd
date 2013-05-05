@@ -1,8 +1,9 @@
 <beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
 		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
 	<http auto-config="true" use-expressions="true">
@@ -22,25 +23,13 @@
 		<intercept-url pattern="/reset" access="isAnonymous()" />
 		<intercept-url pattern="/**" access="hasRole('ROLE_PLATFORM_USER')" />
 	</http>
-
-	<beans:bean class="java.net.URI" id="dbUrl">
-		<beans:constructor-arg value="#{systemEnvironment['DATABASE_URL']}" />
-	</beans:bean>
-
-	<beans:bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		<beans:property name="url"
-			value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath() }" />
-		<beans:property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }" />
-		<beans:property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }" />
-	</beans:bean>
+	
+	<context:component-scan base-package="com.crowdplatform" />
+	
+	<beans:bean id="customUserDetailsService" class="com.crowdplatform.config.CustomUserDetailsService"/>
 
 	<authentication-manager>
-		<authentication-provider>
-			<jdbc-user-service id="userService"
-				data-source-ref="dataSource"
-				users-by-username-query="select username, password, true from PlatformUser where username=?"
-				authorities-by-username-query="select username,'ROLE_PLATFORM_USER' from PlatformUser where username=?" />
-		</authentication-provider>
+		<authentication-provider user-service-ref="customUserDetailsService"/>
 	</authentication-manager>
 
 </beans:beans>

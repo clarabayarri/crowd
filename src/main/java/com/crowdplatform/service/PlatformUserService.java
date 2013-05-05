@@ -55,5 +55,7 @@ public interface PlatformUserService {
 	 * @return True if there is a PlatformUser in the system with the provided username
 	 */
 	public boolean usernameExists(String username);
+
+	public PlatformUser userWithPasswordResetRequest(Long uid);
 	
 }

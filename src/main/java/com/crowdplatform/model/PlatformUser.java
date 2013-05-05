@@ -2,29 +2,24 @@ package com.crowdplatform.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.collect.Lists;
 
-@Entity
+@Document
 public class PlatformUser {
 
 	@Id
-	@Column(name="username")
 	private String username;
 	
-	@Column(name="password")
 	private String password;
 	
-	@Column(name="email", unique=true)
 	private String email;
 	
-	@ElementCollection(fetch=FetchType.EAGER)
-	List<String> projects;
+	private List<String> projects;
+	
+	private PasswordResetRequest passwordResetRequest;
 
 	public PlatformUser() {
 		this.projects = Lists.newArrayList();
@@ -88,6 +83,14 @@ public class PlatformUser {
 			}
 		}
 		return false;
+	}
+
+	public PasswordResetRequest getPasswordResetRequest() {
+		return passwordResetRequest;
+	}
+
+	public void setPasswordResetRequest(PasswordResetRequest passwordResetRequest) {
+		this.passwordResetRequest = passwordResetRequest;
 	}
 
 }

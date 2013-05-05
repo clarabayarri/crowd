@@ -5,13 +5,6 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     id="WebApp_ID" version="2.5">
     <display-name>Crowd Platform</display-name>
- 
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            /WEB-INF/security.xml
-        </param-value>
-    </context-param>
     
     <listener>
     	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -44,6 +37,14 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+ 
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/security.xml
+        </param-value>
+    </context-param>
+    
     <servlet-mapping>
     <servlet-name>default</servlet-name>
     	<url-pattern>/j_spring_security_check</url-pattern>

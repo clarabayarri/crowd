@@ -2,18 +2,9 @@ package com.crowdplatform.model;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-
-@Entity
 public class PasswordResetRequest {
 
-	@Id
 	private Long id;
-	
-	@OneToOne
-	private PlatformUser user;
 	
 	private Date generationDate;
 	
@@ -27,14 +18,6 @@ public class PasswordResetRequest {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public PlatformUser getUser() {
-		return user;
-	}
-
-	public void setUser(PlatformUser user) {
-		this.user = user;
 	}
 
 	public Date getGenerationDate() {

@@ -16,10 +16,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Registration;
-import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.MailSender;
 import com.crowdplatform.util.RegistrationValidator;
@@ -38,9 +36,6 @@ public class UserControllerTest {
 	
 	@Mock
 	private PlatformUserService userService;
-	
-	@Mock
-	private PasswordResetRequestService passwordService;
 	
 	@Mock
 	private MailSender mailSender;
@@ -144,18 +139,19 @@ public class UserControllerTest {
 	
 	@Test
 	public void testForgotPasswordCreatesRequestIfUserExists() {
-		Mockito.when(userService.getUserByUsernameOrEmail("username")).thenReturn(new PlatformUser());
+		PlatformUser user = new PlatformUser();
+		Mockito.when(userService.getUserByUsernameOrEmail("username")).thenReturn(user);
 		
 		controller.forgotPassword("username");
 		
-		Mockito.verify(passwordService).addRequest(Mockito.any(PasswordResetRequest.class));
+		Mockito.verify(userService).saveUser(user);
 	}
 	
 	@Test
 	public void testForgotPasswordDoesntCreateRequestIfUserDoesntExist() {
 		controller.forgotPassword("username");
 		
-		Mockito.verifyZeroInteractions(passwordService);
+		Mockito.verify(userService, Mockito.never()).saveUser(Mockito.any(PlatformUser.class));
 	}
 	
 }

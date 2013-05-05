@@ -1,5 +1,10 @@
 package com.crowdplatform.controller;
 
+import java.security.SecureRandom;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -26,7 +31,6 @@ import com.crowdplatform.model.PasswordResetData;
 import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Registration;
-import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.MailSender;
 import com.crowdplatform.util.PasswordResetDataValidator;
@@ -46,9 +50,6 @@ public class UserController {
 
 	@Autowired
 	private PlatformUserService userService;
-
-	@Autowired
-	private PasswordResetRequestService passwordService;
 
 	private MailSender mailSender;
 
@@ -101,9 +102,11 @@ public class UserController {
 		PlatformUser user = userService.getUserByUsernameOrEmail(username);
 		if (user != null) {
 			PasswordResetRequest request = new PasswordResetRequest();
-			request.setUser(user);
+			SecureRandom secureRandom = new SecureRandom();
+			request.setId(secureRandom.nextLong());
+			user.setPasswordResetRequest(request);
 
-			passwordService.addRequest(request);
+			userService.saveUser(user);
 
 			getMailSender().sendPasswordResetMail(user, request.getId());
 		} else {
@@ -123,18 +126,21 @@ public class UserController {
 	public String resetPassword(@Valid PasswordResetData data, BindingResult bindingResult) {
 		passwordResetValidator.validate(data, bindingResult);
 
-		PasswordResetRequest request = passwordService.getRequest(data.getUid());
-		if (request == null) {
+		PlatformUser user = userService.userWithPasswordResetRequest(data.uid);
+		if (user == null) {
 			bindingResult.reject("password.change.error");
-		} else {
-			System.out.println("UserController: Password reset attempted with unexisting request '" + data.getUid() + "'");
+			System.out.println("UserController: Password reset attempted with unexisting request '" + data.getUid() + "' or wrong date.");
+		}
+		
+		if (user != null && user.getPasswordResetRequest().getGenerationDate().before(getDateForResetLimit())) {
+			bindingResult.reject("password.change.error");
+			System.out.println("UserController: Password reset attempted for user '" + user.getUsername() + "' wrong date.");
 		}
 
 		if (!bindingResult.hasErrors()) {
-			PlatformUser user = request.getUser();
 			user.setPassword(data.getPassword());
+			user.setPasswordResetRequest(null);
 			userService.saveUser(user);
-			passwordService.removeRequest(request);
 
 			// TODO: send email alerting the password was changed
 
@@ -142,6 +148,13 @@ public class UserController {
 		}
 
 		return "password-reset";
+	}
+	
+	private Date getDateForResetLimit() {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_MONTH, -14);
+		return calendar.getTime();
 	}
 
 	private void authenticateUserAndSetSession(PlatformUser user, HttpServletRequest request) {

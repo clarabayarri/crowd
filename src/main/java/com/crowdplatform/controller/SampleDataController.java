@@ -15,12 +15,10 @@ import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
-import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.service.BatchService;
-import com.crowdplatform.service.PasswordResetRequestService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
 import com.google.common.collect.Sets;
@@ -38,9 +36,6 @@ public class SampleDataController {
 	@Autowired
 	private BatchService batchService;
 	
-	@Autowired
-	private PasswordResetRequestService passwordService;
-	
 	private Random random = new Random();
 	
 	@RequestMapping("/")
@@ -52,13 +47,17 @@ public class SampleDataController {
 	
 	@RequestMapping("/clean")
 	public String cleanSampleData() {
-		List<PasswordResetRequest> requests = passwordService.listRequests();
-		for (PasswordResetRequest request : requests) {
-			passwordService.removeRequest(request);
-		}
 		List<PlatformUser> users = userService.listUsers();
 		for (PlatformUser user : users) {
+			List<Project> projects = projectService.getProjectsForUser(user.getUsername());
+			for (Project project : projects) {
+				projectService.removeProject(project.getId());
+			}
 			userService.removeUser(user.getUsername());
+		}
+		List<BatchExecutionCollection> collections = batchService.listCollections();
+		for (BatchExecutionCollection collection : collections) {
+			batchService.removeCollection(collection);
 		}
 		return "redirect:/projects";
 	}
