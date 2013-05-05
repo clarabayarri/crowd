@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import com.crowdplatform.model.BatchExecutionCollection;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BatchServiceImplTest {
+public class BatchServiceMongoImplTest {
 
 	@InjectMocks
 	private BatchExecutionServiceMongoImpl service = new BatchExecutionServiceMongoImpl();
