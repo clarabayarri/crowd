@@ -21,6 +21,8 @@ import com.crowdplatform.model.Task;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Controller
@@ -62,17 +64,12 @@ public class SampleDataController {
 		return "redirect:/projects";
 	}
 	
-	private static final String[] definitions = {"{\"answers\":[],\"id\":1,\"word\":\"a lot\",\"level\":1,\"type\":\"separation\",\"language\":\"EN\",\"display\":\"alot\"}",
-		"{\"answers\":[\"a\",\"s\",\"i\",\"u\"],\"id\":3,\"word\":\"boasted\",\"level\":1,\"type\":\"substitution\",\"language\":\"EN\",\"display\":\"boested\"}",
-		"{\"answers\":[\"ua\",\"ie\",\"i\",\"ei\"],\"id\":4,\"word\":\"actually\",\"level\":1,\"type\":\"substitution\",\"language\":\"EN\",\"display\":\"act|ai|lly\"}",
-		"{\"answers\":[],\"id\":5,\"word\":\"bacon\",\"level\":1,\"type\":\"omission\",\"language\":\"EN\",\"display\":\"baecon\"}",
-		"{\"answers\":[\"t\",\"e\",\"y\",\"h\"],\"id\":7,\"word\":\"trust\",\"level\":1,\"type\":\"insertion1\",\"language\":\"EN\",\"display\":\"trus_\"}",
-		"{\"answers\":[\"t\"],\"id\":8,\"word\":\"trust\",\"level\":1,\"type\":\"insertion\",\"language\":\"EN\",\"display\":\"trus\"}",
-		"{\"answers\":[\"iness\",\"izer\",\"ition\",\"less\"],\"id\":10,\"word\":\"scariness\",\"level\":1,\"type\":\"derivation\",\"language\":\"EN\",\"display\":\"scar\"}",
-		"{\"answers\":[],\"id\":16,\"word\":\"jueves\",\"level\":1,\"type\":\"omission\",\"language\":\"ES\",\"display\":\"jruerves\"}"};
+	private static Map<String, Object> mapDefinition = Maps.newHashMap();
 	private static final Batch.State[] states = {Batch.State.RUNNING, Batch.State.PAUSED};
 	
 	private void createSampleProject() {
+		createMapDefinition();
+		
 		Project project = new Project();
 		project.setName("Dyseggxia project");
 		SecureRandom random = new SecureRandom();
@@ -96,6 +93,16 @@ public class SampleDataController {
 		    userService.saveUser(user);
 	    }
 	    projectService.saveProject(project);
+	}
+	
+	private void createMapDefinition() {
+		mapDefinition.put("id", 4);
+		mapDefinition.put("answers", Lists.newArrayList("ua", "ie", "i", "ei"));
+		mapDefinition.put("word", "actually");
+		mapDefinition.put("level", 1);
+		mapDefinition.put("type", "substitution");
+		mapDefinition.put("language", "EN");
+		mapDefinition.put("display", "act|ai|lly");
 	}
 	
 	private void createInputFields(Project project) {
@@ -180,12 +187,15 @@ public class SampleDataController {
 			Task task = new Task();
 			int numExecutions = random.nextInt(exPerTask + 1);
 			task.setNumExecutions(numExecutions);
-			int index = random.nextInt(definitions.length);
-			task.setContents(definitions[index]);
+			task.setContents(mapDefinition);
 			batch.addTask(task);
 			
 			for (int j = 0; j < numExecutions; ++ j) {
-				Execution execution = new Execution("{\"timeSpent\":300,\"failedAttempts\":1,\"wrongAnswers\":[\"answer\"]}");
+				Map<String, Object> executionContents = Maps.newHashMap();
+				executionContents.put("timeSpent", 300);
+				executionContents.put("failedAttempts", 1);
+				executionContents.put("wrongAnswers", Lists.newArrayList("answer"));
+				Execution execution = new Execution(executionContents);
 				execution.setTaskId(task.getId());
 				collection.addExecution(execution);
 			}

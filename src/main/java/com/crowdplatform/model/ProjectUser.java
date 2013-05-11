@@ -1,11 +1,19 @@
 package com.crowdplatform.model;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 
 public class ProjectUser {
 
 	private Integer id;
 	
-	private String contents;
+	private Map<String, Object> contents;
+	
+	public ProjectUser() {
+		contents = Maps.newHashMap();
+	}
 
 	public Integer getId() {
 		return id;
@@ -15,12 +23,16 @@ public class ProjectUser {
 		this.id = id;
 	}
 
-	public String getContents() {
+	public Map<String, Object> getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
+	public void setContents(Map<String, Object> contents) {
 		this.contents = contents;
+	}
+	
+	public void addContents(String key, Object value) {
+		contents.put(key, value);
 	}
 
 }

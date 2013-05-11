@@ -1,11 +1,13 @@
 package com.crowdplatform.model;
 
+import java.util.Map;
+
 
 public class TaskInfo {
 
 	private Integer id;
 	
-	private String contents;
+	private Map<String, Object> contents;
 	
 	public TaskInfo(Task task) {
 		this.id = task.getId();
@@ -20,11 +22,11 @@ public class TaskInfo {
 		this.id = id;
 	}
 
-	public String getContents() {
+	public Map<String, Object> getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
+	public void setContents(Map<String, Object> contents) {
 		this.contents = contents;
 	}
 }

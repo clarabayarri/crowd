@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,7 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
 import com.crowdplatform.model.Task;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileWriterTest {
@@ -119,7 +121,7 @@ public class FileWriterTest {
 	public void testDecodeTask() {
 		Task task = new Task();
 		task.setId(2);
-		task.setContents("{\"field\":\"string\"}");
+		task.setContents(getStringContents());
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.STRING);
@@ -136,7 +138,7 @@ public class FileWriterTest {
 	public void testDecodeExecutionWithoutUser() {
 		Execution execution = new Execution();
 		execution.setId(2);
-		execution.setContents("{}");
+		execution.setContents(getEmptyContents());
 		List<Field> fields = Lists.newArrayList();
 		
 		String[] result = writer.decodeExecution(execution, null, fields, fields);
@@ -151,7 +153,7 @@ public class FileWriterTest {
 	public void testDecodeExecutionWithoutUserWithUserFields() {
 		Execution execution = new Execution();
 		execution.setId(2);
-		execution.setContents("{}");
+		execution.setContents(getEmptyContents());
 		List<Field> fields = Lists.newArrayList();
 		Field field = new Field();
 		List<Field> fields2 = Lists.newArrayList(field);
@@ -167,10 +169,10 @@ public class FileWriterTest {
 	public void testDecodeExecutionWithEmptyUser() {
 		ProjectUser user = new ProjectUser();
 		user.setId(3);
-		user.setContents("{}");
+		user.setContents(getEmptyContents());
 		Execution execution = new Execution();
 		execution.setId(2);
-		execution.setContents("{}");
+		execution.setContents(getEmptyContents());
 		execution.setProjectUserId(user.getId());
 		List<Field> fields = Lists.newArrayList();
 		
@@ -184,10 +186,10 @@ public class FileWriterTest {
 	public void testDecodeExecutionWithFields() {
 		ProjectUser user = new ProjectUser();
 		user.setId(3);
-		user.setContents("{\"field\":\"string2\"}");
+		user.setContents(getStringContents());
 		Execution execution = new Execution();
 		execution.setId(2);
-		execution.setContents("{\"field\":\"string1\"}");
+		execution.setContents(getStringContents());
 		execution.setProjectUserId(user.getId());
 		Field field = new Field();
 		field.setName("field");
@@ -198,19 +200,18 @@ public class FileWriterTest {
 		
 		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size() + fields.size(), 
 				result.length);
-		assertEquals("string1", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
-		assertEquals("string2", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size()]);
+		assertEquals("string", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
+		assertEquals("string", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size()]);
 	}
 	
 	@Test
 	public void testDecodeAddsStringFields() {
-		String contents = "{\"field\":\"string\"}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.STRING);
 		List<Field> fields = Lists.newArrayList(field);
 		
-		String[] result = writer.decode(contents, fields);
+		String[] result = writer.decode(getStringContents(), fields);
 		
 		assertEquals(1, result.length);
 		assertEquals("string", result[0]);
@@ -218,13 +219,12 @@ public class FileWriterTest {
 	
 	@Test
 	public void testDecodeAddsIntegerFields() {
-		String contents = "{\"field\":1}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.INTEGER);
 		List<Field> fields = Lists.newArrayList(field);
 		
-		String[] result = writer.decode(contents, fields);
+		String[] result = writer.decode(getIntegerContents(), fields);
 		
 		assertEquals(1, result.length);
 		assertEquals("1", result[0]);
@@ -232,13 +232,12 @@ public class FileWriterTest {
 	
 	@Test
 	public void testDecodeAddsDoubleFields() {
-		String contents = "{\"field\":1.3}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.DOUBLE);
 		List<Field> fields = Lists.newArrayList(field);
 		
-		String[] result = writer.decode(contents, fields);
+		String[] result = writer.decode(getDoubleContents(), fields);
 		
 		assertEquals(1, result.length);
 		assertEquals("1.3", result[0]);
@@ -246,13 +245,12 @@ public class FileWriterTest {
 	
 	@Test
 	public void testDecodeAddsMultivaluateStringFields() {
-		String contents = "{\"field\":[\"a\",\"b\"]}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.MULTIVALUATE_STRING);
 		List<Field> fields = Lists.newArrayList(field);
 		
-		String[] result = writer.decode(contents, fields);
+		String[] result = writer.decode(getMultivaluateStringContents(), fields);
 		
 		assertEquals(1, result.length);
 		assertEquals("a,b,", result[0]);
@@ -260,13 +258,12 @@ public class FileWriterTest {
 	
 	@Test
 	public void testDecodeAddsBooleanFields() {
-		String contents = "{\"field\":true}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.BOOL);
 		List<Field> fields = Lists.newArrayList(field);
 		
-		String[] result = writer.decode(contents, fields);
+		String[] result = writer.decode(getBooleanContents(), fields);
 		
 		assertEquals(1, result.length);
 		assertEquals("true", result[0]);
@@ -274,7 +271,6 @@ public class FileWriterTest {
 	
 	@Test
 	public void testDecodeAddsSeveralFields() {
-		String contents = "{\"field\":[\"a\",\"b\"],\"field2\":true,\"field3\":1}";
 		Field field = new Field();
 		field.setName("field");
 		field.setType(Field.Type.MULTIVALUATE_STRING);
@@ -286,11 +282,54 @@ public class FileWriterTest {
 		field3.setType(Field.Type.INTEGER);
 		List<Field> fields = Lists.newArrayList(field, field2, field3);
 		
-		String[] result = writer.decode(contents, fields);
+		String[] result = writer.decode(getMixedContents(), fields);
 		
 		assertEquals(3, result.length);
 		assertEquals("a,b,", result[0]);
 		assertEquals("true", result[1]);
 		assertEquals("1", result[2]);
+	}
+	
+	private Map<String, Object> getEmptyContents() {
+		Map<String, Object> result = Maps.newHashMap();
+		return result;
+	}
+	
+	private Map<String, Object> getStringContents() {
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("field", "string");
+		return result;
+	}
+	
+	private Map<String, Object> getIntegerContents() {
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("field", 1);
+		return result;
+	}
+	
+	private Map<String, Object> getDoubleContents() {
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("field", 1.3);
+		return result;
+	}
+	
+	private Map<String, Object> getBooleanContents() {
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("field", true);
+		return result;
+	}
+	
+	private Map<String, Object> getMultivaluateStringContents() {
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("field", Lists.newArrayList("a", "b"));
+		return result;
+	}
+	
+	private Map<String, Object> getMixedContents() {
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("field", Lists.newArrayList("a", "b"));
+		result.put("field2", true);
+		result.put("field3", 1);
+		return result;
 	}
 }

@@ -4,19 +4,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Task;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class TaskCreator {
-
-	private ObjectMapper mapper = new ObjectMapper();
 
 	/**
 	 * Create a set of tasks and add them to the provided Batch.
@@ -27,21 +25,19 @@ public class TaskCreator {
 	@Transactional
     public void createTasks(Batch batch, List<Field> fields, List<Map<String, String>> fileContents) {
     	for (Map<String, String> line : fileContents) {
-    		ObjectNode contents = encodeLine(fields, line);
+    		Map<String, Object> contents = encodeLine(fields, line);
     		
     		Task task = new Task();
-    		task.setContents(contents.toString());
+    		task.setContents(contents);
     		batch.addTask(task);
     	}
     }
     
-    private ObjectNode encodeLine(List<Field> fields, Map<String, String> line) {
-    	ObjectNode contents = mapper.createObjectNode();
+    private Map<String, Object> encodeLine(List<Field> fields, Map<String, String> line) {
+    	Map<String, Object> contents = Maps.newHashMap();
 		for (Field field : fields) {
 			String value = line.get(field.getName());
-			if (value == null && field.getType() != Field.Type.MULTIVALUATE_STRING) {
-				contents.putNull(field.getName());
-			} else{
+			if (value != null || field.getType().equals(Field.Type.MULTIVALUATE_STRING)) {
 				switch (field.getType()) {
     			case STRING:
     				contents.put(field.getName(), value);
@@ -57,7 +53,7 @@ public class TaskCreator {
     				}
     				break;
     			case MULTIVALUATE_STRING:
-    				ArrayNode array = mapper.createArrayNode();
+    				List<String> array = Lists.newArrayList();
     				for (String column : field.getColumnNames()) {
     					if (line.get(column) != null && !line.get(column).isEmpty())
     						array.add(line.get(column));

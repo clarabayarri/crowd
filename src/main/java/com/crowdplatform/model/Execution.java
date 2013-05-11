@@ -1,6 +1,9 @@
 package com.crowdplatform.model;
 
 import java.util.Date;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 public class Execution {
 
@@ -8,7 +11,7 @@ public class Execution {
 	
 	private Date date;
 	
-	private String contents;
+	private Map<String, Object> contents;
 	
 	private Integer projectUserId;
 	
@@ -16,9 +19,10 @@ public class Execution {
 	
 	public Execution() {
 		this.date = new Date();
+		this.contents = Maps.newHashMap();
 	}
 	
-	public Execution(String contents) {
+	public Execution(Map<String, Object> contents) {
 		this.contents = contents;
 		this.date = new Date();
 	}
@@ -39,12 +43,16 @@ public class Execution {
 		this.date = date;
 	}
 
-	public String getContents() {
+	public Map<String, Object> getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
+	public void setContents(Map<String, Object> contents) {
 		this.contents = contents;
+	}
+	
+	public void addContents(String key, Object value) {
+		contents.put(key, value);
 	}
 
 	public Integer getProjectUserId() {

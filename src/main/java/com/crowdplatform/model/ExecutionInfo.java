@@ -1,5 +1,9 @@
 package com.crowdplatform.model;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 
 public class ExecutionInfo {
 
@@ -7,12 +11,12 @@ public class ExecutionInfo {
 	
 	private Integer taskId;
 	
-	private String contents;
+	private Map<String, Object> contents;
 	
 	private Integer userId;
 	
 	public ExecutionInfo() {
-		
+		contents = Maps.newHashMap();
 	}
 
 	public Integer getBatchId() {
@@ -31,11 +35,11 @@ public class ExecutionInfo {
 		this.taskId = taskId;
 	}
 
-	public String getContents() {
+	public Map<String, Object> getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
+	public void setContents(Map<String, Object> contents) {
 		this.contents = contents;
 	}
 

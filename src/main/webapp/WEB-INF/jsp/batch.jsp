@@ -131,7 +131,7 @@
                         <p><strong>Executions: </strong>${task.numExecutions}</p>
                         <p><strong>Contents:</strong></p>
                         <dl class="dl-horizontal">
-                            <c:forEach var="entry" items="${task.contentsMap}">
+                            <c:forEach var="entry" items="${task.contents}">
                                 <dt><c:out value="${entry.key}"/></dt>
                                 <dd><c:out value="${entry.value}"/></dd>
                             </c:forEach>

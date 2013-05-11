@@ -4,12 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 
 import com.crowdplatform.model.Batch;
@@ -35,9 +34,7 @@ public class TaskCreatorTest {
 		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
-			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
-			assertTrue(node.get("text").isTextual());
-			assertEquals("bla", node.get("text").getTextValue());
+			assertEquals("bla", task.getContents().get("text"));
 		}
 	}
 	
@@ -53,9 +50,7 @@ public class TaskCreatorTest {
 		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
-			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
-			assertTrue(node.get("integer").isInt());
-			assertEquals(33, node.get("integer").getIntValue());
+			assertEquals(33, task.getContents().get("integer"));
 		}
 	}
 	
@@ -71,9 +66,7 @@ public class TaskCreatorTest {
 		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
-			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
-			assertTrue(node.get("float").isFloatingPointNumber());
-			assertEquals(33.3, node.get("float").getDoubleValue(), 0.0001);
+			assertEquals(33.3, (Float) task.getContents().get("float"), 0.0001);
 		}
 	}
 	
@@ -89,8 +82,7 @@ public class TaskCreatorTest {
 		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
-			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
-			assertTrue(node.get("null").isNull());
+			assertTrue(task.getContents().get("null") == null);
 		}
 	}
 	
@@ -106,9 +98,7 @@ public class TaskCreatorTest {
 		List<Task> tasks = batch.getTasks();
 		assertEquals(1, tasks.size());
 		for (Task task : tasks) {
-			JsonNode node = (new ObjectMapper()).readTree(task.getContents());
-			assertTrue(node.get("multi").isArray());
-			assertEquals(2, node.get("multi").size());
+			assertEquals(2, ((Collection<String>) task.getContents().get("multi")).size());
 		}
 	}
 	
