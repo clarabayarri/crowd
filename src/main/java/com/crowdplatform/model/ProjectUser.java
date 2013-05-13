@@ -11,6 +11,8 @@ public class ProjectUser {
 	
 	private Map<String, Object> contents;
 	
+	private Map<String, Number> userDataContents;
+	
 	public ProjectUser() {
 		contents = Maps.newHashMap();
 	}
@@ -35,4 +37,15 @@ public class ProjectUser {
 		contents.put(key, value);
 	}
 
+	public Map<String, Number> getUserDataContents() {
+		return userDataContents;
+	}
+
+	public void setUserDataContents(Map<String, Number> userDataContents) {
+		this.userDataContents = userDataContents;
+	}
+
+	public void addUserDataContents(String key, Number value) {
+		this.userDataContents.put(key, value);
+	}
 }

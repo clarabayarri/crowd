@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Field;
@@ -21,7 +20,7 @@ public class TaskCreator {
 	 * @param fields Fields that should be considered for the Task contents
 	 * @param fileContents Data used to create the tasks
 	 */
-	@Transactional
+	
     public void createTasks(Batch batch, List<Field> fields, List<Map<String, String>> fileContents) {
     	for (Map<String, String> line : fileContents) {
     		Map<String, Object> contents = encodeLine(fields, line);

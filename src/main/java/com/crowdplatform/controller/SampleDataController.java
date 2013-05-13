@@ -18,6 +18,8 @@ import com.crowdplatform.model.Field;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.Task;
+import com.crowdplatform.model.UserDataField;
+import com.crowdplatform.model.UserDataField.UserDataFieldAggregationType;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
@@ -77,6 +79,7 @@ public class SampleDataController {
 		createInputFields(project);
 		createOutputFields(project);
 		createUserFields(project);
+		createUserDataFields(project);
 		projectService.addProject(project);
 		
 		for (int i = 0; i < 1; ++i) {
@@ -168,6 +171,14 @@ public class SampleDataController {
 		field.setType(Field.Type.BOOL);
 		field.setFieldType(Field.FieldType.USER);
 		project.addUserField(field);
+	}
+	
+	private void createUserDataFields(Project project) {
+		UserDataField field = new UserDataField();
+		field.setName("averageTime");
+		field.setType(UserDataFieldAggregationType.AVERAGE);
+		field.setProjectFieldName("timeSpent");
+		project.addUserDataField(field);
 	}
 	
 	private Batch createSampleBatch() {
