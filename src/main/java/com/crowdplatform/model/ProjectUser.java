@@ -16,6 +16,10 @@ public class ProjectUser {
 	public ProjectUser() {
 		contents = Maps.newHashMap();
 	}
+	
+	public ProjectUser(ProjectUserInfo info) {
+		this.contents = info.getContents();
+	}
 
 	public Integer getId() {
 		return id;

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -26,8 +25,10 @@ import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.model.ProjectUser;
+import com.crowdplatform.model.ProjectUserInfo;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
+import com.crowdplatform.model.TaskRequest;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
@@ -45,16 +46,16 @@ public class RemoteServiceController {
 	@Autowired
 	private TaskRetrievalStrategy taskRetrieval;
 	
-	@RequestMapping(value="/project/{projectId}/uid/{uid}/task", method=RequestMethod.GET)
+	@RequestMapping(value="/project/{projectId}/task", method=RequestMethod.GET)
 	public @ResponseBody TaskInfo[] provideTask(@PathVariable("projectId") String projectId, 
-			@PathVariable("uid") Long uid,
-			@RequestParam(value="count", required=false) Integer count) {
+			@RequestBody TaskRequest request) {
+		Integer count = request.getCount();
 		if (count == null) {
 			count = 1;
 		}
 		
 		Project project = projectService.getProject(projectId);
-		if (project.getUid().equals(uid)) {
+		if (project.getUid().equals(request.getProjectUid())) {
 			List<Task> tasks = taskRetrieval.retrieveTasksForExecution(projectId, count);
 			TaskInfo[] data = new TaskInfo[tasks.size()];
 			for (int i = 0; i < tasks.size(); ++i) {
@@ -69,12 +70,12 @@ public class RemoteServiceController {
 	}
 	
 	
-	@RequestMapping(value="/project/{projectId}/uid/{uid}/execution", method=RequestMethod.POST)
+	@RequestMapping(value="/project/{projectId}/execution", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public void saveExecution(@PathVariable("projectId") String projectId, 
-			@PathVariable("uid") Long uid, @RequestBody ExecutionInfo info) {
+			@RequestBody ExecutionInfo info) {
 		Project project = projectService.getProject(projectId);
-		if (project.getUid().equals(uid)) {
+		if (project.getUid().equals(info.getProjectUid())) {
 			Batch batch = project.getBatch(info.getBatchId());
 			if (batch != null) {
 				Task task = batch.getTask(info.getTaskId());
@@ -100,14 +101,15 @@ public class RemoteServiceController {
 		}
 	}
 	
-	@RequestMapping(value="/project/{projectId}/uid/{uid}/user", method=RequestMethod.POST)
+	@RequestMapping(value="/project/{projectId}/user", method=RequestMethod.POST)
 	public @ResponseBody Integer saveUser(@PathVariable("projectId") String projectId, 
-			@PathVariable("uid") Long uid, @RequestBody ProjectUser user) {
+			@RequestBody ProjectUserInfo user) {
 		Project project = projectService.getProject(projectId);
-		if (project.getUid().equals(uid)) {
-			project.addUser(user);
+		if (project.getUid().equals(user.getProjectUid())) {
+			ProjectUser newUser = new ProjectUser(user);
+			project.addUser(newUser);
 			projectService.saveProject(project);
-			return user.getId();
+			return newUser.getId();
 		} else {
 			System.out.println("RemoteServiceController: Save user attempted with wrong uid for project " + projectId + ".");
 		}

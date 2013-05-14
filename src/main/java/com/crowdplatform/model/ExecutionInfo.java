@@ -11,6 +11,8 @@ public class ExecutionInfo {
 	
 	private Integer taskId;
 	
+	private Long projectUid;
+	
 	private Map<String, Object> contents;
 	
 	private Integer userId;
@@ -33,6 +35,14 @@ public class ExecutionInfo {
 
 	public void setTaskId(Integer taskId) {
 		this.taskId = taskId;
+	}
+
+	public Long getProjectUid() {
+		return projectUid;
+	}
+
+	public void setProjectUid(Long projectUid) {
+		this.projectUid = projectUid;
 	}
 
 	public Map<String, Object> getContents() {
