@@ -28,8 +28,13 @@
 	
 	<beans:bean id="customUserDetailsService" class="com.crowdplatform.config.CustomUserDetailsService"/>
 
+	<beans:bean class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" id="passwordEncoder">
+    </beans:bean>
+
 	<authentication-manager>
-		<authentication-provider user-service-ref="customUserDetailsService"/>
+		<authentication-provider user-service-ref="customUserDetailsService">
+		    <password-encoder hash="sha" ref="passwordEncoder"></password-encoder>
+		</authentication-provider>
 	</authentication-manager>
 
 </beans:beans>

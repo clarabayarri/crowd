@@ -15,6 +15,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -50,6 +51,9 @@ public class UserController {
 
 	@Autowired
 	private PlatformUserService userService;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	private MailSender mailSender;
 
@@ -86,10 +90,12 @@ public class UserController {
 		if (bindingResult.hasErrors()) {
 			return "register";
 		}
-		userService.addUser(new PlatformUser(registration));
+		PlatformUser newUser = new PlatformUser(registration);
+		newUser.setPassword(passwordEncoder.encodePassword(registration.getPassword(), null));
+		userService.addUser(newUser);
 		PlatformUser user = userService.getUser(registration.getUsername());
 		if (user != null) {
-			authenticateUserAndSetSession(user, request);
+			authenticateUserAndSetSession(registration.getUsername(), registration.getPassword(), request);
 			return "redirect:/projects?registered=true";
 		}
 		bindingResult.reject("registration.error");
@@ -138,7 +144,7 @@ public class UserController {
 		}
 
 		if (!bindingResult.hasErrors()) {
-			user.setPassword(data.getPassword());
+			user.setPassword(passwordEncoder.encodePassword(data.getPassword(), null));
 			user.setPasswordResetRequest(null);
 			userService.saveUser(user);
 
@@ -157,9 +163,9 @@ public class UserController {
 		return calendar.getTime();
 	}
 
-	private void authenticateUserAndSetSession(PlatformUser user, HttpServletRequest request) {
+	private void authenticateUserAndSetSession(String username, String password, HttpServletRequest request) {
 		UsernamePasswordAuthenticationToken token = 
-				new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+				new UsernamePasswordAuthenticationToken(username, password);
 
 		request.getSession();
 

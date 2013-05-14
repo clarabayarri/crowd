@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -48,6 +49,9 @@ public class UserControllerTest {
 	private PlatformUserService userService;
 	
 	@Mock
+	private PasswordEncoder encoder;
+	
+	@Mock
 	private MailSender mailSender;
 	
 	private static final Long uid = new Long(2);
@@ -55,6 +59,8 @@ public class UserControllerTest {
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
+		
+		Mockito.when(encoder.encodePassword(Mockito.anyString(), Mockito.isNull())).thenReturn("password");
 	}
 	
 	@Test
