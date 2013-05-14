@@ -1,2 +1,2 @@
-*client_secrets.json filter=git-crypt diff=git-crypt
+*secrets.json filter=git-crypt diff=git-crypt
 *.secret filter=git-crypt diff=git-crypt
