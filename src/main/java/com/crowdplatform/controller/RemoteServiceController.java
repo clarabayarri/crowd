@@ -46,7 +46,7 @@ public class RemoteServiceController {
 	@Autowired
 	private TaskRetrievalStrategy taskRetrieval;
 	
-	@RequestMapping(value="/project/{projectId}/task", method=RequestMethod.GET)
+	@RequestMapping(value="/project/{projectId}/task", method=RequestMethod.POST)
 	public @ResponseBody TaskInfo[] provideTask(@PathVariable("projectId") String projectId, 
 			@RequestBody TaskRequest request) {
 		Integer count = request.getCount();

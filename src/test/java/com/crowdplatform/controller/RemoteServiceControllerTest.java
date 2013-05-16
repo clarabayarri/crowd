@@ -16,9 +16,10 @@ import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.Project;
-import com.crowdplatform.model.ProjectUser;
+import com.crowdplatform.model.ProjectUserInfo;
 import com.crowdplatform.model.Task;
 import com.crowdplatform.model.TaskInfo;
+import com.crowdplatform.model.TaskRequest;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskRetrievalStrategy;
@@ -67,9 +68,12 @@ public class RemoteServiceControllerTest {
 	public void testProvideTaskRetrievesTask() {
 		Task task = new Task();
 		task.setId(3);
+		TaskRequest request = new TaskRequest();
+		request.setCount(1);
+		request.setProjectUid(projectUid);
 		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 1)).thenReturn(Lists.newArrayList(task));
 		
-		TaskInfo[] taskInfo = controller.provideTask(projectId, projectUid, 1);
+		TaskInfo[] taskInfo = controller.provideTask(projectId, request);
 		
 		assertEquals(1, taskInfo.length);
 		assertEquals(task.getId(), taskInfo[0].getId());
@@ -79,9 +83,11 @@ public class RemoteServiceControllerTest {
 	public void testProvideTaskRetrievesOneTaskIfNoCountProvided() {
 		Task task = new Task();
 		task.setId(3);
+		TaskRequest request = new TaskRequest();
+		request.setProjectUid(projectUid);
 		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 1)).thenReturn(Lists.newArrayList(task));
 		
-		TaskInfo[] taskInfo = controller.provideTask(projectId, projectUid, null);
+		TaskInfo[] taskInfo = controller.provideTask(projectId, request);
 		
 		assertEquals(1, taskInfo.length);
 	}
@@ -90,16 +96,23 @@ public class RemoteServiceControllerTest {
 	public void testProvideTaskRetrievesMoreTasksIfCountProvided() {
 		Task task = new Task();
 		task.setId(3);
+		TaskRequest request = new TaskRequest();
+		request.setCount(2);
+		request.setProjectUid(projectUid);
 		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 2)).thenReturn(Lists.newArrayList(task, task));
 		
-		TaskInfo[] taskInfo = controller.provideTask(projectId, projectUid, 2);
+		TaskInfo[] taskInfo = controller.provideTask(projectId, request);
 		
 		assertEquals(2, taskInfo.length);
 	}
 	
 	@Test
 	public void testProvideTaskRetrievesNothingIfWrongCredentials() {
-		TaskInfo[] taskInfo = controller.provideTask(projectId, new Long(1), 2);
+		TaskRequest request = new TaskRequest();
+		request.setCount(2);
+		request.setProjectUid(new Long(1));
+		
+		TaskInfo[] taskInfo = controller.provideTask(projectId, request);
 		
 		assertNull(taskInfo);
 	}
@@ -109,15 +122,19 @@ public class RemoteServiceControllerTest {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setBatchId(batchId);
 		info.setTaskId(taskId);
+		info.setProjectUid(projectUid);
 		
-		controller.saveExecution(projectId, projectUid, info);
+		controller.saveExecution(projectId, info);
 		
 		Mockito.verify(batchService).saveExecutions(Mockito.any(BatchExecutionCollection.class));
 	}
 	
 	@Test
 	public void testSaveExecutionDoesNothingIfWrongCredentials() {
-		controller.saveExecution(projectId, new Long(3), null);
+		ExecutionInfo info = new ExecutionInfo();
+		info.setProjectUid(new Long(3));
+		
+		controller.saveExecution(projectId, info);
 		
 		Mockito.verifyZeroInteractions(batchService);
 		Mockito.verify(projectService, Mockito.never()).saveProject(project);
@@ -128,8 +145,9 @@ public class RemoteServiceControllerTest {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setBatchId(8);
 		info.setTaskId(taskId);
+		info.setProjectUid(projectUid);
 		
-		controller.saveExecution(projectId, projectUid, info);
+		controller.saveExecution(projectId, info);
 		
 		Mockito.verifyZeroInteractions(batchService);
 		Mockito.verify(projectService, Mockito.never()).saveProject(project);
@@ -140,8 +158,9 @@ public class RemoteServiceControllerTest {
 		ExecutionInfo info = new ExecutionInfo();
 		info.setBatchId(batchId);
 		info.setTaskId(8);
+		info.setProjectUid(projectUid);
 		
-		controller.saveExecution(projectId, projectUid, info);
+		controller.saveExecution(projectId, info);
 		
 		Mockito.verifyZeroInteractions(batchService);
 		Mockito.verify(projectService, Mockito.never()).saveProject(project);
@@ -149,34 +168,40 @@ public class RemoteServiceControllerTest {
 	
 	@Test
 	public void testSaveUserCallsServiceToSave() {
-		ProjectUser user = new ProjectUser();
+		ProjectUserInfo user = new ProjectUserInfo();
+		user.setProjectUid(projectUid);
 		
-		controller.saveUser(projectId, projectUid, user);
+		controller.saveUser(projectId, user);
 		
 		Mockito.verify(projectService).saveProject(Mockito.any(Project.class));
 	}
 	
 	@Test
 	public void testSaveUserReturnsZeroIfGoneWrong() {
-		ProjectUser user = new ProjectUser();
+		ProjectUserInfo user = new ProjectUserInfo();
+		user.setProjectUid(new Long(3));
 		
-		int result = controller.saveUser(projectId, new Long(3), user);
+		int result = controller.saveUser(projectId, user);
 		
 		assertEquals(0, result);
 	}
 	
 	@Test
 	public void testSaveUserReturnsUserIdIfCorrect() {
-		ProjectUser user = new ProjectUser();
+		ProjectUserInfo user = new ProjectUserInfo();
+		user.setProjectUid(projectUid);
 		
-		int result = controller.saveUser(projectId, projectUid, user);
+		int result = controller.saveUser(projectId, user);
 		
 		assertEquals(1, result);
 	}
 	
 	@Test
 	public void testSaveUserDoesNothingIfWrongCredentials() {
-		controller.saveUser(projectId, new Long(3), null);
+		ProjectUserInfo user = new ProjectUserInfo();
+		user.setProjectUid(new Long(3));
+		
+		controller.saveUser(projectId, user);
 		
 		Mockito.verify(projectService, Mockito.never()).saveProject(project);
 	}
