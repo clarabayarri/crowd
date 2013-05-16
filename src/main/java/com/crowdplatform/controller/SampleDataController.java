@@ -83,8 +83,7 @@ public class SampleDataController {
 		projectService.addProject(project);
 		
 		for (int i = 0; i < 1; ++i) {
-			Batch batch = createSampleBatch();
-			batch.setId(i + 1);
+			Batch batch = createSampleBatch(i + 1);
 			project.addBatch(batch);
 		}
 		
@@ -181,8 +180,9 @@ public class SampleDataController {
 		project.addUserDataField(field);
 	}
 	
-	private Batch createSampleBatch() {
+	private Batch createSampleBatch(Integer id) {
 		Batch batch = new Batch();
+		batch.setId(id);
 		batch.setName("Wonderful" + random.nextInt(99));
 		int exPerTask = random.nextInt(10) + 1;
 		batch.setExecutionsPerTask(exPerTask);
@@ -199,6 +199,7 @@ public class SampleDataController {
 			int numExecutions = random.nextInt(exPerTask + 1);
 			task.setNumExecutions(numExecutions);
 			task.setContents(mapDefinition);
+			task.setBatchId(batch.getId());
 			batch.addTask(task);
 			
 			for (int j = 0; j < numExecutions; ++ j) {

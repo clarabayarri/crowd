@@ -26,6 +26,7 @@ public class TaskCreator {
     		Map<String, Object> contents = encodeLine(fields, line);
     		
     		Task task = new Task();
+    		task.setBatchId(batch.getId());
     		task.setContents(contents);
     		batch.addTask(task);
     	}

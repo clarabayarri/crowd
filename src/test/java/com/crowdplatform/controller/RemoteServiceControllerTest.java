@@ -58,6 +58,7 @@ public class RemoteServiceControllerTest {
 	    batch.addTask(task);
 	    project.addBatch(batch);
 	    task.setId(taskId);
+	    task.setBatchId(batchId);
 	    batch.setId(batchId);
 	    project.setUid(projectUid);
 	    Mockito.when(projectService.getProject(projectId)).thenReturn(project);
@@ -76,7 +77,7 @@ public class RemoteServiceControllerTest {
 		TaskInfo[] taskInfo = controller.provideTask(projectId, request);
 		
 		assertEquals(1, taskInfo.length);
-		assertEquals(task.getId(), taskInfo[0].getId());
+		assertEquals(task.getId(), taskInfo[0].getTaskId());
 	}
 	
 	@Test

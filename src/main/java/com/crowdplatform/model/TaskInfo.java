@@ -5,21 +5,32 @@ import java.util.Map;
 
 public class TaskInfo {
 
-	private Integer id;
+private Integer batchId;
+	
+	private Integer taskId;
 	
 	private Map<String, Object> contents;
 	
 	public TaskInfo(Task task) {
-		this.id = task.getId();
+		this.batchId = task.getBatchId();
+		this.taskId = task.getId();
 		this.contents = task.getContents();
 	}
 
-	public Integer getId() {
-		return id;
+	public Integer getBatchId() {
+		return batchId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setBatchId(Integer batchId) {
+		this.batchId = batchId;
+	}
+
+	public Integer getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(Integer taskId) {
+		this.taskId = taskId;
 	}
 
 	public Map<String, Object> getContents() {

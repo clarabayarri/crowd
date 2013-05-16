@@ -7,6 +7,8 @@ import com.google.common.collect.Maps;
 public class Task {
 
     private Integer id;
+    
+    private Integer batchId;
 	
 	private Map<String, Object> contents;
 	
@@ -23,6 +25,14 @@ public class Task {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getBatchId() {
+		return batchId;
+	}
+
+	public void setBatchId(Integer batchId) {
+		this.batchId = batchId;
 	}
 
 	public Map<String, Object> getContents() {
