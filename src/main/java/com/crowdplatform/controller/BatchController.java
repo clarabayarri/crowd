@@ -155,6 +155,9 @@ public class BatchController {
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
 			project.addBatch(batch);
+			BatchExecutionCollection collection = new BatchExecutionCollection();
+			batchService.saveExecutions(collection);
+			batch.setExecutionCollectionId(collection.getId());
 			
 			if (taskFile != null && !taskFile.isEmpty()) {
 				List<Field> fields = project.getInputFields();
