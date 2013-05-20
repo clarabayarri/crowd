@@ -116,6 +116,8 @@ public class BatchController {
 		Project project = projectService.getProject(projectId);
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
+			Batch batch = project.getBatch(batchId);
+			batchService.removeCollection(batch.getExecutionCollectionId());
 			project.removeBatch(batchId);
 			projectService.saveProject(project);
 		} else {

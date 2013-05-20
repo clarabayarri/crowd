@@ -30,7 +30,8 @@ public class BatchExecutionServiceMongoImpl implements BatchExecutionService {
 	}
 
 	@Override
-	public void removeCollection(BatchExecutionCollection collection) {
+	public void removeCollection(String collectionId) {
+		BatchExecutionCollection collection = getExecutions(collectionId);
 		mongoOperation.remove(collection);
 	}
 }

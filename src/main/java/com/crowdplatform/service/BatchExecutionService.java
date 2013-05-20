@@ -12,6 +12,6 @@ public interface BatchExecutionService {
     
     public List<BatchExecutionCollection> listCollections();
 
-	public void removeCollection(BatchExecutionCollection collection);
+	public void removeCollection(String collectionId);
     
 }
