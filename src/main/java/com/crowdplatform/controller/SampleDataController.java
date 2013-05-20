@@ -61,7 +61,7 @@ public class SampleDataController {
 		}
 		List<BatchExecutionCollection> collections = batchService.listCollections();
 		for (BatchExecutionCollection collection : collections) {
-			batchService.removeCollection(collection);
+			batchService.removeCollection(collection.getId());
 		}
 		return "redirect:/projects";
 	}
