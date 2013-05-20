@@ -80,7 +80,12 @@ public class Project {
 	}
 	
 	public void addBatch(Batch batch) {
-		batch.setId(this.batches.size() + 1);
+		if (this.batches.isEmpty()) {
+			batch.setId(1);
+		} else {
+			int lastId = this.batches.get(this.batches.size()-1).getId();
+			batch.setId(lastId + 1);
+		}
 		this.batches.add(batch);
 	}
 	
