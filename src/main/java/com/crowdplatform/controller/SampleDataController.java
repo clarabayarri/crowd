@@ -170,6 +170,16 @@ public class SampleDataController {
 		field.setType(Field.Type.BOOL);
 		field.setFieldType(Field.FieldType.USER);
 		project.addUserField(field);
+		Field field1 = new Field();
+		field1.setName("age");
+		field1.setType(Field.Type.INTEGER);
+		field1.setFieldType(Field.FieldType.USER);
+		project.addUserField(field1);
+		Field field2 = new Field();
+		field2.setName("spanishSpeaker");
+		field2.setType(Field.Type.BOOL);
+		field2.setFieldType(Field.FieldType.USER);
+		project.addUserField(field2);
 	}
 	
 	private void createUserDataFields(Project project) {
