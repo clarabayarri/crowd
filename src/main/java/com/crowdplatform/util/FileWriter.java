@@ -134,7 +134,10 @@ public class FileWriter {
 				}
 				break;
 			default:
-				values[i] = contents.get(field.getName()).toString();
+				Object value = contents.get(field.getName());
+				if (value != null) {
+					values[i] = value.toString();
+				}
 				break;
 			}
 		}
