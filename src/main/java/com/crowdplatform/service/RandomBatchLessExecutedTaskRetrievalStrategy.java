@@ -44,6 +44,14 @@ public class RandomBatchLessExecutedTaskRetrievalStrategy implements TaskRetriev
 	public List<Task> getLessExecutedTasksForBatch(Batch batch, Integer number) {
 		List<Task> tasks = Lists.newArrayList();
 		tasks.addAll(batch.getTasks());
+		// Shuffle
+		Random random = new Random();
+		for (int i = tasks.size()-1; i > 0; --i) {
+			int index = random.nextInt(i);
+			Task task1 = tasks.get(i);
+			tasks.set(i, tasks.get(index));
+			tasks.set(index, task1);
+		}
 		Collections.sort(tasks, new Comparator<Task>() {
 			@Override
 			public int compare(Task t1, Task t2) {
