@@ -10,5 +10,10 @@ public class HomeController {
 	public String loadHome() {
 		return "index";
 	}
+	
+	@RequestMapping(value={"/favicon.ico"})
+	public String findIcon() {
+		return "redirect:/resources/img/favicon.ico";
+	}
 
 }

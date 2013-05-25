@@ -16,6 +16,7 @@
 		<intercept-url pattern="/home" access="permitAll" />
 		<intercept-url pattern="/API/**" access="permitAll" />
 		<intercept-url pattern="/resources/**" access="permitAll" />
+		<intercept-url pattern="/favicon.ico" access="permitAll" />
 		<intercept-url pattern="/login" access="isAnonymous()" />
 		<intercept-url pattern="/register" access="isAnonymous()" />
 		<intercept-url pattern="/forgot" access="isAnonymous()" />
