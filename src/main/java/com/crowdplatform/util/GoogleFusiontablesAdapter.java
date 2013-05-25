@@ -1,10 +1,12 @@
 package com.crowdplatform.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.crowdplatform.model.Batch;
@@ -34,6 +36,17 @@ public class GoogleFusiontablesAdapter {
 	private static final String APPLICATION_NAME = "Crowd Platform";
 	
 	private static final String FUSIONTABLES_URL = "https://www.google.com/fusiontables/data?docid=";
+	
+	@Value("#{systemEnvironment['GOOGLE_API_SECRETS']}")
+	private String CLIENT_SECRET;
+	
+	public String getCLIENT_SECRET() {
+		return CLIENT_SECRET;
+	}
+
+	public void setCLIENT_SECRET(String cLIENT_SECRET) {
+		CLIENT_SECRET = cLIENT_SECRET;
+	}
 
 	private HttpTransport HTTP_TRANSPORT;
 
@@ -73,12 +86,11 @@ public class GoogleFusiontablesAdapter {
 	public Credential authorize() throws Exception {
 		// load client secrets
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
-				JSON_FACTORY, GoogleFusiontablesAdapter.class.getResourceAsStream("/client_secrets.json"));
+				JSON_FACTORY, new ByteArrayInputStream(CLIENT_SECRET.getBytes()));
 		if (clientSecrets.getDetails().getClientId().startsWith("Enter")
 				|| clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
 			System.out.println(
-					"Enter Client ID and Secret from https://code.google.com/apis/console/?api=fusiontables "
-							+ "into src/main/resources/client_secrets.json");
+					"Enter Client Secret as system variable.");
 		}
 		// set up file credential store
 		FileCredentialStore credentialStore = new FileCredentialStore(
