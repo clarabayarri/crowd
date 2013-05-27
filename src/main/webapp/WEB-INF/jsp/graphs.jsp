@@ -13,6 +13,7 @@
 
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
 
 </head>
 
@@ -39,8 +40,19 @@
             <h2>Daily executions</h2>
 
             <div id="executions-graph">
+                <c:set var="dataUrl" value="/project/${project.id}/data/field/date" />
                 <%@ include file="/resources/js/executionsGraph.html" %>
             </div>
+
+            <c:forEach items="${project.outputFields}" var="field">
+                <h3>${field.name}</h3>
+                <c:if test="${field.type eq 'STRING' || field.type eq 'MULTIVALUATE_STRING'}">
+                    <c:set var="dataUrl" value="/project/${project.id}/data/field/${field.name}" />
+                    <div id="${field.name}-graph">
+                        <%@ include file="/resources/js/wordsGraph.html" %>
+                    </div>
+                </c:if>
+            </c:forEach>
         </div>
     </div>
 </div>

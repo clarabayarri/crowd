@@ -46,6 +46,10 @@
                 <a href="/project/${project.id}/batch/create" class="btn">New batch</a>
             </div>
 
+            <div class="pull-right">
+                <a href="/project/${project.id}/graphs" class="btn btn-info">View graphs</a>
+            </div>
+
             <div class="page-header">
                 <h1>${project.name}</h1>
             </div>

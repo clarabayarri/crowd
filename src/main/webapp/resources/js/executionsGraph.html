@@ -15,21 +15,20 @@ body {
   stroke-width: 2px;
 }
 
-.RdYlGn .q0-11{fill:rgb(165,0,38)}
-.RdYlGn .q1-11{fill:rgb(215,48,39)}
-.RdYlGn .q2-11{fill:rgb(244,109,67)}
-.RdYlGn .q3-11{fill:rgb(253,174,97)}
-.RdYlGn .q4-11{fill:rgb(254,224,139)}
-.RdYlGn .q5-11{fill:rgb(255,255,191)}
-.RdYlGn .q6-11{fill:rgb(217,239,139)}
-.RdYlGn .q7-11{fill:rgb(166,217,106)}
-.RdYlGn .q8-11{fill:rgb(102,189,99)}
-.RdYlGn .q9-11{fill:rgb(26,152,80)}
-.RdYlGn .q10-11{fill:rgb(0,104,55)}
+.RdYlGn .q0-11{fill:#5E4FA2}
+.RdYlGn .q1-11{fill:#3288BD}
+.RdYlGn .q2-11{fill:#66C2A5}
+.RdYlGn .q3-11{fill:#ABDDA4}
+.RdYlGn .q4-11{fill:#E6F598}
+.RdYlGn .q5-11{fill:#f6faaa}
+.RdYlGn .q6-11{fill:#FEE08B}
+.RdYlGn .q7-11{fill:#FDAE61}
+.RdYlGn .q8-11{fill:#F46D43}
+.RdYlGn .q9-11{fill:#D53E4F}
+.RdYlGn .q10-11{fill:#9E0142}
 
 </style>
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
 <script type="text/javascript" src="/resources/js/jquery.dateFormat-1.0.js"></script>
 <script>
 
@@ -77,18 +76,13 @@ svg.selectAll(".month")
     .attr("class", "month")
     .attr("d", monthPath);
 
-d3.csv("/project/${project.id}/data/executions", function(error, csv) {
+d3.json("${dataUrl}", function(error, json) {
   var maxValue = 0;
-  var data = d3.nest()
-    .key(function(d) { 
-      var date = $.format.date(d.date, "yyyy-MM-dd");
-      return date; 
-    })
-    .rollup(function(d) { 
-      maxValue = Math.max(maxValue, d.length);
-      return d.length; 
-    })
-    .map(csv);
+  var data = json;
+
+  for (var row in data) {
+    maxValue = Math.max(maxValue, data[row]);
+  }
 
     color = d3.scale.quantize()
             .domain([0, maxValue])
@@ -115,7 +109,5 @@ function monthPath(t0) {
       + "H" + (w1 + 1) * cellSize + "V" + 0
       + "H" + (w0 + 1) * cellSize + "Z";
 }
-
-//d3.select(self.frameElement).style("height", "2910px");
 
 </script>

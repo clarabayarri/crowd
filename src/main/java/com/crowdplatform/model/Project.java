@@ -31,8 +31,6 @@ public class Project {
 	
 	private List<Field> userFields;
 	
-	private List<UserDataField> userDataFields;
-	
 	private String ownerId;
 	
 	private List<ProjectUser> users;
@@ -42,7 +40,6 @@ public class Project {
 		inputFields = Lists.newArrayList();
 		outputFields = Lists.newArrayList();
 		userFields = Lists.newArrayList();
-		userDataFields = Lists.newArrayList();
 		users = Lists.newArrayList();
 		creationDate = new Date();
 	}
@@ -191,16 +188,17 @@ public class Project {
 		this.userFields.add(field);
 	}
 
-	public List<UserDataField> getUserDataFields() {
-		return userDataFields;
-	}
-
-	public void setUserDataFields(List<UserDataField> userDataFields) {
-		this.userDataFields = userDataFields;
-	}
-	
-	public void addUserDataField(UserDataField field) {
-		this.userDataFields.add(field);
+	public Field getField(String fieldName) {
+		for (Field field : this.inputFields) {
+			if (field.getName().equals(fieldName)) return field;
+		}
+		for (Field field : this.outputFields) {
+			if (field.getName().equals(fieldName)) return field;
+		}
+		for (Field field : this.userFields) {
+			if (field.getName().equals(fieldName)) return field;
+		}
+		return null;
 	}
 
 	public Date getCreationDate() {
