@@ -2,7 +2,6 @@ package com.crowdplatform.controller;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -155,32 +154,36 @@ public class GraphDataController {
 	}
 	
 	private Map<Object, Object> getFieldIntegerCoundData(Project project, String fieldName) {
-		Map<Integer, Integer> result = Maps.newHashMap();
+		Integer minValue = Integer.MAX_VALUE;
+		Integer maxValue = Integer.MIN_VALUE;
 		for (Batch batch : project.getBatches()) {
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
 			for (Execution execution : collection.getExecutions()) {
 				Number num = (Number) execution.getContents().get(fieldName);
 				if (num != null) {
 					Integer value = num.intValue();
-					Integer count = (Integer) result.get(value);
-					if (count == null) count = 0;
-					count ++;
-					result.put(value, count);
+					minValue = Math.min(minValue, value);
+					maxValue = Math.max(maxValue, value);
 				}
 			}
 		}
-		Integer minValue = Collections.min(result.keySet());
-		Integer maxValue = Collections.max(result.keySet());
 		Integer step = Math.max(1, (int) Math.ceil((maxValue - minValue) / 18.0));
 		Map<Object, Object> ordered = Maps.newLinkedHashMap();
-		for (int i = minValue-step; i <= maxValue + step; i += step) {
+		for (int i = minValue; i <= minValue + 19*step; i += step) {
 			ordered.put(i, 0);
 		}
-		for (Integer key : result.keySet()) {
-			Integer slot = key - (key%step);
-			Integer count = (Integer) ordered.get(slot);
-			count += result.get(key);
-			ordered.put(slot, count);
+		for (Batch batch : project.getBatches()) {
+			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
+			for (Execution execution : collection.getExecutions()) {
+				Number num = (Number) execution.getContents().get(fieldName);
+				if (num != null) {
+					Integer value = num.intValue();
+					Integer slot = value - ((value-minValue) % step);
+					Integer count = (Integer) ordered.get(slot);
+					count++;
+					ordered.put(slot, count);
+				}
+			}
 		}
 		return ordered;
 	}
