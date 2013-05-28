@@ -46,12 +46,17 @@
 
             <c:forEach items="${project.outputFields}" var="field">
                 <h3>${field.name}</h3>
-                <c:if test="${field.type eq 'STRING' || field.type eq 'MULTIVALUATE_STRING'}">
-                    <c:set var="dataUrl" value="/project/${project.id}/data/field/${field.name}" />
-                    <div id="${field.name}-graph">
-                        <%@ include file="/resources/js/wordsGraph.html" %>
-                    </div>
-                </c:if>
+                <c:set var="dataUrl" value="/project/${project.id}/data/field/${field.name}" />
+                <div id="${field.name}-graph">
+                    <c:choose>
+                        <c:when test="${field.type eq 'STRING' || field.type eq 'MULTIVALUATE_STRING'}">
+                            <%@ include file="/resources/js/wordsGraph.html" %>
+                        </c:when>
+                        <c:when test="${field.type eq 'INTEGER'}">
+                            <%@ include file="/resources/js/barGraph.html" %>
+                        </c:when>
+                    </c:choose>
+                </div>
             </c:forEach>
         </div>
     </div>

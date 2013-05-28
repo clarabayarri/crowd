@@ -2,6 +2,7 @@ package com.crowdplatform.controller;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class GraphDataController {
 	}
 	
 	@RequestMapping("/project/{projectId}/data/field/{fieldName}")
-	public @ResponseBody Map<String, Object> obtainFieldData(@PathVariable("projectId") String projectId,
+	public @ResponseBody Map<Object, Object> obtainFieldData(@PathVariable("projectId") String projectId,
 			@PathVariable("fieldName") String fieldName) {
 		Project project = projectService.getProject(projectId);
 		PlatformUser user = userService.getCurrentUser();
@@ -92,16 +93,17 @@ public class GraphDataController {
 		return result;
 	}
 	
-	private Map<String, Object> getFieldData(Project project, String fieldName) {
+	private Map<Object, Object> getFieldData(Project project, String fieldName) {
 		if (fieldName.equals("date")) return getFieldDateCountData(project);
 		Field field = project.getField(fieldName);
+		if (field.getType().equals(Field.Type.INTEGER)) return getFieldIntegerCoundData(project, fieldName);
 		if (field.getType().equals(Field.Type.STRING)) return getFieldStringCountData(project, fieldName);
 		if (field.getType().equals(Field.Type.MULTIVALUATE_STRING)) return getFieldMultivaluateStringCountData(project, fieldName);
 		return null;
 	}
 	
-	private Map<String, Object> getFieldDateCountData(Project project) {
-		Map<String, Object> result = Maps.newHashMap();
+	private Map<Object, Object> getFieldDateCountData(Project project) {
+		Map<Object, Object> result = Maps.newHashMap();
 		SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
 		for (Batch batch : project.getBatches()) {
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
@@ -116,8 +118,8 @@ public class GraphDataController {
 		return result;
 	}
 	
-	private Map<String, Object> getFieldStringCountData(Project project, String fieldName) {
-		Map<String, Object> result = Maps.newHashMap();
+	private Map<Object, Object> getFieldStringCountData(Project project, String fieldName) {
+		Map<Object, Object> result = Maps.newHashMap();
 		for (Batch batch : project.getBatches()) {
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
 			for (Execution execution : collection.getExecutions()) {
@@ -135,8 +137,8 @@ public class GraphDataController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> getFieldMultivaluateStringCountData(Project project, String fieldName) {
-		Map<String, Object> result = Maps.newHashMap();
+	private Map<Object, Object> getFieldMultivaluateStringCountData(Project project, String fieldName) {
+		Map<Object, Object> result = Maps.newHashMap();
 		for (Batch batch : project.getBatches()) {
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
 			for (Execution execution : collection.getExecutions()) {
@@ -150,5 +152,33 @@ public class GraphDataController {
 			}
 		}
 		return result;
+	}
+	
+	private Map<Object, Object> getFieldIntegerCoundData(Project project, String fieldName) {
+		Map<Integer, Integer> result = Maps.newHashMap();
+		for (Batch batch : project.getBatches()) {
+			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
+			for (Execution execution : collection.getExecutions()) {
+				Integer value = ((Number) execution.getContents().get(fieldName)).intValue();
+				Integer count = (Integer) result.get(value);
+				if (count == null) count = 0;
+				count ++;
+				result.put(value, count);
+			}
+		}
+		Integer minValue = Collections.min(result.keySet());
+		Integer maxValue = Collections.max(result.keySet());
+		Integer step = Math.max(1, (int) Math.ceil((maxValue - minValue) / 18.0));
+		Map<Object, Object> ordered = Maps.newLinkedHashMap();
+		for (int i = minValue-step; i <= maxValue + step; i += step) {
+			ordered.put(i, 0);
+		}
+		for (Integer key : result.keySet()) {
+			Integer slot = key - (key%step);
+			Integer count = (Integer) ordered.get(slot);
+			count += result.get(key);
+			ordered.put(slot, count);
+		}
+		return ordered;
 	}
 }
