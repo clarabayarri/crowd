@@ -159,11 +159,14 @@ public class GraphDataController {
 		for (Batch batch : project.getBatches()) {
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
 			for (Execution execution : collection.getExecutions()) {
-				Integer value = ((Number) execution.getContents().get(fieldName)).intValue();
-				Integer count = (Integer) result.get(value);
-				if (count == null) count = 0;
-				count ++;
-				result.put(value, count);
+				Number num = (Number) execution.getContents().get(fieldName);
+				if (num != null) {
+					Integer value = num.intValue();
+					Integer count = (Integer) result.get(value);
+					if (count == null) count = 0;
+					count ++;
+					result.put(value, count);
+				}
 			}
 		}
 		Integer minValue = Collections.min(result.keySet());
