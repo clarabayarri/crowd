@@ -56,6 +56,7 @@ public class RemoteServiceControllerTest {
 	    batch = new Batch();
 	    task = new Task();
 	    batch.addTask(task);
+	    batch.setState(Batch.State.RUNNING);
 	    project.addBatch(batch);
 	    task.setId(taskId);
 	    task.setBatchId(batchId);

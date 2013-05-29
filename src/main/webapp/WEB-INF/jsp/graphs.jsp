@@ -24,6 +24,9 @@
     <li><a href="/">Home</a> <span class="divider">/</span></li>
     <li><a href="/projects">Projects</a> <span class="divider">/</span></li>
     <li><a href="/project/${project.id}">${project.name}</a> <span class="divider">/</span></li>
+    <c:if test="${!(batch eq null)}">
+        <li><a href="/project/${project.id}/batch/${batch.id}">${batch.name}</a> <span class="divider">/</span></li>
+    </c:if>
     <li class="active">Graphs</li>
 </ul>
 
@@ -46,7 +49,14 @@
 
             <c:forEach items="${project.outputFields}" var="field">
                 <h3>${field.name}</h3>
-                <c:set var="dataUrl" value="/project/${project.id}/data/field/${field.name}" />
+                <c:choose>
+                    <c:when test="${batch eq null}">
+                        <c:set var="dataUrl" value="/project/${project.id}/data/field/${field.name}" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="dataUrl" value="/project/${project.id}/batch/${batch.id}/data/field/${field.name}" />
+                    </c:otherwise>
+                </c:choose>
                 <div id="${field.name}-graph">
                     <c:choose>
                         <c:when test="${field.type eq 'STRING' || field.type eq 'MULTIVALUATE_STRING'}">

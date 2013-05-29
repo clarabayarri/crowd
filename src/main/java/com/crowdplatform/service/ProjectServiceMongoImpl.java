@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.MapReduceResult;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.util.DataMiner;
@@ -74,6 +75,22 @@ public class ProjectServiceMongoImpl implements ProjectService {
 	
 	public Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, String field) {
 		return dataMiner.aggregateByFieldWithIntegerSteps(project, field);
+	}
+	
+	public Map<Object, Object> getAggregatedDataByDate(Project project, Batch batch) {
+		return transform(dataMiner.aggregateByDate(project, batch));
+	}
+	
+	public Map<Object, Object> getAggregatedDataByField(Project project, Batch batch, String field) {
+		return transform(dataMiner.aggregateByField(project, batch, field));
+	}
+	
+	public Map<Object, Object> getAggregatedDataByMultivaluateField(Project project, Batch batch, String field) {
+		return transform(dataMiner.aggregateByMultivaluateField(project, batch, field));
+	}
+	
+	public Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, Batch batch, String field) {
+		return dataMiner.aggregateByFieldWithIntegerSteps(project, batch, field);
 	}
 	
 	private Map<Object, Object> transform(MapReduceResults<MapReduceResult> results) {

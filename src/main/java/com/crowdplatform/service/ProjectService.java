@@ -3,6 +3,7 @@ package com.crowdplatform.service;
 import java.util.List;
 import java.util.Map;
 
+import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.Project;
 
 public interface ProjectService {
@@ -41,4 +42,12 @@ public interface ProjectService {
 	public Map<Object, Object> getAggregatedDataByMultivaluateField(Project project, String field);
 	
 	public  Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, String field);
+	
+	public Map<Object, Object> getAggregatedDataByDate(Project project, Batch batch);
+	
+	public Map<Object, Object> getAggregatedDataByField(Project project, Batch batch, String field);
+	
+	public Map<Object, Object> getAggregatedDataByMultivaluateField(Project project, Batch batch, String field);
+	
+	public  Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, Batch batch, String field);
 }

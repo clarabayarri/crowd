@@ -85,6 +85,7 @@
                 <div class="pull-right">
                     <p><a href="/project/${project.id}/batch/${batch.id}/download" class="btn btn-info pull-right">Download executions</a></p>
                     <p><a href="/project/${project.id}/batch/${batch.id}/export" class="btn btn-info pull-right" target="_blank">Export to Fusiontables</a></p>
+                    <p><a href="/project/${project.id}/batch/${batch.id}/graphs" class="btn btn-info pull-right">View graphs</a></p>
                     <div class="clearfix"></div>
                 </div>
                 
