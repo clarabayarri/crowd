@@ -77,7 +77,7 @@ public class RemoteServiceController {
 		Project project = projectService.getProject(projectId);
 		if (project.getUid().equals(info.getProjectUid())) {
 			Batch batch = project.getBatch(info.getBatchId());
-			if (batch != null) {
+			if (batch != null && batch.getState() == Batch.State.RUNNING) {
 				Task task = batch.getTask(info.getTaskId());
 				if (task != null) {
 					Execution execution = new Execution(info.getContents());
@@ -87,13 +87,16 @@ public class RemoteServiceController {
 					collection.addExecution(execution);
 					batchService.saveExecutions(collection);
 					task.setNumExecutions(task.getNumExecutions() + 1);
+					if (task.getNumExecutions() == batch.getExecutionsPerTask()) {
+						batch.setNumCompletedTasks(batch.getNumCompletedTasks() + 1);
+					}
 					projectService.saveProject(project);
 				} else {
 					System.out.println("RemoteServiceController: Save execution attempted with unexisting task " + 
 							projectId + " - " + info.getBatchId() + " - " + info.getTaskId() + ".");
 				}
 			} else {
-				System.out.println("RemoteServiceController: Save execution attempted with unexisting batch " + 
+				System.out.println("RemoteServiceController: Save execution attempted with unexisting or not running batch " + 
 						projectId + " - " + info.getBatchId() + ".");
 			}
 		} else {

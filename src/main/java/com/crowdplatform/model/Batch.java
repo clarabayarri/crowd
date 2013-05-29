@@ -29,6 +29,8 @@ public class Batch {
 	
 	private String executionCollectionId;
 	
+	private Integer numCompletedTasks;
+	
 	public enum State {
 		RUNNING, PAUSED, COMPLETE
 	}
@@ -42,6 +44,7 @@ public class Batch {
 		tasks = Lists.newArrayList();
 		executionsPerTask = 1;
 		state = State.PAUSED;
+		numCompletedTasks = 0;
 	}
 	
 	public Integer getId() {
@@ -90,12 +93,16 @@ public class Batch {
 	}
 
 	public double getPercentageComplete() {
+		if (state == State.COMPLETE) return 100;
 		if (tasks != null) {
 			int total = 0;
 			for(Task task : tasks) {
 				total += Math.min(executionsPerTask, task.getNumExecutions());
 			}
 			if (total > 0) {
+				if (total == executionsPerTask * tasks.size() && state != State.COMPLETE) {
+					this.state = State.COMPLETE;
+				}
 				this.percentageComplete = ((double) total * 100) / (executionsPerTask * tasks.size());
 			}
 		}
@@ -136,5 +143,14 @@ public class Batch {
 
 	public void setExecutionCollectionId(String executionCollectionId) {
 		this.executionCollectionId = executionCollectionId;
+	}
+
+	public Integer getNumCompletedTasks() {
+		return numCompletedTasks;
+	}
+
+	public void setNumCompletedTasks(Integer numCompletedTasks) {
+		this.numCompletedTasks = numCompletedTasks;
+		if (this.numCompletedTasks == this.getNumTasks()) this.setState(State.COMPLETE);
 	}
 }
