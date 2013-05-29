@@ -42,6 +42,17 @@ public class DataMinerImpl implements DataMiner {
 				options, MapReduceResult.class);
 	}
 	
+	public MapReduceResults<MapReduceResult> aggregateByMultivaluateField(Project project, String field) {
+		BasicQuery query1 = new BasicQuery("{ projectId : '"+ project.getId() + "' }");
+		Map<String, Object> vars = Maps.newHashMap();
+		vars.put("fieldName", field);
+		MapReduceOptions options = new MapReduceOptions().scopeVariables(vars).verbose(true).outputTypeInline();
+		return mongoTemplate.mapReduce(query1, "batchExecutionCollection", 
+				"classpath:mapreduce/map_by_multivaluate_field.js", 
+				"classpath:mapreduce/reduce_by_sum.js", 
+				options, MapReduceResult.class);
+	}
+	
 	public Map<Object, Object> aggregateByFieldWithIntegerSteps(Project project, String field) {
 		MapReduceResults<MapReduceResult> results = aggregateByField(project, field);
 		List<MapReduceResult> list = Lists.newArrayList(results);

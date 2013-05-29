@@ -1,6 +1,5 @@
 package com.crowdplatform.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.BatchExecutionCollection;
-import com.crowdplatform.model.Execution;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
-import com.google.common.collect.Maps;
 
 @Controller
 public class GraphDataController {
@@ -59,25 +54,7 @@ public class GraphDataController {
 		Field field = project.getField(fieldName);
 		if (field.getType().equals(Field.Type.INTEGER)) return projectService.getAggregatedDataByFieldWithSteps(project, fieldName);
 		if (field.getType().equals(Field.Type.STRING)) return projectService.getAggregatedDataByField(project, fieldName);
-		if (field.getType().equals(Field.Type.MULTIVALUATE_STRING)) return getFieldMultivaluateStringCountData(project, fieldName);
+		if (field.getType().equals(Field.Type.MULTIVALUATE_STRING)) return projectService.getAggregatedDataByMultivaluateField(project, fieldName);
 		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Map<Object, Object> getFieldMultivaluateStringCountData(Project project, String fieldName) {
-		Map<Object, Object> result = Maps.newHashMap();
-		for (Batch batch : project.getBatches()) {
-			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			for (Execution execution : collection.getExecutions()) {
-				List<String> value = (List<String>) execution.getContents().get(fieldName);
-				for (String item : value) {
-					Integer count = (Integer) result.get(item);
-					if (count == null) count = 0;
-					count ++;
-					result.put(item, count);
-				}
-			}
-		}
-		return result;
 	}
 }

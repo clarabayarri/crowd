@@ -38,5 +38,7 @@ public interface ProjectService {
 	
 	public Map<Object, Object> getAggregatedDataByField(Project project, String field);
 	
+	public Map<Object, Object> getAggregatedDataByMultivaluateField(Project project, String field);
+	
 	public  Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, String field);
 }

@@ -68,6 +68,10 @@ public class ProjectServiceMongoImpl implements ProjectService {
 		return transform(dataMiner.aggregateByField(project, field));
 	}
 	
+	public Map<Object, Object> getAggregatedDataByMultivaluateField(Project project, String field) {
+		return transform(dataMiner.aggregateByMultivaluateField(project, field));
+	}
+	
 	public Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, String field) {
 		return dataMiner.aggregateByFieldWithIntegerSteps(project, field);
 	}

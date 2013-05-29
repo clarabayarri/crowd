@@ -13,6 +13,8 @@ public interface DataMiner {
 	
 	public MapReduceResults<MapReduceResult> aggregateByField(Project project, String field);
 	
+	public MapReduceResults<MapReduceResult> aggregateByMultivaluateField(Project project, String field);
+	
 	public Map<Object, Object> aggregateByFieldWithIntegerSteps(Project project, String field);
 	
 }
