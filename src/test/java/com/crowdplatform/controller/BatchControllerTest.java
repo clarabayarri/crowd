@@ -292,7 +292,7 @@ public class BatchControllerTest {
 		controller.createBatch(batch, projectId, bindingResult, null);
 		
 		Mockito.verify(project).addBatch(batch);
-		Mockito.verify(projectService).saveProject(project);
+		Mockito.verify(projectService, Mockito.atLeastOnce()).saveProject(project);
 	}
 
 }

@@ -157,7 +157,10 @@ public class BatchController {
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
 			project.addBatch(batch);
+			projectService.saveProject(project);
 			BatchExecutionCollection collection = new BatchExecutionCollection();
+			collection.setProjectId(project.getId());
+			collection.setBatchId(batch.getId());
 			batchService.saveExecutions(collection);
 			batch.setExecutionCollectionId(collection.getId());
 			

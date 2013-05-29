@@ -1,6 +1,7 @@
 package com.crowdplatform.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.crowdplatform.model.Project;
 
@@ -33,4 +34,9 @@ public interface ProjectService {
 	
 	public List<Project> getProjectsForUser(String userId);
 	
+	public Map<Object, Object> getAggregatedDataByDate(Project project);
+	
+	public Map<Object, Object> getAggregatedDataByField(Project project, String field);
+	
+	public  Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, String field);
 }

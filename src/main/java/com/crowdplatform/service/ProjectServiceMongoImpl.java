@@ -1,23 +1,31 @@
 package com.crowdplatform.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.DefaultIndexOperations;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.crowdplatform.model.MapReduceResult;
 import com.crowdplatform.model.Project;
+import com.crowdplatform.util.DataMiner;
+import com.google.common.collect.Maps;
 
 @Service
 public class ProjectServiceMongoImpl implements ProjectService {
 
 	@Autowired
 	MongoOperations mongoOperation;
+	
+	@Autowired
+	DataMiner dataMiner;
 	
 	public void addProject(Project project) {
 		mongoOperation.save(project);
@@ -50,5 +58,25 @@ public class ProjectServiceMongoImpl implements ProjectService {
 	private void checkForOwnerIndex() {
 		DefaultIndexOperations indexOperations = new DefaultIndexOperations(mongoOperation, "project");
 		indexOperations.ensureIndex(new Index().on("ownerId", Order.ASCENDING));
+	}
+	
+	public Map<Object, Object> getAggregatedDataByDate(Project project) {
+		return transform(dataMiner.aggregateByDate(project));
+	}
+	
+	public Map<Object, Object> getAggregatedDataByField(Project project, String field) {
+		return transform(dataMiner.aggregateByField(project, field));
+	}
+	
+	public Map<Object, Object> getAggregatedDataByFieldWithSteps(Project project, String field) {
+		return dataMiner.aggregateByFieldWithIntegerSteps(project, field);
+	}
+	
+	private Map<Object, Object> transform(MapReduceResults<MapReduceResult> results) {
+		Map<Object, Object> map = Maps.newLinkedHashMap();
+		for (MapReduceResult result : results) {
+			map.put(result.getId(), result.getValue());
+		}
+		return map;
 	}
 }

@@ -1,11 +1,7 @@
 package com.crowdplatform.controller;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +19,6 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
-import com.crowdplatform.util.FileWriter;
 import com.google.common.collect.Maps;
 
 @Controller
@@ -48,26 +43,6 @@ public class GraphDataController {
 		return "graphs";
 	}
 	
-	@RequestMapping("/project/{projectId}/data/executions")
-	public void downloadData(@PathVariable("projectId") String projectId, 
-			HttpServletResponse response) {
-		Project project = projectService.getProject(projectId);
-		PlatformUser user = userService.getCurrentUser();
-		if (project.getOwnerId().equals(user.getUsername())) {
-			try {
-				String writer = writeDatesExecutions(project);
-				response.getWriter().write(writer);
-				response.setContentType("text/csv");
-				response.setHeader("Content-Disposition","attachment; filename=batch-executions-data.csv");
-				response.flushBuffer();
-			} catch (IOException ex) {
-				throw new RuntimeException("IOError writing file to output stream");
-			}
-		} else {
-	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " download batch.");
-	    }
-	}
-	
 	@RequestMapping("/project/{projectId}/data/field/{fieldName}")
 	public @ResponseBody Map<Object, Object> obtainFieldData(@PathVariable("projectId") String projectId,
 			@PathVariable("fieldName") String fieldName) {
@@ -79,60 +54,13 @@ public class GraphDataController {
 		return null;
 	}
 	
-	private String writeDatesExecutions(Project project) throws IOException {
-		FileWriter writer = new FileWriter();
-		boolean first = true;
-		String result = "";
-		for (Batch batch : project.getBatches()) {
-			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			String partialResult = writer.writeTasksExecutions(project, batch, collection, first);
-			first = false;
-			result += partialResult;
-		}
-		return result;
-	}
-	
 	private Map<Object, Object> getFieldData(Project project, String fieldName) {
-		if (fieldName.equals("date")) return getFieldDateCountData(project);
+		if (fieldName.equals("date")) return projectService.getAggregatedDataByDate(project);
 		Field field = project.getField(fieldName);
-		if (field.getType().equals(Field.Type.INTEGER)) return getFieldIntegerCoundData(project, fieldName);
-		if (field.getType().equals(Field.Type.STRING)) return getFieldStringCountData(project, fieldName);
+		if (field.getType().equals(Field.Type.INTEGER)) return projectService.getAggregatedDataByFieldWithSteps(project, fieldName);
+		if (field.getType().equals(Field.Type.STRING)) return projectService.getAggregatedDataByField(project, fieldName);
 		if (field.getType().equals(Field.Type.MULTIVALUATE_STRING)) return getFieldMultivaluateStringCountData(project, fieldName);
 		return null;
-	}
-	
-	private Map<Object, Object> getFieldDateCountData(Project project) {
-		Map<Object, Object> result = Maps.newHashMap();
-		SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
-		for (Batch batch : project.getBatches()) {
-			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			for (Execution execution : collection.getExecutions()) {
-				String value = myFormat.format(execution.getDate());
-				Integer count = (Integer) result.get(value);
-				if (count == null) count = 0;
-				count ++;
-				result.put(value, count);
-			}
-		}
-		return result;
-	}
-	
-	private Map<Object, Object> getFieldStringCountData(Project project, String fieldName) {
-		Map<Object, Object> result = Maps.newHashMap();
-		for (Batch batch : project.getBatches()) {
-			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			for (Execution execution : collection.getExecutions()) {
-				String value = (String) execution.getContents().get(fieldName);
-				System.out.println(value);
-				if (value != null) {
-					Integer count = (Integer) result.get(value);
-					if (count == null) count = 0;
-					count ++;
-					result.put(value, count);
-				}
-			}
-		}
-		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -151,40 +79,5 @@ public class GraphDataController {
 			}
 		}
 		return result;
-	}
-	
-	private Map<Object, Object> getFieldIntegerCoundData(Project project, String fieldName) {
-		Integer minValue = Integer.MAX_VALUE;
-		Integer maxValue = Integer.MIN_VALUE;
-		for (Batch batch : project.getBatches()) {
-			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			for (Execution execution : collection.getExecutions()) {
-				Number num = (Number) execution.getContents().get(fieldName);
-				if (num != null) {
-					Integer value = num.intValue();
-					minValue = Math.min(minValue, value);
-					maxValue = Math.max(maxValue, value);
-				}
-			}
-		}
-		Integer step = Math.max(1, (int) Math.ceil((maxValue - minValue) / 18.0));
-		Map<Object, Object> ordered = Maps.newLinkedHashMap();
-		for (int i = minValue; i <= minValue + 19*step; i += step) {
-			ordered.put(i, 0);
-		}
-		for (Batch batch : project.getBatches()) {
-			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			for (Execution execution : collection.getExecutions()) {
-				Number num = (Number) execution.getContents().get(fieldName);
-				if (num != null) {
-					Integer value = num.intValue();
-					Integer slot = value - ((value-minValue) % step);
-					Integer count = (Integer) ordered.get(slot);
-					count++;
-					ordered.put(slot, count);
-				}
-			}
-		}
-		return ordered;
 	}
 }

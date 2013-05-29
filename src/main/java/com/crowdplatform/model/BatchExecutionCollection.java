@@ -13,7 +13,7 @@ public class BatchExecutionCollection {
 	
 	private String projectId;
 	
-	private Long batchId;
+	private Integer batchId;
 	
 	private List<Execution> executions;
 	
@@ -37,11 +37,11 @@ public class BatchExecutionCollection {
 		this.projectId = projectId;
 	}
 
-	public Long getBatchId() {
+	public Integer getBatchId() {
 		return batchId;
 	}
 
-	public void setBatchId(Long batchId) {
+	public void setBatchId(Integer batchId) {
 		this.batchId = batchId;
 	}
 
