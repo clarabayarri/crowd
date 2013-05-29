@@ -56,27 +56,32 @@ public class DataMinerImpl implements DataMiner {
 	public Map<Object, Object> aggregateByFieldWithIntegerSteps(Project project, String field) {
 		MapReduceResults<MapReduceResult> results = aggregateByField(project, field);
 		List<MapReduceResult> list = Lists.newArrayList(results);
-		Collections.sort(list, new Comparator<MapReduceResult>() {
-			@Override
-			public int compare(MapReduceResult arg0, MapReduceResult arg1) {
-				Integer value1 = ((Number) arg0.getId()).intValue();
-				Integer value2 = ((Number) arg1.getId()).intValue();
-				return value1.compareTo(value2);
-			}});
-		Integer minValue = ((Number) list.get(0).getId()).intValue();
-		Integer maxValue = ((Number) list.get(list.size()-1).getId()).intValue();
-		Integer step = Math.max(1, (int) Math.ceil((maxValue - minValue) / 18.0));
 		Map<Object, Object> ordered = Maps.newLinkedHashMap();
-		for (int i = minValue; i <= minValue + 19*step; i += step) {
-			ordered.put(i, 0);
+		
+		if (!list.isEmpty()) {
+			Collections.sort(list, new Comparator<MapReduceResult>() {
+				@Override
+				public int compare(MapReduceResult arg0, MapReduceResult arg1) {
+					Integer value1 = ((Number) arg0.getId()).intValue();
+					Integer value2 = ((Number) arg1.getId()).intValue();
+					return value1.compareTo(value2);
+				}});
+			Integer minValue = ((Number) list.get(0).getId()).intValue();
+			Integer maxValue = ((Number) list.get(list.size()-1).getId()).intValue();
+			Integer step = Math.max(1, (int) Math.ceil((maxValue - minValue) / 18.0));
+			
+			for (int i = minValue; i <= minValue + 19*step; i += step) {
+				ordered.put(i, 0);
+			}
+			for (MapReduceResult res : list) {
+				Integer value = ((Number) res.getId()).intValue();
+				Integer slot = value - ((value-minValue) % step);
+				Integer count = (Integer) ordered.get(slot);
+				count += ((Number) res.getValue()).intValue();
+				ordered.put(slot, count);
+			}
 		}
-		for (MapReduceResult res : list) {
-			Integer value = ((Number) res.getId()).intValue();
-			Integer slot = value - ((value-minValue) % step);
-			Integer count = (Integer) ordered.get(slot);
-			count += ((Number) res.getValue()).intValue();
-			ordered.put(slot, count);
-		}
+		
 		return ordered;
 	}
 }
