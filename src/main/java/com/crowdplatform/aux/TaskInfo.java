@@ -1,24 +1,22 @@
-package com.crowdplatform.model;
+package com.crowdplatform.aux;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import com.crowdplatform.model.Task;
 
 
-public class ExecutionInfo {
+public class TaskInfo {
 
-	private Integer batchId;
+private Integer batchId;
 	
 	private Integer taskId;
 	
-	private Long projectUid;
-	
 	private Map<String, Object> contents;
 	
-	private Integer userId;
-	
-	public ExecutionInfo() {
-		contents = Maps.newHashMap();
+	public TaskInfo(Task task) {
+		this.batchId = task.getBatchId();
+		this.taskId = task.getId();
+		this.contents = task.getContents();
 	}
 
 	public Integer getBatchId() {
@@ -37,14 +35,6 @@ public class ExecutionInfo {
 		this.taskId = taskId;
 	}
 
-	public Long getProjectUid() {
-		return projectUid;
-	}
-
-	public void setProjectUid(Long projectUid) {
-		this.projectUid = projectUid;
-	}
-
 	public Map<String, Object> getContents() {
 		return contents;
 	}
@@ -52,14 +42,4 @@ public class ExecutionInfo {
 	public void setContents(Map<String, Object> contents) {
 		this.contents = contents;
 	}
-
-	public Integer getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
-	
-	
 }

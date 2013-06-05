@@ -3,6 +3,8 @@ package com.crowdplatform.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.crowdplatform.aux.Registration;
+
 @Document
 public class PlatformUser {
 

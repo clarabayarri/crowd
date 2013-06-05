@@ -1,4 +1,4 @@
-package com.crowdplatform.model;
+package com.crowdplatform.aux;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

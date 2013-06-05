@@ -13,8 +13,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.crowdplatform.aux.MapReduceResult;
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.MapReduceResult;
 import com.crowdplatform.model.Project;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

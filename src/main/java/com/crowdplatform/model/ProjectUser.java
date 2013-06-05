@@ -2,6 +2,7 @@ package com.crowdplatform.model;
 
 import java.util.Map;
 
+import com.crowdplatform.aux.ProjectUserInfo;
 import com.google.common.collect.Maps;
 
 

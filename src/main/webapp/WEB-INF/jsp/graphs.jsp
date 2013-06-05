@@ -43,7 +43,14 @@
             <h2>Daily executions</h2>
 
             <div id="executions-graph">
-                <c:set var="dataUrl" value="/project/${project.id}/data/field/date" />
+                <c:choose>
+                    <c:when test="${batch eq null}">
+                        <c:set var="dataUrl" value="/project/${project.id}/data/field/date" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="dataUrl" value="/project/${project.id}/batch/${batch.id}/data/field/date" />
+                    </c:otherwise>
+                </c:choose>
                 <%@ include file="/resources/js/executionsGraph.html" %>
             </div>
 

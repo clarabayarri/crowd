@@ -1,4 +1,4 @@
-package com.crowdplatform.model;
+package com.crowdplatform.aux;
 
 import java.util.Map;
 

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.crowdplatform.model.Registration;
+import com.crowdplatform.aux.Registration;
 import com.crowdplatform.service.PlatformUserService;
 
 @Component

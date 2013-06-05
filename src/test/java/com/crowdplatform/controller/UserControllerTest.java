@@ -21,10 +21,10 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import com.crowdplatform.model.PasswordResetData;
+import com.crowdplatform.aux.PasswordResetData;
+import com.crowdplatform.aux.Registration;
 import com.crowdplatform.model.PasswordResetRequest;
 import com.crowdplatform.model.PlatformUser;
-import com.crowdplatform.model.Registration;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.util.MailSender;
 import com.crowdplatform.util.PasswordResetDataValidator;

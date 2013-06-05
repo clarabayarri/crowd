@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 
+import com.crowdplatform.aux.MapReduceResult;
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.MapReduceResult;
 import com.crowdplatform.model.Project;
 
 public interface DataMiner {

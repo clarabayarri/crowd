@@ -12,14 +12,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.crowdplatform.aux.ExecutionInfo;
+import com.crowdplatform.aux.ProjectUserInfo;
+import com.crowdplatform.aux.TaskInfo;
+import com.crowdplatform.aux.TaskRequest;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.BatchExecutionCollection;
-import com.crowdplatform.model.ExecutionInfo;
 import com.crowdplatform.model.Project;
-import com.crowdplatform.model.ProjectUserInfo;
 import com.crowdplatform.model.Task;
-import com.crowdplatform.model.TaskInfo;
-import com.crowdplatform.model.TaskRequest;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.service.TaskRetrievalStrategy;

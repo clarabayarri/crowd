@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.crowdplatform.model.PasswordResetData;
+import com.crowdplatform.aux.PasswordResetData;
 
 @Component
 public class PasswordResetDataValidator {
