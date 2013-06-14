@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.crowdplatform.model.Batch;
-import com.crowdplatform.model.Field;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
+import com.crowdplatform.util.DataMiner;
 
 @Controller
 public class GraphDataController {
@@ -28,6 +28,9 @@ public class GraphDataController {
 	
 	@Autowired
 	private PlatformUserService userService;
+	
+	@Autowired
+	private DataMiner dataMiner;
 	
 	@RequestMapping("/project/{projectId}/graphs")
 	public String showGraphs(Model model, @PathVariable("projectId") String projectId) {
@@ -60,7 +63,7 @@ public class GraphDataController {
 		Project project = projectService.getProject(projectId);
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
-			return getFieldData(project, fieldName);
+			return dataMiner.aggregateByField(project, fieldName);
 		}
 		return null;
 	}
@@ -74,27 +77,9 @@ public class GraphDataController {
 		if (project.getOwnerId().equals(user.getUsername())) {
 			Batch batch = project.getBatch(batchId);
 			if (batch != null) {
-				return getFieldData(project, batch, fieldName);
+				return dataMiner.aggregateByField(project, batch, fieldName);
 			}
 		}
-		return null;
-	}
-	
-	private Map<Object, Object> getFieldData(Project project, String fieldName) {
-		if (fieldName.equals("date")) return projectService.getAggregatedDataByDate(project);
-		Field field = project.getField(fieldName);
-		if (field.getType().equals(Field.Type.INTEGER)) return projectService.getAggregatedDataByFieldWithSteps(project, fieldName);
-		if (field.getType().equals(Field.Type.STRING)) return projectService.getAggregatedDataByField(project, fieldName);
-		if (field.getType().equals(Field.Type.MULTIVALUATE_STRING)) return projectService.getAggregatedDataByMultivaluateField(project, fieldName);
-		return null;
-	}
-	
-	private Map<Object, Object> getFieldData(Project project, Batch batch, String fieldName) {
-		if (fieldName.equals("date")) return projectService.getAggregatedDataByDate(project, batch);
-		Field field = project.getField(fieldName);
-		if (field.getType().equals(Field.Type.INTEGER)) return projectService.getAggregatedDataByFieldWithSteps(project, batch, fieldName);
-		if (field.getType().equals(Field.Type.STRING)) return projectService.getAggregatedDataByField(project, batch, fieldName);
-		if (field.getType().equals(Field.Type.MULTIVALUATE_STRING)) return projectService.getAggregatedDataByMultivaluateField(project, batch, fieldName);
 		return null;
 	}
 }

@@ -80,7 +80,11 @@ public class Batch {
 	}
 	
 	public void addTask(Task task) {
-		task.setId(this.tasks.size() + 1);
+		int id = 1;
+		if (this.tasks != null && !this.tasks.isEmpty()) {
+			id = this.tasks.get(this.tasks.size()-1).getId() + 1;
+		}
+		task.setTaskId(id);
 		this.tasks.add(task);
 	}
 	

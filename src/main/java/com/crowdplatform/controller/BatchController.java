@@ -25,9 +25,9 @@ import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
+import com.crowdplatform.util.DataViewer;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
-import com.crowdplatform.util.GoogleFusiontablesAdapter;
 import com.crowdplatform.util.TaskCreator;
 
 @Controller
@@ -43,16 +43,16 @@ public class BatchController {
 	private PlatformUserService userService;
 	
 	@Autowired
-	private GoogleFusiontablesAdapter dataExporter;
+	private DataViewer dataExporter;
 	
 	@Autowired
 	private TaskCreator taskCreator;
 	
-	private FileReader reader = new FileReader();
+	@Autowired
+	private FileWriter fileWriter;
 	
-	public void setFileReader(FileReader fileReader) {
-		this.reader = fileReader;
-	}
+	@Autowired
+	private FileReader fileReader;
 
 	@RequestMapping("/project/{projectId}/batch/{batchId}")
 	public String getBatch(@PathVariable("projectId") String projectId, 
@@ -167,7 +167,7 @@ public class BatchController {
 			if (taskFile != null && !taskFile.isEmpty()) {
 				List<Field> fields = project.getInputFields();
 				try {
-					List<Map<String, String>> fileContents = reader.readCSVFile(taskFile);
+					List<Map<String, String>> fileContents = fileReader.readCSVFile(taskFile);
 					taskCreator.createTasks(batch, fields, fileContents);
 				} catch (IOException e) {
 					bindingResult.reject("error.file.contents");
@@ -196,7 +196,7 @@ public class BatchController {
 			Batch batch = project.getBatch(batchId);
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
 			try {
-				String writer = (new FileWriter()).writeTasksExecutions(project, batch, collection, true);
+				String writer = fileWriter.writeTasksExecutions(project, batch, collection, true);
 				response.getWriter().write(writer);
 				response.setContentType("text/csv");
 				response.setHeader("Content-Disposition","attachment; filename=batch-executions-" + batch.getName().trim().replace(" ", "-") + ".csv");
@@ -210,14 +210,14 @@ public class BatchController {
 	}
 	
 	@RequestMapping("/project/{projectId}/batch/{batchId}/export")
-	public String exportBatch(@PathVariable("projectId") String projectId, 
+	public String viewBatchData(@PathVariable("projectId") String projectId, 
 			@PathVariable("batchId") Integer batchId) {
 		Project project = projectService.getProject(projectId);
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
 			Batch batch = project.getBatch(batchId);
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			String url = dataExporter.exportDataURL(project, batch, collection);
+			String url = dataExporter.getDataURL(project, batch, collection);
 			projectService.saveProject(project);
 			if (url != null) {
 				return "redirect:" + url;

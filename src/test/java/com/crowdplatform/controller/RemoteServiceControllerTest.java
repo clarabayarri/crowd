@@ -58,7 +58,7 @@ public class RemoteServiceControllerTest {
 	    batch.addTask(task);
 	    batch.setState(Batch.State.RUNNING);
 	    project.addBatch(batch);
-	    task.setId(taskId);
+	    task.setTaskId(taskId);
 	    task.setBatchId(batchId);
 	    batch.setId(batchId);
 	    project.setUid(projectUid);
@@ -69,7 +69,7 @@ public class RemoteServiceControllerTest {
 	@Test
 	public void testProvideTaskRetrievesTask() {
 		Task task = new Task();
-		task.setId(3);
+		task.setTaskId(3);
 		TaskRequest request = new TaskRequest();
 		request.setCount(1);
 		request.setProjectUid(projectUid);
@@ -84,7 +84,7 @@ public class RemoteServiceControllerTest {
 	@Test
 	public void testProvideTaskRetrievesOneTaskIfNoCountProvided() {
 		Task task = new Task();
-		task.setId(3);
+		task.setTaskId(3);
 		TaskRequest request = new TaskRequest();
 		request.setProjectUid(projectUid);
 		Mockito.when(taskRetrieval.retrieveTasksForExecution(projectId, 1)).thenReturn(Lists.newArrayList(task));
@@ -97,7 +97,7 @@ public class RemoteServiceControllerTest {
 	@Test
 	public void testProvideTaskRetrievesMoreTasksIfCountProvided() {
 		Task task = new Task();
-		task.setId(3);
+		task.setTaskId(3);
 		TaskRequest request = new TaskRequest();
 		request.setCount(2);
 		request.setProjectUid(projectUid);

@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 
 public class Task {
 
-    private Integer id;
+    private Integer taskId;
     
     private Integer batchId;
 	
@@ -20,11 +20,11 @@ public class Task {
 	}
 	
 	public Integer getId() {
-		return id;
+		return taskId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setTaskId(Integer id) {
+		this.taskId = id;
 	}
 
 	public Integer getBatchId() {

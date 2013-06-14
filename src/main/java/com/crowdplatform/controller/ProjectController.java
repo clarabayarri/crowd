@@ -28,7 +28,7 @@ public class ProjectController {
 	public String listProjects(Model model, @RequestParam(value="registered", required=false) Boolean registered) {
 		PlatformUser user = userService.getCurrentUser();
 	    if (user != null) {
-	    	List<Project> projects = projectService.getProjectsForUser(user.getUsername());
+	    	List<Project> projects = projectService.getProjectsForUser(user);
 	    	model.addAttribute(projects);
 	    }
 	    if (registered != null) {

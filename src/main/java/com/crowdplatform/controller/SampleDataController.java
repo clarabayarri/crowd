@@ -51,7 +51,7 @@ public class SampleDataController {
 	public String cleanSampleData() {
 		List<PlatformUser> users = userService.listUsers();
 		for (PlatformUser user : users) {
-			List<Project> projects = projectService.getProjectsForUser(user.getUsername());
+			List<Project> projects = projectService.getProjectsForUser(user);
 			for (Project project : projects) {
 				projectService.removeProject(project.getId());
 			}

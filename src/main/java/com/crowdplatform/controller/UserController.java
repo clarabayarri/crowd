@@ -78,7 +78,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value={"/register"}, method=RequestMethod.GET)
-	public String showRegistration(Model model) {
+	public String loadRegister(Model model) {
 		model.addAttribute(new Registration());
 		return "register";
 	}

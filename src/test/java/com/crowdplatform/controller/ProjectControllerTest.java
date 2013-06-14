@@ -46,7 +46,7 @@ public class ProjectControllerTest {
 	    user.setUsername(username);
 	    project.setId(projectId);
 	    List<Project> projects = Lists.newArrayList(project);
-	    Mockito.when(projectService.getProjectsForUser(user.getUsername())).thenReturn(projects);
+	    Mockito.when(projectService.getProjectsForUser(user)).thenReturn(projects);
 		Mockito.when(userService.getCurrentUser()).thenReturn(user);
 		
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);

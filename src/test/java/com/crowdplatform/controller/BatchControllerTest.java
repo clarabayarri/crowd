@@ -1,8 +1,13 @@
 package com.crowdplatform.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +22,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.crowdplatform.model.Batch;
+import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 import com.crowdplatform.service.BatchExecutionService;
 import com.crowdplatform.service.PlatformUserService;
 import com.crowdplatform.service.ProjectService;
 import com.crowdplatform.util.FileReader;
+import com.crowdplatform.util.FileWriter;
 import com.crowdplatform.util.GoogleFusiontablesAdapter;
 import com.crowdplatform.util.TaskCreator;
 import com.google.common.collect.Lists;
@@ -48,6 +55,12 @@ public class BatchControllerTest {
 	@Mock
 	private TaskCreator taskCreator;
 	
+	@Mock
+	private FileWriter fileWriter;
+	
+	@Mock
+	private FileReader fileReader;
+	
 	private Batch batch = new Batch();
 	private Project project = new Project();
 	private PlatformUser user = new PlatformUser();
@@ -63,9 +76,10 @@ public class BatchControllerTest {
 	    project.setId(projectId);
 	    project.addBatch(batch);
 	    project.setOwnerId(username);
+	    batch.setName("batch name");
 	    user.setUsername(username);
 	    List<Project> projects = Lists.newArrayList(project);
-	    Mockito.when(projectService.getProjectsForUser(username)).thenReturn(projects);
+	    Mockito.when(projectService.getProjectsForUser(user)).thenReturn(projects);
 	    Mockito.when(userService.getCurrentUser()).thenReturn(user);
 		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
 	}
@@ -156,7 +170,7 @@ public class BatchControllerTest {
 	}
 	
 	@Test
-	public void testPauseBatchCallsService() {
+	public void testPauseBatchChangesStateAndSaves() {
 		batch.setState(Batch.State.RUNNING);
 		
 		controller.pauseBatch(projectId, batch.getId());
@@ -193,7 +207,7 @@ public class BatchControllerTest {
 	}
 	
 	@Test
-	public void testDeleteBatchDoesntCallServiceIfNotAuthorized() {
+	public void testDeleteBatchDoesntSaveIfNotAuthorized() {
 		project.setOwnerId("other username");
 		
 		controller.deleteBatch(projectId, batch.getId());
@@ -272,8 +286,6 @@ public class BatchControllerTest {
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		MultipartFile file = Mockito.mock(MultipartFile.class);
 		Mockito.when(file.getContentType()).thenReturn("text/csv");
-		FileReader reader = Mockito.mock(FileReader.class);
-		controller.setFileReader(reader);
 		
 		controller.createBatch(batch, projectId, bindingResult, file);
 		
@@ -293,6 +305,90 @@ public class BatchControllerTest {
 		
 		Mockito.verify(project).addBatch(batch);
 		Mockito.verify(projectService, Mockito.atLeastOnce()).saveProject(project);
+	}
+	
+	@Test
+	public void testCreateBatchRejectsAndReturnsIfIOException() throws IOException {
+		Project project = new Project();
+		project.setOwnerId(username);
+		Mockito.when(projectService.getProject(projectId)).thenReturn(project);
+		BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		MultipartFile file = Mockito.mock(MultipartFile.class);
+		Mockito.when(file.getContentType()).thenReturn("text/csv");
+		Mockito.when(fileReader.readCSVFile(file)).thenThrow(new IOException());
+		
+		String result = controller.createBatch(batch, projectId, bindingResult, file);
+		
+		Mockito.verify(bindingResult).reject("error.file.contents");
+		assertEquals("create", result);
+	}
+	
+	@Test
+	public void testDownloadBatchDoesNothingIfNotAuthorized() {
+		project.setOwnerId("other user");
+		HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+		
+		controller.downloadBatch(projectId, 1, response);
+		
+		Mockito.verifyZeroInteractions(response);
+	}
+	
+	@Test
+	public void testDownloadBatchWritesWriterOutput() throws IOException {
+		HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+		PrintWriter writer = Mockito.mock(PrintWriter.class);
+		Mockito.when(response.getWriter()).thenReturn(writer);
+		String output = "This is an output.";
+		Mockito.when(fileWriter.writeTasksExecutions(Mockito.any(Project.class), 
+				Mockito.any(Batch.class), Mockito.any(BatchExecutionCollection.class), 
+				Mockito.anyBoolean())).thenReturn(output);
+		
+		controller.downloadBatch(projectId, 1, response);
+		
+		Mockito.verify(writer).write(output);
+	}
+	
+	@Test
+	public void testDownloadBatchThrowsRuntimeExceptionIfIOError() throws IOException {
+		HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+		Mockito.when(fileWriter.writeTasksExecutions(Mockito.any(Project.class), 
+				Mockito.any(Batch.class), Mockito.any(BatchExecutionCollection.class), 
+				Mockito.anyBoolean())).thenThrow(new IOException());
+		
+		try {
+			controller.downloadBatch(projectId, 1, response);
+			fail("Runtime Exception not raised.");
+		} catch (RuntimeException e) {
+			assertEquals("IOError writing file to output stream", e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testViewBatchDataHandleRequestViewIfNotAuthorized() {
+		project.setOwnerId("other user");
+		
+		String result = controller.viewBatchData(projectId, 1);
+		
+		assertEquals("redirect:/project/" + projectId + "/batch/1?export-error=true", result);
+	}
+	
+	@Test
+	public void testViewBatchDataHandleRequestView() {
+		String url = "url";
+		Mockito.when(dataExporter.getDataURL(
+				Mockito.eq(project), 
+				Mockito.eq(batch), 
+				Mockito.any(BatchExecutionCollection.class)))
+				.thenReturn(url);
+		
+		String result = controller.viewBatchData(projectId, 1);
+		
+		assertEquals("redirect:" + url, result);
+		Mockito.verify(dataExporter).getDataURL(
+				Mockito.eq(project), 
+				Mockito.eq(batch), 
+				Mockito.any(BatchExecutionCollection.class));
 	}
 
 }

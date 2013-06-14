@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ import com.google.api.services.fusiontables.model.Table;
 import com.google.common.collect.Lists;
 
 @Service
-public class GoogleFusiontablesAdapter {
+public class GoogleFusiontablesAdapter implements DataViewer {
 
 	private static final String APPLICATION_NAME = "Crowd Platform";
 	
@@ -53,8 +54,11 @@ public class GoogleFusiontablesAdapter {
 	private final JsonFactory JSON_FACTORY = new JacksonFactory();
 
 	private Fusiontables fusiontables;
+	
+	@Autowired
+	private FileWriter fileWriter;
 
-	public String exportDataURL(Project project, Batch batch, BatchExecutionCollection collection) {
+	public String getDataURL(Project project, Batch batch, BatchExecutionCollection collection) {
 		try {
 			try {
 				HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -157,7 +161,7 @@ public class GoogleFusiontablesAdapter {
 	}
 	
 	private void insertData(Table table, Project project, Batch batch, BatchExecutionCollection collection) throws IOException {
-		String writer = (new FileWriter()).writeTasksExecutions(project, batch, collection, false);
+		String writer = fileWriter.writeTasksExecutions(project, batch, collection, false);
 		ByteArrayContent byteArrayContent = ByteArrayContent.fromString("application/octet-stream", writer);
 		Fusiontables.Table.ImportRows importRows = fusiontables.table().importRows(table.getTableId(), byteArrayContent);
 		importRows.setIsStrict(false);

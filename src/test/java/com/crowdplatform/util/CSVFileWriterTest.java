@@ -25,10 +25,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FileWriterTest {
+public class CSVFileWriterTest {
 
 	@InjectMocks
-	private FileWriter writer = new FileWriter();
+	private CSVFileWriter writer = new CSVFileWriter();
 	
 	@Test
 	public void testWriteExecutionsReturnsString() throws IOException {
@@ -106,21 +106,21 @@ public class FileWriterTest {
 		
 		String[] result = writer.writeHeaders(fields, fields2, fields3);
 		
-		assertEquals(FileWriter.NUM_STATIC_TASK_FIELDS + FileWriter.NUM_STATIC_EXECUTION_FIELDS + 
+		assertEquals(CSVFileWriter.NUM_STATIC_TASK_FIELDS + CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS + 
 				fields.size() + fields2.size() + fields3.size(), result.length);
 		assertEquals("task_id", result[0]);
-		assertEquals("field", result[FileWriter.NUM_STATIC_TASK_FIELDS]);
-		assertEquals("execution_id", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size()]);
-		assertEquals("date", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + 1]);
-		assertEquals("userId", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + 2]);
-		assertEquals("field2", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
-		assertEquals("field3", result[FileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields2.size()]);
+		assertEquals("field", result[CSVFileWriter.NUM_STATIC_TASK_FIELDS]);
+		assertEquals("execution_id", result[CSVFileWriter.NUM_STATIC_TASK_FIELDS + fields.size()]);
+		assertEquals("date", result[CSVFileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + 1]);
+		assertEquals("userId", result[CSVFileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + 2]);
+		assertEquals("field2", result[CSVFileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS]);
+		assertEquals("field3", result[CSVFileWriter.NUM_STATIC_TASK_FIELDS + fields.size() + CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS + fields2.size()]);
 	}
 	
 	@Test
 	public void testDecodeTask() {
 		Task task = new Task();
-		task.setId(2);
+		task.setTaskId(2);
 		task.setContents(getStringContents());
 		Field field = new Field();
 		field.setName("field");
@@ -129,7 +129,7 @@ public class FileWriterTest {
 		
 		String[] result = writer.decodeTask(task, fields);
 		
-		assertEquals(FileWriter.NUM_STATIC_TASK_FIELDS + fields.size(), result.length);
+		assertEquals(CSVFileWriter.NUM_STATIC_TASK_FIELDS + fields.size(), result.length);
 		assertEquals("2", result[0]);
 		assertEquals("string", result[1]);
 	}
@@ -143,7 +143,7 @@ public class FileWriterTest {
 		
 		String[] result = writer.decodeExecution(execution, null, fields, fields);
 		
-		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
+		assertEquals(CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
 		assertEquals("2", result[0]);
 		assertTrue(!result[1].isEmpty());
 		assertNull(result[2]);
@@ -160,9 +160,9 @@ public class FileWriterTest {
 		
 		String[] result = writer.decodeExecution(execution, null, fields, fields2);
 		
-		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields2.size(), result.length);
+		assertEquals(CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS + fields2.size(), result.length);
 		assertNull(result[2]);
-		assertNull(result[FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
+		assertNull(result[CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS]);
 	}
 	
 	@Test
@@ -178,7 +178,7 @@ public class FileWriterTest {
 		
 		String[] result = writer.decodeExecution(execution, user, fields, fields);
 		
-		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
+		assertEquals(CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS, result.length);
 		assertEquals("3", result[2]);
 	}
 	
@@ -198,10 +198,10 @@ public class FileWriterTest {
 		
 		String[] result = writer.decodeExecution(execution, user, fields, fields);
 		
-		assertEquals(FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size() + fields.size(), 
+		assertEquals(CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size() + fields.size(), 
 				result.length);
-		assertEquals("string", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS]);
-		assertEquals("string", result[FileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size()]);
+		assertEquals("string", result[CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS]);
+		assertEquals("string", result[CSVFileWriter.NUM_STATIC_EXECUTION_FIELDS + fields.size()]);
 	}
 	
 	@Test

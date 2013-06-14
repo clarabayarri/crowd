@@ -42,4 +42,18 @@ public class BatchServiceMongoImplTest {
 		
 		Mockito.verify(mongoOperation).save(collection);
 	}
+	
+	@Test
+	public void testListCollections() {
+		service.listCollections();
+		
+		Mockito.verify(mongoOperation).findAll(BatchExecutionCollection.class);
+	}
+	
+	@Test
+	public void testRemoveCollection() {
+		service.removeCollection(collectionId);
+		
+		Mockito.verify(mongoOperation).remove(Mockito.any());
+	}
 }

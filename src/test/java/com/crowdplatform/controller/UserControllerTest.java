@@ -82,19 +82,19 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void testShowRegistrationHandleRequestView() {
+	public void testLoadRegisterHandleRequestView() {
 		Model model = Mockito.mock(Model.class);
 		
-		String result = controller.showRegistration(model);
+		String result = controller.loadRegister(model);
 		
 		assertEquals("register", result);
 	}
 	
 	@Test
-	public void testShowRegistrationAddsEmptyRegistrationToModel() {
+	public void testLoadRegisterAddsEmptyRegistrationToModel() {
 		Model model = Mockito.mock(Model.class);
 		
-		controller.showRegistration(model);
+		controller.loadRegister(model);
 		
 		Mockito.verify(model).addAttribute(Mockito.any(Registration.class));
 	}

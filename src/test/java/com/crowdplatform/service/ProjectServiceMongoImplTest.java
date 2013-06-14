@@ -11,6 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.crowdplatform.model.PlatformUser;
 import com.crowdplatform.model.Project;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,7 +74,7 @@ public class ProjectServiceMongoImplTest {
 	
 	@Test
 	public void testGetProjectsForUser() {
-		service.getProjectsForUser("user");
+		service.getProjectsForUser(new PlatformUser());
 		
 		Mockito.verify(mongoOperation).find(Mockito.any(Query.class), Mockito.eq(Project.class));
 	}

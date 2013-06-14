@@ -1,6 +1,7 @@
 package com.crowdplatform.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.List;
@@ -46,6 +47,24 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		Batch result = service.getRandomBatch(projectId);
 		
 		assertEquals(batch, result);
+	}
+	
+	@Test
+	public void testGetRandomBatchRetrievesCompletedBatchIfNoRunning() {
+		Batch batch = new Batch();
+		batch.setState(Batch.State.COMPLETE);
+		project.addBatch(batch);
+		
+		Batch result = service.getRandomBatch(projectId);
+		
+		assertEquals(batch, result);
+	}
+	
+	@Test
+	public void testGetRandomBatchFakesBatchIfNoneAvailable() {
+		Batch result = service.getRandomBatch(projectId);
+		
+		assertNotNull(result);
 	}
 	
 	@Test
@@ -102,5 +121,22 @@ public class RandomBatchLessExecutedTaskRetrievalStrategyTest {
 		assertEquals(2, result.size());
 		assertSame(task2, result.get(0));
 		assertSame(task1, result.get(1));
+	}
+	
+	@Test
+	public void testRetrieveTasksForExecutionJoinsLogic() {
+		Batch batch = new Batch();
+		batch.setState(Batch.State.RUNNING);
+		project.addBatch(batch);
+		Task task1 = new Task();
+		task1.setNumExecutions(3);
+		batch.addTask(task1);
+		Task task2 = new Task();
+		task2.setNumExecutions(1);
+		batch.addTask(task2);
+		
+		List<Task> result = service.retrieveTasksForExecution("project", 7);
+		
+		assertNotNull(result);
 	}
 }
