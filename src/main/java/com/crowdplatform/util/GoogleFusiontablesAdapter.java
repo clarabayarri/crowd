@@ -98,6 +98,9 @@ public class GoogleFusiontablesAdapter implements DataViewer {
 
 	private static GoogleCredential createCredentialWithAccessTokenOnly(
 			HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse) {
+		tokenResponse.setScope("https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/fusiontables");
+		tokenResponse.setExpiresInSeconds(new Long(3600));
+		tokenResponse.setTokenType("Bearer");
 		return new GoogleCredential().setFromTokenResponse(tokenResponse);
 	}
 
