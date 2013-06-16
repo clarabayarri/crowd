@@ -14,6 +14,50 @@
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
 
+    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <script type="text/javascript">
+      var CLIENT_ID = '584658910433-o8r4lo2art5fgji23o52ffmlv7ell173.apps.googleusercontent.com';
+      var SCOPES = [
+          'https://www.googleapis.com/auth/drive.file',
+          // Add other scopes needed by your application.
+        ];
+
+      /**
+       * Called when the client library is loaded.
+       */
+      function handleClientLoad() {
+        checkAuth();
+      }
+
+      /**
+       * Check if the current user has authorized the application.
+       */
+      function checkAuth() {
+        gapi.auth.authorize(
+            {'client_id': CLIENT_ID, 'scope': SCOPES.join(' '), 'immediate': true},
+            handleAuthResult);
+      }
+
+      /**
+       * Called when authorization server replies.
+       *
+       * @param {Object} authResult Authorization result.
+       */
+      function handleAuthResult(authResult) {
+        if (authResult) {
+          // Access token has been successfully retrieved, requests can be sent to the API
+          window.location = "/project/${project.id}/batch/${batch.id}/export";
+        } else {
+          // No access token could be retrieved, force the authorization flow.
+          gapi.auth.authorize(
+              {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
+              handleAuthResult);
+        }
+      }
+    </script>
+
+
+
 </head>
 
 <body>
@@ -84,7 +128,7 @@
                 <div class="clearfix"></div>
                 <div class="pull-right">
                     <p><a href="/project/${project.id}/batch/${batch.id}/download" class="btn btn-info pull-right">Download executions</a></p>
-                    <p><a href="/project/${project.id}/batch/${batch.id}/export" class="btn btn-info pull-right" target="_blank">Export to Fusiontables</a></p>
+                    <p><button onclick="checkAuth()" href="/project/${project.id}/batch/${batch.id}/export" class="btn btn-info pull-right" target="_blank" id="export-link">Export to Fusiontables</button></p>
                     <p><a href="/project/${project.id}/batch/${batch.id}/graphs" class="btn btn-info pull-right">View graphs</a></p>
                     <div class="clearfix"></div>
                 </div>

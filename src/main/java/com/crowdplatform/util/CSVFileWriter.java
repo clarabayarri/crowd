@@ -41,14 +41,17 @@ public class CSVFileWriter implements FileWriter {
 
 		Map<Integer, String[]> taskValues = Maps.newHashMap();
 		for (Task task : batch.getTasks()) {
-			taskValues.put(task.getId(), decodeTask(task, project.getInputFields()));
+			if (task.getId() != null)
+				taskValues.put(task.getId(), decodeTask(task, project.getInputFields()));
 		}
 
 		for (Execution execution : collection.getExecutions()) {
 			ProjectUser user = null;
 			if (execution.getProjectUserId() != null)
 				user = project.getUser(execution.getProjectUserId());
-			writeExecution(csvWriter, taskValues.get(execution.getTaskId()), execution, user, project.getOutputFields(), project.getUserFields());
+			String[] taskVal = taskValues.get(execution.getTaskId());
+			if (taskVal == null) taskVal = new String[1 + project.getInputFields().size()];
+			writeExecution(csvWriter, taskVal, execution, user, project.getOutputFields(), project.getUserFields());
 		}
 
 		String result = writer.toString();
