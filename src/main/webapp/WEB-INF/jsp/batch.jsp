@@ -16,9 +16,10 @@
 
     <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     <script type="text/javascript">
-      var CLIENT_ID = '584658910433-o8r4lo2art5fgji23o52ffmlv7ell173.apps.googleusercontent.com';
+      var CLIENT_ID = '584658910433-nbp0k67iof7lc1dn88a0frfck1gd78aa.apps.googleusercontent.com';
       var SCOPES = [
           'https://www.googleapis.com/auth/drive.file',
+          'https://www.googleapis.com/auth/fusiontables',
           // Add other scopes needed by your application.
         ];
 
