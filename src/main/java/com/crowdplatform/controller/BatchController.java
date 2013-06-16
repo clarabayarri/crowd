@@ -12,11 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.crowdplatform.aux.GoogleToken;
 import com.crowdplatform.model.Batch;
 import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Field;
@@ -29,6 +32,7 @@ import com.crowdplatform.util.DataViewer;
 import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
 import com.crowdplatform.util.TaskCreator;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 
 @Controller
 public class BatchController {
@@ -210,21 +214,22 @@ public class BatchController {
 	}
 	
 	@RequestMapping("/project/{projectId}/batch/{batchId}/export")
-	public String viewBatchData(@PathVariable("projectId") String projectId, 
-			@PathVariable("batchId") Integer batchId) {
+	public @ResponseBody String viewBatchData(@PathVariable("projectId") String projectId, 
+			@PathVariable("batchId") Integer batchId, @RequestBody String token) {
 		Project project = projectService.getProject(projectId);
 		PlatformUser user = userService.getCurrentUser();
 		if (project.getOwnerId().equals(user.getUsername())) {
 			Batch batch = project.getBatch(batchId);
 			BatchExecutionCollection collection = batchService.getExecutions(batch.getExecutionCollectionId());
-			String url = dataExporter.getDataURL(project, batch, collection);
+			GoogleTokenResponse response = new GoogleTokenResponse().setAccessToken(token);
+			String url = dataExporter.getDataURL(project, batch, collection, response);
 			projectService.saveProject(project);
 			if (url != null) {
-				return "redirect:" + url;
+				return url;
 			}
 		} else {
 	    	System.out.println("ProjectController: Access denied to user " + user.getUsername() + " for project " + projectId + " export batch.");
 	    }
-		return "redirect:/project/" + projectId + "/batch/" + batchId + "?export-error=true";
+		return "/project/" + projectId + "/batch/" + batchId + "?export-error=true";
 	}
 }

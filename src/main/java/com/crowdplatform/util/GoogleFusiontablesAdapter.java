@@ -1,9 +1,7 @@
 package com.crowdplatform.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +13,15 @@ import com.crowdplatform.model.BatchExecutionCollection;
 import com.crowdplatform.model.Field;
 import com.crowdplatform.model.Project;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.java6.auth.oauth2.FileCredentialStore;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.fusiontables.Fusiontables;
-import com.google.api.services.fusiontables.FusiontablesScopes;
 import com.google.api.services.fusiontables.model.Column;
 import com.google.api.services.fusiontables.model.Table;
 import com.google.common.collect.Lists;
@@ -35,13 +30,13 @@ import com.google.common.collect.Lists;
 public class GoogleFusiontablesAdapter implements DataViewer {
 
 	private static final String APPLICATION_NAME = "Crowd Platform";
-	
+
 	private static final String FUSIONTABLES_URL = "https://www.google.com/fusiontables/data?docid=";
-	
+
 	@Value("#{systemEnvironment['GOOGLE_API_SECRETS']}")
 	private String CLIENT_SECRET;
 	//private String CLIENT_SECRET = "{\"web\":{\"auth_uri\":\"https://accounts.google.com/o/oauth2/auth\",\"client_secret\":\"K63ErMkAwKTsGfn3c_tHD3OT\",\"token_uri\":\"https://accounts.google.com/o/oauth2/token\",\"client_email\":\"584658910433@developer.gserviceaccount.com\",\"redirect_uris\":[\"http://crowd.clarabayarri.com:8080/\",\"http://crowd.clarabayarri.com:56043/Callback\",\"http://crowd.clarabayarri.com/Callback\",\"http://gentle-gorge-9660.herokuapp.com/oauth2callback\",\"http://gentle-gorge-9660.herokuapp.com:8080/\",\"http://gentle-gorge-9660.herokuapp.com:56043/Callback\",\"http://gentle-gorge-9660.herokuapp.com/Callback\",\"http://localhost:38866/Callback\",\"http://localhost/Callback\"],\"client_x509_cert_url\":\"https://www.googleapis.com/robot/v1/metadata/x509/584658910433@developer.gserviceaccount.com\",\"client_id\":\"584658910433.apps.googleusercontent.com\",\"auth_provider_x509_cert_url\":\"https://www.googleapis.com/oauth2/v1/certs\",\"javascript_origins\":[\"http://crowd.clarabayarri.com\",\"http://gentle-gorge-9660.herokuapp.com\"]}}";
-	
+
 	public String getCLIENT_SECRET() {
 		return CLIENT_SECRET;
 	}
@@ -55,16 +50,16 @@ public class GoogleFusiontablesAdapter implements DataViewer {
 	private final JsonFactory JSON_FACTORY = new JacksonFactory();
 
 	private Fusiontables fusiontables;
-	
+
 	@Autowired
 	private FileWriter fileWriter;
 
-	public String getDataURL(Project project, Batch batch, BatchExecutionCollection collection) {
+	public String getDataURL(Project project, Batch batch, BatchExecutionCollection collection, TokenResponse response) {
 		try {
 			try {
 				HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 				// authorization
-				Credential credential = authorize();
+				Credential credential = authorize(response);
 				// set up global FusionTables instance
 				fusiontables = new Fusiontables.Builder(
 						HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
@@ -74,9 +69,9 @@ public class GoogleFusiontablesAdapter implements DataViewer {
 
 				// Inserts
 				insertData(table, project, batch, collection);
-				
+
 				return FUSIONTABLES_URL + table.getTableId();
-				
+
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
 				e.printStackTrace();
@@ -88,7 +83,7 @@ public class GoogleFusiontablesAdapter implements DataViewer {
 		return null;
 	}
 
-	public Credential authorize() throws Exception {
+	public Credential authorize(TokenResponse tokenResponse) throws Exception {
 		// load client secrets
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
 				JSON_FACTORY, new ByteArrayInputStream(CLIENT_SECRET.getBytes()));
@@ -97,18 +92,15 @@ public class GoogleFusiontablesAdapter implements DataViewer {
 			System.out.println(
 					"Enter Client Secret as system variable.");
 		}
-		// set up file credential store
-		FileCredentialStore credentialStore = new FileCredentialStore(
-				new File(System.getProperty("user.home"), ".credentials/fusiontables.json"), JSON_FACTORY);
-		// set up authorization code flow
-		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-				HTTP_TRANSPORT, JSON_FACTORY, clientSecrets,
-				Collections.singleton(FusiontablesScopes.FUSIONTABLES)).setCredentialStore(credentialStore)
-				.build();
-		// authorize
-		return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+
+		return createCredentialWithAccessTokenOnly(HTTP_TRANSPORT, JSON_FACTORY, tokenResponse);
 	}
-	
+
+	private static GoogleCredential createCredentialWithAccessTokenOnly(
+			HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse) {
+		return new GoogleCredential().setFromTokenResponse(tokenResponse);
+	}
+
 	private Table retrieveTable(Project project, Batch batch) throws IOException {
 		if (batch.getFusiontableId() != null) {
 			Fusiontables.Table.Get query = fusiontables.table().get(batch.getFusiontableId());
@@ -124,14 +116,14 @@ public class GoogleFusiontablesAdapter implements DataViewer {
 		}
 		return createTable(project, batch);
 	}
-	
+
 	private Table createTable(Project project, Batch batch) throws IOException {
 		Table table = new Table();
 		table.setName(batch.getName());
 		table.setIsExportable(false);
 		table.setDescription("Data from Crowd Platform batch " + batch.getId());
 		List<Column> columns = Lists.newArrayList();
-		
+
 		columns.add(new Column().setName("task_id").setType("NUMBER"));
 		for (Field field : project.getInputFields()) {
 			if (field.getType().equals(Field.Type.DOUBLE) || field.getType().equals(Field.Type.INTEGER)) {
@@ -150,17 +142,17 @@ public class GoogleFusiontablesAdapter implements DataViewer {
 				columns.add(new Column().setName(field.getName()).setType("STRING"));
 			}
 		}
-		
+
 		table.setColumns(columns);
-		
+
 		Fusiontables.Table.Insert insert = fusiontables.table().insert(table);
-		
+
 		Table result = insert.execute();
 		batch.setFusiontableId(result.getTableId());
-		
+
 		return result;
 	}
-	
+
 	private void insertData(Table table, Project project, Batch batch, BatchExecutionCollection collection) throws IOException {
 		String writer = fileWriter.writeTasksExecutions(project, batch, collection, false);
 		ByteArrayContent byteArrayContent = ByteArrayContent.fromString("application/octet-stream", writer);

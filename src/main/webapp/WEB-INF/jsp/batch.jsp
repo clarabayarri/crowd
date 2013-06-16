@@ -14,21 +14,15 @@
     <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <script type="text/javascript" src="https://apis.google.com/js/client.js"></script>
     <script type="text/javascript">
+      //var CLIENT_ID = '584658910433-o8r4lo2art5fgji23o52ffmlv7ell173.apps.googleusercontent.com';
       var CLIENT_ID = '584658910433-nbp0k67iof7lc1dn88a0frfck1gd78aa.apps.googleusercontent.com';
       var SCOPES = [
           'https://www.googleapis.com/auth/drive.file',
           'https://www.googleapis.com/auth/fusiontables',
           // Add other scopes needed by your application.
         ];
-
-      /**
-       * Called when the client library is loaded.
-       */
-      function handleClientLoad() {
-        checkAuth();
-      }
 
       /**
        * Check if the current user has authorized the application.
@@ -47,7 +41,9 @@
       function handleAuthResult(authResult) {
         if (authResult) {
           // Access token has been successfully retrieved, requests can be sent to the API
-          window.location = "/project/${project.id}/batch/${batch.id}/export";
+          $.post("/project/${project.id}/batch/${batch.id}/export", authResult.access_token, function(result) {
+            window.location = result;
+          });
         } else {
           // No access token could be retrieved, force the authorization flow.
           gapi.auth.authorize(

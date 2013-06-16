@@ -32,6 +32,7 @@ import com.crowdplatform.util.FileReader;
 import com.crowdplatform.util.FileWriter;
 import com.crowdplatform.util.GoogleFusiontablesAdapter;
 import com.crowdplatform.util.TaskCreator;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -368,9 +369,9 @@ public class BatchControllerTest {
 	public void testViewBatchDataHandleRequestViewIfNotAuthorized() {
 		project.setOwnerId("other user");
 		
-		String result = controller.viewBatchData(projectId, 1);
+		String result = controller.viewBatchData(projectId, 1, null);
 		
-		assertEquals("redirect:/project/" + projectId + "/batch/1?export-error=true", result);
+		assertEquals("/project/" + projectId + "/batch/1?export-error=true", result);
 	}
 	
 	@Test
@@ -379,16 +380,16 @@ public class BatchControllerTest {
 		Mockito.when(dataExporter.getDataURL(
 				Mockito.eq(project), 
 				Mockito.eq(batch), 
-				Mockito.any(BatchExecutionCollection.class)))
+				Mockito.any(BatchExecutionCollection.class), Mockito.any(TokenResponse.class)))
 				.thenReturn(url);
 		
-		String result = controller.viewBatchData(projectId, 1);
+		String result = controller.viewBatchData(projectId, 1, "");
 		
-		assertEquals("redirect:" + url, result);
+		assertEquals(url, result);
 		Mockito.verify(dataExporter).getDataURL(
 				Mockito.eq(project), 
 				Mockito.eq(batch), 
-				Mockito.any(BatchExecutionCollection.class));
+				Mockito.any(BatchExecutionCollection.class), Mockito.any(TokenResponse.class));
 	}
 
 }
