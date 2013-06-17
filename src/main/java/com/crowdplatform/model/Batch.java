@@ -123,6 +123,11 @@ public class Batch {
 
 	public void setState(State state) {
 		this.state = state;
+		if (!this.tasks.isEmpty() && this.tasks.get(0) == null) {
+			for (int i = 0; i < this.tasks.size(); ++i) {
+				this.tasks.get(i).setTaskId(i);
+			}
+		}
 	}
 
 	public Date getCreationDate() {
