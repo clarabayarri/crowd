@@ -123,7 +123,8 @@ public class Batch {
 
 	public void setState(State state) {
 		this.state = state;
-		if (!this.tasks.isEmpty() && this.tasks.get(0) == null) {
+		if ((!this.tasks.isEmpty()) && this.tasks.get(0).getId() == null) {
+			System.out.println("resetting ids");
 			for (int i = 0; i < this.tasks.size(); ++i) {
 				this.tasks.get(i).setTaskId(i);
 			}
